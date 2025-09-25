@@ -18,5 +18,5 @@ COPY --from=deps /app/.next ./.next
 COPY --from=deps /app/public ./public
 COPY --from=deps /app/next.config.mjs ./
 
-EXPOSE 3000
+EXPOSE 3100
 CMD ["yarn", "start"]
