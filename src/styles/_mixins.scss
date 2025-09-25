@@ -1,0 +1,51 @@
+@use 'tokens' as *;
+
+@mixin transition-base($props: all, $duration: 0.25s) {
+  transition: $props $duration $transition-base;
+}
+
+@mixin card {
+  background: $color-surface;
+  border-radius: $radius-lg;
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  box-shadow: $shadow-sm;
+}
+
+@mixin tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  color: $color-primary;
+  font-weight: 500;
+  font-size: 0.85rem;
+}
+
+@mixin button-reset {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+}
+
+@mixin button-base($bg, $color: #fff) {
+  @include button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+  background: $bg;
+  color: $color;
+  @include transition-base(transform, 0.25s);
+}
+
+@mixin responsive-width {
+  width: min(1200px, 92vw);
+  margin: 0 auto;
+}

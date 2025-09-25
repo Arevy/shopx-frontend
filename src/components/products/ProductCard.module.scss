@@ -1,0 +1,85 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as m;
+
+.card {
+  @include m.card;
+  padding: 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.3s $transition-base, box-shadow 0.3s $transition-base;
+
+  &:hover {
+    transform: translateY(-6px);
+    box-shadow: $shadow-md;
+  }
+}
+
+.imageMock {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(14, 165, 233, 0.3));
+  border-radius: $radius-md;
+  aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
+}
+
+.imageShine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(70deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0));
+  transform: translateX(-80%);
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.secondaryButton {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  padding: 0.6rem 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border 0.2s ease;
+  background: transparent;
+
+  &:hover {
+    border-color: var(--color-primary);
+  }
+}
+
+.primaryButton {
+  flex: 1;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 16px 30px -20px rgba(37, 99, 235, 0.9);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}

@@ -1,0 +1,55 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as m;
+
+.footer {
+  background: var(--color-surface);
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  margin-top: auto;
+}
+
+.inner {
+  @include m.responsive-width;
+  padding: 3rem 0;
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+.sectionTitle {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.link {
+  color: var(--color-text-muted);
+  margin-bottom: 0.6rem;
+  display: inline-flex;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.bottomBar {
+  border-top: 1px solid rgba(148, 163, 184, 0.16);
+  padding: 1rem 0;
+  @include m.responsive-width;
+  display: flex;
+  justify-content: space-between;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .bottomBar {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+}

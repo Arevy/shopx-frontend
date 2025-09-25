@@ -1,0 +1,128 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as m;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(16px);
+  background: rgba($color-background, 0.85);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+}
+
+.inner {
+  @include m.responsive-width;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.1rem 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: -0.04em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.navLink {
+  color: var(--color-text-muted);
+  font-weight: 500;
+  transition: color 0.2s ease;
+
+  &Active {
+    color: var(--color-text);
+  }
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.badge {
+  min-width: 1.65rem;
+  height: 1.65rem;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: 0.4rem;
+}
+
+.userButton {
+  background: rgba(37, 99, 235, 0.1);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  border: none;
+  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(37, 99, 235, 0.16);
+  }
+}
+
+.menuToggle {
+  display: none;
+}
+
+.mobileNav {
+  display: none;
+}
+
+@media (max-width: $breakpoint-md) {
+  .inner {
+    width: min(100%, 95vw);
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .menuToggle {
+    display: block;
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+  }
+
+  .mobileNav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem 0 1.5rem;
+  }
+
+  .mobileLink {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+
+    &Active {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+  }
+}
+
+.dark .header {
+  background: rgba(15, 23, 42, 0.9);
+}

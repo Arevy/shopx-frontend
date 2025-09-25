@@ -1,0 +1,57 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as m;
+
+.stack {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  z-index: 100;
+}
+
+.toast {
+  padding: 0.85rem 1.1rem;
+  border-radius: $radius-md;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 260px;
+  box-shadow: $shadow-sm;
+  background: var(--color-surface);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.toastSuccess {
+  border-color: rgba($color-success, 0.35);
+}
+
+.toastError {
+  border-color: rgba($color-danger, 0.35);
+}
+
+.toastInfo {
+  border-color: rgba($color-primary, 0.35);
+}
+
+.message {
+  flex: 1;
+}
+
+.close {
+  @include m.button-reset;
+  color: var(--color-text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+@media (max-width: $breakpoint-sm) {
+  .stack {
+    top: auto;
+    bottom: 1.5rem;
+    right: 50%;
+    transform: translateX(50%);
+    width: min(360px, 92vw);
+  }
+}

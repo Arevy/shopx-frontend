@@ -1,0 +1,82 @@
+@use '../../styles/tokens' as *;
+@use '../../styles/mixins' as m;
+
+.button {
+  @include m.button-reset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 999px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.25s $transition-base, box-shadow 0.25s $transition-base;
+
+  &.isBlock {
+    width: 100%;
+  }
+
+  &.isLoading {
+    cursor: progress;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.primary {
+  padding: 0.85rem 1.6rem;
+  background: linear-gradient(135deg, $color-primary, $color-secondary);
+  color: #fff;
+  box-shadow: 0 18px 30px -15px rgba(37, 99, 235, 0.45);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 35px -20px rgba(37, 99, 235, 0.55);
+  }
+}
+
+.secondary {
+  padding: 0.85rem 1.6rem;
+  background: rgba($color-primary, 0.08);
+  color: $color-primary;
+}
+
+.outline {
+  padding: 0.85rem 1.6rem;
+  border: 1px solid var(--color-border);
+  color: inherit;
+
+  &:hover:not(:disabled) {
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+}
+
+.ghost {
+  padding: 0.6rem 1rem;
+  color: $color-text-muted;
+
+  &:hover:not(:disabled) {
+    color: $color-primary;
+  }
+}
+
+.sm {
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+}
+
+.lg {
+  padding: 1rem 1.8rem;
+  font-size: 1.05rem;
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+}

@@ -1,0 +1,15 @@
+@use '../../styles/mixins' as m;
+
+.surface {
+  @include m.card;
+  padding: 1.25rem;
+}
+
+.compact {
+  padding: 0.9rem 1.1rem;
+}
+
+.flush {
+  padding: 0;
+  border-radius: var(--radius-md);
+}
