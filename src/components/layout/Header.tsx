@@ -128,8 +128,8 @@ export const Header = observer(() => {
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => {
-                  userStore.logout()
+                onClick={async () => {
+                  await userStore.logout()
                   onClose()
                 }}
               >

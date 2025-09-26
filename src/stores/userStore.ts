@@ -3,23 +3,23 @@ import { requestGraphQL } from '@lib/graphqlClient'
 import {
   GET_USER_CONTEXT,
   LOGIN,
+  LOGOUT,
   REGISTER,
 } from '@graphql/operations'
 import type { AuthPayload, User } from '@/types/user'
 import type { UserContext } from '@/types/userContext'
+import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
 
 const STORAGE_KEY = 'shopx:auth'
 
 interface StoredAuth {
-  token: string
   user: User
 }
 
 export class UserStore {
   private readonly root: RootStore
   user: User | null = null
-  token: string | null = null
   loading = false
   error: string | null = null
 
@@ -29,7 +29,7 @@ export class UserStore {
   }
 
   get isAuthenticated() {
-    return Boolean(this.user && this.token)
+    return Boolean(this.user)
   }
 
   hydrateFromStorage() {
@@ -40,7 +40,6 @@ export class UserStore {
 
       const parsed: StoredAuth = JSON.parse(persisted)
       this.user = parsed.user
-      this.token = parsed.token
       if (this.user) {
         this.user.id = String(this.user.id)
       }
@@ -52,16 +51,23 @@ export class UserStore {
 
   private persist() {
     if (typeof window === 'undefined') return
-    if (!this.user || !this.token) {
+    if (!this.user) {
       window.localStorage.removeItem(STORAGE_KEY)
       return
     }
 
     const payload: StoredAuth = {
       user: this.user,
-      token: this.token,
     }
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
+  }
+
+  adoptUserSession(user: User) {
+    this.user = {
+      ...user,
+      id: String(user.id),
+    }
+    this.persist()
   }
 
   async login(email: string, password: string) {
@@ -73,12 +79,7 @@ export class UserStore {
         { email, password },
       )
 
-      this.user = {
-        ...login.user,
-        id: String(login.user.id),
-      }
-      this.token = login.token
-      this.persist()
+      this.adoptUserSession(login.user)
       this.root.uiStore.addToast('Signed in successfully. Welcome back!', 'success')
 
       await Promise.all([
@@ -128,17 +129,35 @@ export class UserStore {
     }
   }
 
-  logout() {
+  async logout() {
+    try {
+      await requestGraphQL<{ logout: boolean }>(LOGOUT)
+    } catch (err) {
+      console.error('Logout mutation failed', err)
+    }
+
     this.user = null
-    this.token = null
     this.persist()
     this.root.cartStore.reset()
     this.root.wishlistStore.reset()
     this.root.uiStore.addToast('You have been signed out. See you soon!', 'info')
   }
 
+  handleSessionExpired() {
+    if (!this.user) {
+      return
+    }
+
+    this.user = null
+    this.persist()
+    this.error = null
+    this.root.cartStore.reset()
+    this.root.wishlistStore.reset()
+    this.root.uiStore.addToast('Your session expired. Please sign in again.', 'info')
+  }
+
   async loadUserContext(): Promise<UserContext | null> {
-    if (!this.user || !this.token) {
+    if (!this.user) {
       return null
     }
 
@@ -154,20 +173,24 @@ export class UserStore {
       const { getUserContext } = await requestGraphQL<{ getUserContext: UserContext }>(
         GET_USER_CONTEXT,
         { userId: numericId },
-        this.token,
       )
 
-      this.user = {
-        ...getUserContext.user,
-        id: String(getUserContext.user.id),
+      if (getUserContext.user) {
+        this.adoptUserSession(getUserContext.user)
+      } else {
+        this.user = null
+        this.persist()
       }
-      this.persist()
 
       this.root.cartStore.setRemoteCart(getUserContext.cart)
       this.root.wishlistStore.setRemoteProducts(getUserContext.wishlist.products)
 
       return getUserContext
     } catch (err) {
+      if (isSessionExpiredError(err)) {
+        return null
+      }
+
       console.error('Failed to load user context', err)
       this.root.uiStore.addToast(
         "We couldn't refresh your account data. Please try again shortly.",

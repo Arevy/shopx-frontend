@@ -217,6 +217,23 @@ export const LOGIN = /* GraphQL */ `
   }
 `
 
+export const LOGOUT = /* GraphQL */ `
+  mutation Logout {
+    logout
+  }
+`
+
+export const REDEEM_IMPERSONATION = /* GraphQL */ `
+  mutation RedeemImpersonation($token: String!) {
+    redeemImpersonation(token: $token) {
+      id
+      email
+      name
+      role
+    }
+  }
+`
+
 export const CREATE_ORDER = /* GraphQL */ `
   mutation CreateOrder($userId: ID!, $products: [OrderProductInput!]!) {
     createOrder(userId: $userId, products: $products) {

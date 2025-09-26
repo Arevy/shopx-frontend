@@ -50,14 +50,13 @@ export const CheckoutPage = observer(() => {
   const isLoggedIn = userStore.isAuthenticated
   const userIdRaw = userStore.user?.id
   const userId = Number(userIdRaw)
-  const token = userStore.token ?? undefined
 
   useEffect(() => {
     if (!isLoggedIn || !Number.isFinite(userId)) return
 
     let isMounted = true
 
-    requestGraphQL<{ getAddresses: Address[] }>(GET_ADDRESSES, { userId }, token)
+    requestGraphQL<{ getAddresses: Address[] }>(GET_ADDRESSES, { userId })
       .then(({ getAddresses }) => {
         if (!isMounted) return
         setAddresses(getAddresses)
@@ -72,7 +71,7 @@ export const CheckoutPage = observer(() => {
     return () => {
       isMounted = false
     }
-  }, [isLoggedIn, userId, token])
+  }, [isLoggedIn, userId])
 
   const selectedAddress = useMemo(() => {
     if (selectedAddressId === 'new') return null
@@ -94,14 +93,10 @@ export const CheckoutPage = observer(() => {
       let addressId = selectedAddressId !== 'new' ? selectedAddressId : undefined
 
       if (!addressId) {
-        const { addAddress } = await requestGraphQL<{ addAddress: Address }>(
-          ADD_ADDRESS,
-          {
-            userId,
-            ...form,
-          },
-          token,
-        )
+        const { addAddress } = await requestGraphQL<{ addAddress: Address }>(ADD_ADDRESS, {
+          userId,
+          ...form,
+        })
         addressId = addAddress.id
         setAddresses((prev) => [addAddress, ...prev])
         setSelectedAddressId(addAddress.id)
@@ -117,24 +112,16 @@ export const CheckoutPage = observer(() => {
         throw new Error('We could not process one of the products in your cart. Please refresh and try again.')
       }
 
-      const { createOrder } = await requestGraphQL<{ createOrder: Order }>(
-        CREATE_ORDER,
-        {
-          userId,
-          products: orderProducts,
-        },
-        token,
-      )
+      const { createOrder } = await requestGraphQL<{ createOrder: Order }>(CREATE_ORDER, {
+        userId,
+        products: orderProducts,
+      })
 
-      await requestGraphQL(
-        CREATE_PAYMENT,
-        {
-          orderId: createOrder.id,
-          amount: total,
-          method: paymentMethod,
-        },
-        token,
-      )
+      await requestGraphQL(CREATE_PAYMENT, {
+        orderId: createOrder.id,
+        amount: total,
+        method: paymentMethod,
+      })
 
       await cartStore.clearCart()
 

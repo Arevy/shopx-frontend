@@ -50,7 +50,8 @@ Any variable prefixed with `NEXT_PUBLIC_` is automatically exposed to the browse
 - **Product detail** – price, description, reviews, recommendations, CTA buttons (“Add to cart”, “Save for later”).
 - **Cart workflow** – guest cart stored in local storage with automatic migration once the user authenticates; authenticated carts live server-side with Redis-backed caching and are pulled via the new `getUserContext` aggregate immediately after login.
 - **Wishlist** – same hybrid behaviour as cart, with Redis-backed persistence and instant refresh driven by `getUserContext`.
-- **Authentication** – login and registration screens with MobX-managed session state; JWT is stored and reattached through a shared GraphQL client.
+- **Authentication** – login and registration screens backed by HTTP-only session cookies; MobX only persists lightweight profile data and automatically refreshes the server context after sign-in.
+- **Admin impersonation** – dedicated `/impersonate` route redeems short-lived tokens issued from the admin portal and swaps the active session cookie before redirecting to the homepage.
 - **Checkout** – shipping address capture (with address book reuse), order creation, and payment mutation (card/cash/bank transfer) tied to the backend schema.
 - **Notification system** – toast stack for success/error/info feedback, used consistently across flows.
 
@@ -64,6 +65,7 @@ shopx-frontend/
 ├── src/
 │   ├── app/                   # Next.js App Router routes
 │   │   ├── (routes)/          # Pages (products, cart, wishlist, checkout, auth, CMS)
+│   │   ├── impersonate/       # Redeems admin-issued impersonation tickets
 │   │   └── layout.tsx         # Root layout + Providers
 │   ├── components/
 │   │   ├── home/              # Homepage sections (hero, highlights, etc.)
@@ -85,7 +87,7 @@ MobX stores orchestrate API calls and stateful logic. Components consume them vi
 ## Development Notes
 - **Internationalisation**: The UI is currently English-only. Future translation work can leverage Next’s built-in routing or third-party libs; all copy now lives in English for easier globalization.
 - **CMS integration**: CMS pages are cached via Redis in the backend. On the frontend we memoize responses in the `CmsStore` to avoid redundant queries during a session.
-- **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, and profile data stay in sync with Redis-backed caches.
+- **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, and profile data stay in sync with Redis-backed caches. If the backend revokes the session (e.g., via the admin portal), shared helpers detect the `Authentication required` error, clear local state, and prompt the shopper to sign back in.
 - **Design tokens**: Global palette, typography, and spacing live in `src/app/globals.scss`. Repurpose or swap with Tailwind/CSS-in-JS if necessary.
 - **Typed routes**: `next.config.mjs` disables `typedRoutes` due to the custom linking strategy. Re-enable once all dynamic routes are upgraded to `Route` types.
 - **Testing**: TypeScript compile (`tsc --noEmit`) is wired into CI. Add Playwright or Testing Library tests for end-to-end confidence.

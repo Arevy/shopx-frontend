@@ -6,6 +6,7 @@ import {
 } from '@graphql/operations'
 import { requestGraphQL } from '@lib/graphqlClient'
 import type { Product } from '@/types/product'
+import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
 
 const LOCAL_WISHLIST_KEY = 'shopx:wishlist'
@@ -63,14 +64,17 @@ export class WishlistStore {
 
     this.loading = true
     try {
-      const token = this.root.userStore.token ?? undefined
       const { getWishlist } = await requestGraphQL<{
         getWishlist: { products: Product[] }
-      }>(GET_WISHLIST, { userId }, token)
+      }>(GET_WISHLIST, { userId })
       runInAction(() => {
         this.setRemoteProducts(getWishlist.products)
       })
     } catch (err) {
+      if (isSessionExpiredError(err)) {
+        return
+      }
+
       console.error('Failed to load wishlist', err)
       this.root.uiStore.addToast(
         "We couldn't load your wishlist.",
@@ -88,7 +92,6 @@ export class WishlistStore {
 
     const rawUserId = this.root.userStore.user?.id
     const userId = Number(rawUserId)
-    const token = this.root.userStore.token ?? undefined
     if (!Number.isFinite(userId)) return
 
     const guestItems = [...this.localProducts]
@@ -109,7 +112,6 @@ export class WishlistStore {
             userId,
             productId: productIdValue,
           },
-          token,
         )
       }
       await this.syncFromServer()
@@ -126,8 +128,6 @@ export class WishlistStore {
     const userId = Number(this.root.userStore.user?.id)
     if (!Number.isFinite(userId)) return
 
-    const token = this.root.userStore.token ?? undefined
-
     const productIdValue = Number(productId)
     if (!Number.isFinite(productIdValue)) {
       console.error('Invalid product id for wishlist add', { productId })
@@ -136,14 +136,13 @@ export class WishlistStore {
 
     const { addToWishlist } = await requestGraphQL<{
       addToWishlist: { products: Product[] }
-    }>(ADD_TO_WISHLIST, { userId, productId: productIdValue }, token)
+    }>(ADD_TO_WISHLIST, { userId, productId: productIdValue })
     this.setRemoteProducts(addToWishlist.products)
   }
 
   private async removeRemote(productId: string) {
     const userId = Number(this.root.userStore.user?.id)
     if (!Number.isFinite(userId)) return
-    const token = this.root.userStore.token ?? undefined
     const productIdValue = Number(productId)
     if (!Number.isFinite(productIdValue)) {
       console.error('Invalid product id for wishlist removal', { productId })
@@ -152,7 +151,7 @@ export class WishlistStore {
 
     const { removeFromWishlist } = await requestGraphQL<{
       removeFromWishlist: { products: Product[] }
-    }>(REMOVE_FROM_WISHLIST, { userId, productId: productIdValue }, token)
+    }>(REMOVE_FROM_WISHLIST, { userId, productId: productIdValue })
     this.setRemoteProducts(removeFromWishlist.products)
   }
 

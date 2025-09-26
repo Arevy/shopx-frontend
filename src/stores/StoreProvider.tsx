@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useMemo } from 'react'
 import { enableStaticRendering } from 'mobx-react-lite'
 import type { ReactNode } from 'react'
 import { createRootStore, RootStore } from './rootStore'
+import { onSessionExpired } from '@lib/authEvents'
 
 const isServer = typeof window === 'undefined'
 enableStaticRendering(isServer)
@@ -22,6 +23,13 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
     if (store.userStore.isAuthenticated) {
       void store.userStore.bootstrapAuthenticatedUser()
     }
+  }, [store])
+
+  useEffect(() => {
+    const unsubscribe = onSessionExpired(() => {
+      store.userStore.handleSessionExpired()
+    })
+    return unsubscribe
   }, [store])
 
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>

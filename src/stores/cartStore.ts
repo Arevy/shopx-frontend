@@ -8,6 +8,7 @@ import {
 import { requestGraphQL } from '@lib/graphqlClient'
 import type { Cart, CartItem } from '@/types/cart'
 import type { Product } from '@/types/product'
+import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
 
 const LOCAL_CART_KEY = 'shopx:cart'
@@ -86,7 +87,6 @@ export class CartStore {
     }
 
     const userId = this.requireUserId()
-    const token = this.root.userStore.token ?? undefined
     if (!userId) return
 
     const guestItems = [...this.localItems]
@@ -101,15 +101,11 @@ export class CartStore {
           continue
         }
 
-        await requestGraphQL<{ addToCart: Cart }>(
-          ADD_TO_CART,
-          {
-            userId,
-            productId: productIdValue,
-            quantity: item.quantity,
-          },
-          token,
-        )
+        await requestGraphQL<{ addToCart: Cart }>(ADD_TO_CART, {
+          userId,
+          productId: productIdValue,
+          quantity: item.quantity,
+        })
       }
       await this.syncFromServer()
     } catch (err) {
@@ -134,18 +130,18 @@ export class CartStore {
       this.loading = false
       return
     }
-    const token = this.root.userStore.token ?? undefined
-
     try {
-      const { getCart } = await requestGraphQL<{ getCart: Cart }>(
-        GET_CART,
-        { userId },
-        token,
-      )
+      const { getCart } = await requestGraphQL<{ getCart: Cart }>(GET_CART, {
+        userId,
+      })
       runInAction(() => {
         this.setRemoteCart(getCart)
       })
     } catch (err) {
+      if (isSessionExpiredError(err)) {
+        return
+      }
+
       console.error('Failed to load cart', err)
       this.error = err instanceof Error ? err.message : 'Cart fetch failed'
       this.root.uiStore.addToast(
@@ -194,21 +190,16 @@ export class CartStore {
     if (!userId) return
 
     try {
-      const token = this.root.userStore.token ?? undefined
       const productIdValue = Number(product.id)
       if (!Number.isFinite(productIdValue)) {
         console.error('Invalid product id for cart add', { id: product.id })
         return
       }
-      const { addToCart } = await requestGraphQL<{ addToCart: Cart }>(
-        ADD_TO_CART,
-        {
-          userId,
-          productId: productIdValue,
-          quantity,
-        },
-        token,
-      )
+      const { addToCart } = await requestGraphQL<{ addToCart: Cart }>(ADD_TO_CART, {
+        userId,
+        productId: productIdValue,
+        quantity,
+      })
       runInAction(() => {
         this.cart = {
           ...addToCart,
@@ -278,7 +269,6 @@ export class CartStore {
     if (!userId) return
 
     try {
-      const token = this.root.userStore.token ?? undefined
       const productIdValue = Number(productId)
       if (!Number.isFinite(productIdValue)) {
         console.error('Invalid product id for cart removal', { productId })
@@ -292,7 +282,6 @@ export class CartStore {
           userId,
           productId: productIdValue,
         },
-        token,
       )
       runInAction(() => {
         this.cart = {
@@ -320,12 +309,7 @@ export class CartStore {
     if (!userId) return
 
     try {
-      const token = this.root.userStore.token ?? undefined
-      await requestGraphQL<{ clearCart: boolean }>(
-        CLEAR_CART,
-        { userId },
-        token,
-      )
+      await requestGraphQL<{ clearCart: boolean }>(CLEAR_CART, { userId })
       this.cart = { userId: String(userId), items: [], total: 0 }
     } catch (err) {
       console.error('Failed to clear cart', err)
