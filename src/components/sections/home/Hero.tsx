@@ -1,18 +1,25 @@
 'use client'
 
-import { observer } from 'mobx-react-lite'
 import { motion } from 'framer-motion'
 import { Button } from '@components/ui'
 import { usePrefersReducedMotion } from '@hooks/usePrefersReducedMotion'
 import { useStores } from '@stores/StoreProvider'
+import type { Product } from '@/types/product'
 
-export const Hero = observer(() => {
-  const { productStore, cartStore, wishlistStore } = useStores()
-  const heroProduct = productStore.heroProduct
+type HeroProps = {
+  product: Product | null
+}
+
+export const Hero = ({ product }: HeroProps) => {
+  const { cartStore, wishlistStore } = useStores()
   const prefersReducedMotion = usePrefersReducedMotion()
 
   const revealInitial = prefersReducedMotion ? undefined : { opacity: 0, y: 12 }
   const revealAnimate = prefersReducedMotion ? undefined : { opacity: 1, y: 0 }
+
+  if (!product) {
+    return null
+  }
 
   return (
     <section className="section" style={{ display: 'grid', gap: '3rem' }}>
@@ -54,18 +61,21 @@ export const Hero = observer(() => {
         </motion.div>
       </div>
 
-      {heroProduct && (
+      {product && (
         <motion.div
           initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.98 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: 'easeOut', delay: 0.28 }}
           style={{
-            background: 'radial-gradient(circle at top, rgba(14, 165, 233, 0.18), rgba(37, 99, 235, 0.22))',
+            background:
+              'linear-gradient(140deg, rgba(99,102,241,0.18) 0%, rgba(34,211,238,0.14) 45%, rgba(255,255,255,0.12) 100%)',
             borderRadius: 'var(--radius-lg)',
-            padding: '2.5rem',
+            padding: '2.75rem',
             position: 'relative',
             overflow: 'hidden',
             minHeight: '320px',
+            border: '1px solid rgba(99,102,241,0.18)',
+            boxShadow: '0 35px 80px -50px rgba(99,102,241,0.55)',
           }}
         >
           <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -79,26 +89,26 @@ export const Hero = observer(() => {
                 left: '10%',
                 width: '80%',
                 height: '160%',
-                background: 'conic-gradient(from 90deg at 50% 50%, rgba(255,255,255,0.45), rgba(14,165,233,0.25))',
+                background: 'conic-gradient(from 90deg at 50% 50%, rgba(255,255,255,0.5), rgba(99,102,241,0.22))',
                 filter: 'blur(120px)',
               }}
             />
           </div>
           <div style={{ position: 'relative', display: 'grid', gap: '1.2rem' }}>
-            <span className="tag">Featured · Editor's pick</span>
-            <h3 style={{ fontSize: '2rem', fontWeight: 700 }}>{heroProduct.name}</h3>
+            <span className="tag">{"Featured · Editor's pick"}</span>
+            <h3 style={{ fontSize: '2rem', fontWeight: 700 }}>{product.name}</h3>
             <p style={{ color: 'var(--color-text-muted)', maxWidth: '540px' }}>
-              {heroProduct.description ?? "Premium product selected by our team for impeccable performance and aesthetics."}
+              {product.description ?? "Premium product selected by our team for impeccable performance and aesthetics."}
             </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
               <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>
-                {heroProduct.price.toLocaleString('ro-RO', {
+                {product.price.toLocaleString('ro-RO', {
                   style: 'currency',
                   currency: 'RON',
                 })}
               </span>
-              <Button onClick={() => cartStore.addItem(heroProduct)}>Add to cart</Button>
-              <Button variant="outline" onClick={() => wishlistStore.toggle(heroProduct)}>
+              <Button onClick={() => cartStore.addItem(product)}>Add to cart</Button>
+              <Button variant="outline" onClick={() => wishlistStore.toggle(product)}>
                 Save for later
               </Button>
             </div>
@@ -107,4 +117,4 @@ export const Hero = observer(() => {
       )}
     </section>
   )
-})
+}

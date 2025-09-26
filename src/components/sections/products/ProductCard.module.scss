@@ -1,5 +1,5 @@
-@use '../../styles/tokens' as *;
-@use '../../styles/mixins' as m;
+@use '../../../styles/tokens' as *;
+@use '../../../styles/mixins' as m;
 
 .card {
   @include m.card;
@@ -16,7 +16,7 @@
 }
 
 .imageMock {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(14, 165, 233, 0.3));
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.18), rgba(34, 211, 238, 0.24));
   border-radius: $radius-md;
   aspect-ratio: 4/3;
   position: relative;
@@ -55,7 +55,7 @@
 .secondaryButton {
   flex: 1;
   border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, 0.4);
+  border: 1px solid rgba($color-primary, 0.22);
   padding: 0.6rem 0.8rem;
   font-weight: 500;
   cursor: pointer;
@@ -63,21 +63,21 @@
   background: transparent;
 
   &:hover {
-    border-color: var(--color-primary);
+    border-color: rgba($color-primary, 0.55);
   }
 }
 
 .primaryButton {
   flex: 1;
   border-radius: 999px;
-  background: var(--color-primary);
+  background: linear-gradient(135deg, $color-primary, $color-accent);
   color: #fff;
   border: none;
   padding: 0.6rem 0.8rem;
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 16px 30px -20px rgba(37, 99, 235, 0.9);
+  box-shadow: 0 18px 35px -22px rgba(99, 102, 241, 0.6);
 
   &:hover {
     transform: translateY(-2px);

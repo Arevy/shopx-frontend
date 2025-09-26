@@ -117,6 +117,51 @@ export const GET_WISHLIST = /* GraphQL */ `
   }
 `
 
+export const GET_USER_CONTEXT = /* GraphQL */ `
+  query GetUserContext($userId: ID!) {
+    getUserContext(userId: $userId) {
+      user {
+        id
+        email
+        name
+        role
+      }
+      cart {
+        userId
+        total
+        items {
+          quantity
+          product {
+            id
+            name
+            price
+            description
+            categoryId
+          }
+        }
+      }
+      wishlist {
+        userId
+        products {
+          id
+          name
+          price
+          description
+          categoryId
+        }
+      }
+      addresses {
+        id
+        userId
+        street
+        city
+        postalCode
+        country
+      }
+    }
+  }
+`
+
 export const ADD_TO_WISHLIST = /* GraphQL */ `
   mutation AddToWishlist($userId: ID!, $productId: ID!) {
     addToWishlist(userId: $userId, productId: $productId) {

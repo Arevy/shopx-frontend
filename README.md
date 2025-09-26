@@ -1,6 +1,6 @@
 # ShopX Frontend
 
-The Storefront experience of the ShopX platform, implemented with **Next.js 14 (App Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
+The store front experience of the ShopX platform, implemented with **Next.js 14 (App Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
 
 ---
 
@@ -12,7 +12,7 @@ The Storefront experience of the ShopX platform, implemented with **Next.js 14 (
 | Admin portal         | `http://localhost:3000` | Internal merchandising & CMS tooling  |
 | GraphQL backend      | `http://localhost:4000/graphql` | Data source for both UIs              |
 
-> ℹ️  Ports are coordinated across the monorepo: the admin portal stays on 3000 while the storefront runs on 3100 to avoid conflicts.
+> ℹ️  Ports are coordinated across the monorepo: the admin portal stays on 3000 while the store front runs on 3100 to avoid conflicts.
 
 ---
 
@@ -48,8 +48,8 @@ Any variable prefixed with `NEXT_PUBLIC_` is automatically exposed to the browse
 - **CMS-driven homepage** – dynamic hero, highlights, featured products, new arrivals, and a rich-text block fed by the admin portal’s WYSIWYG editor.
 - **Catalog browsing** – server-sourced product list with category filtering, instant search, wishlist toggles, and graceful loading states.
 - **Product detail** – price, description, reviews, recommendations, CTA buttons (“Add to cart”, “Save for later”).
-- **Cart workflow** – guest cart stored in local storage with automatic migration once the user authenticates; authenticated carts live server-side with Redis-backed caching.
-- **Wishlist** – same hybrid behaviour as cart, providing quick save/remove plus migration at login.
+- **Cart workflow** – guest cart stored in local storage with automatic migration once the user authenticates; authenticated carts live server-side with Redis-backed caching and are pulled via the new `getUserContext` aggregate immediately after login.
+- **Wishlist** – same hybrid behaviour as cart, with Redis-backed persistence and instant refresh driven by `getUserContext`.
 - **Authentication** – login and registration screens with MobX-managed session state; JWT is stored and reattached through a shared GraphQL client.
 - **Checkout** – shipping address capture (with address book reuse), order creation, and payment mutation (card/cash/bank transfer) tied to the backend schema.
 - **Notification system** – toast stack for success/error/info feedback, used consistently across flows.
@@ -85,6 +85,7 @@ MobX stores orchestrate API calls and stateful logic. Components consume them vi
 ## Development Notes
 - **Internationalisation**: The UI is currently English-only. Future translation work can leverage Next’s built-in routing or third-party libs; all copy now lives in English for easier globalization.
 - **CMS integration**: CMS pages are cached via Redis in the backend. On the frontend we memoize responses in the `CmsStore` to avoid redundant queries during a session.
+- **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, and profile data stay in sync with Redis-backed caches.
 - **Design tokens**: Global palette, typography, and spacing live in `src/app/globals.scss`. Repurpose or swap with Tailwind/CSS-in-JS if necessary.
 - **Typed routes**: `next.config.mjs` disables `typedRoutes` due to the custom linking strategy. Re-enable once all dynamic routes are upgraded to `Route` types.
 - **Testing**: TypeScript compile (`tsc --noEmit`) is wired into CI. Add Playwright or Testing Library tests for end-to-end confidence.

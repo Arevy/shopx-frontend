@@ -1,4 +1,4 @@
-import { ProductListingPage } from '@components/products/ProductListingPage'
+import { ProductListingPage } from '@components/sections/products/ProductListingPage'
 
 export default function ProductsPage() {
   return <ProductListingPage />

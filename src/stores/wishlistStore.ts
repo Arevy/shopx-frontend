@@ -19,17 +19,14 @@ export class WishlistStore {
   constructor(root: RootStore) {
     this.root = root
     makeAutoObservable<WishlistStore, 'root'>(this, { root: false }, { autoBind: true })
-
-    if (typeof window !== 'undefined') {
-      this.hydrateLocalWishlist()
-    }
   }
 
   get items(): Product[] {
     return this.root.userStore.isAuthenticated ? this.products : this.localProducts
   }
 
-  private hydrateLocalWishlist() {
+  hydrateFromStorage() {
+    if (typeof window === 'undefined') return
     try {
       const persisted = window.localStorage.getItem(LOCAL_WISHLIST_KEY)
       if (!persisted) return
@@ -58,17 +55,20 @@ export class WishlistStore {
       return
     }
 
-    const user = this.root.userStore.user
-    if (!user) return
+    const userId = Number(this.root.userStore.user?.id)
+    if (!Number.isFinite(userId)) {
+      console.error('Invalid user id for wishlist sync', { id: this.root.userStore.user?.id })
+      return
+    }
 
     this.loading = true
     try {
       const token = this.root.userStore.token ?? undefined
       const { getWishlist } = await requestGraphQL<{
         getWishlist: { products: Product[] }
-      }>(GET_WISHLIST, { userId: user.id }, token)
+      }>(GET_WISHLIST, { userId }, token)
       runInAction(() => {
-        this.products = getWishlist.products
+        this.setRemoteProducts(getWishlist.products)
       })
     } catch (err) {
       console.error('Failed to load wishlist', err)
@@ -86,9 +86,10 @@ export class WishlistStore {
       return
     }
 
-    const userId = this.root.userStore.user?.id
+    const rawUserId = this.root.userStore.user?.id
+    const userId = Number(rawUserId)
     const token = this.root.userStore.token ?? undefined
-    if (!userId) return
+    if (!Number.isFinite(userId)) return
 
     const guestItems = [...this.localProducts]
     this.localProducts = []
@@ -96,11 +97,17 @@ export class WishlistStore {
 
     try {
       for (const product of guestItems) {
+        const productIdValue = Number(product.id)
+        if (!Number.isFinite(productIdValue)) {
+          console.error('Invalid product id for wishlist migration', { id: product.id })
+          continue
+        }
+
         await requestGraphQL<{ addToWishlist: { products: Product[] } }>(
           ADD_TO_WISHLIST,
           {
             userId,
-            productId: product.id,
+            productId: productIdValue,
           },
           token,
         )
@@ -116,25 +123,37 @@ export class WishlistStore {
   }
 
   private async addRemote(productId: string) {
-    const user = this.root.userStore.user
-    if (!user) return
+    const userId = Number(this.root.userStore.user?.id)
+    if (!Number.isFinite(userId)) return
 
     const token = this.root.userStore.token ?? undefined
+
+    const productIdValue = Number(productId)
+    if (!Number.isFinite(productIdValue)) {
+      console.error('Invalid product id for wishlist add', { productId })
+      return
+    }
 
     const { addToWishlist } = await requestGraphQL<{
       addToWishlist: { products: Product[] }
-    }>(ADD_TO_WISHLIST, { userId: user.id, productId }, token)
-    this.products = addToWishlist.products
+    }>(ADD_TO_WISHLIST, { userId, productId: productIdValue }, token)
+    this.setRemoteProducts(addToWishlist.products)
   }
 
   private async removeRemote(productId: string) {
-    const user = this.root.userStore.user
-    if (!user) return
+    const userId = Number(this.root.userStore.user?.id)
+    if (!Number.isFinite(userId)) return
     const token = this.root.userStore.token ?? undefined
+    const productIdValue = Number(productId)
+    if (!Number.isFinite(productIdValue)) {
+      console.error('Invalid product id for wishlist removal', { productId })
+      return
+    }
+
     const { removeFromWishlist } = await requestGraphQL<{
       removeFromWishlist: { products: Product[] }
-    }>(REMOVE_FROM_WISHLIST, { userId: user.id, productId }, token)
-    this.products = removeFromWishlist.products
+    }>(REMOVE_FROM_WISHLIST, { userId, productId: productIdValue }, token)
+    this.setRemoteProducts(removeFromWishlist.products)
   }
 
   async toggle(product: Product) {
@@ -187,6 +206,17 @@ export class WishlistStore {
 
     this.localProducts = this.localProducts.filter((item) => item.id !== productId)
     this.persistLocalWishlist()
+  }
+
+  setRemoteProducts(products: Product[]) {
+    this.products = products.map((product) => ({
+      ...product,
+      id: String(product.id),
+      categoryId:
+        product.categoryId !== undefined && product.categoryId !== null
+          ? String(product.categoryId)
+          : null,
+    }))
   }
 
   reset() {

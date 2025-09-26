@@ -1,3 +1,4 @@
+@use 'sass:color';
 @use 'tokens' as *;
 
 @mixin transition-base($props: all, $duration: 0.25s) {
@@ -5,10 +6,11 @@
 }
 
 @mixin card {
-  background: $color-surface;
+  background: $color-surface-translucent;
   border-radius: $radius-lg;
-  border: 1px solid rgba(148, 163, 184, 0.12);
+  border: 1px solid rgba($color-primary, 0.12);
   box-shadow: $shadow-sm;
+  backdrop-filter: blur(26px);
 }
 
 @mixin tag {
@@ -17,7 +19,8 @@
   gap: 0.3rem;
   padding: 0.35rem 0.8rem;
   border-radius: 999px;
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  border: 1px solid rgba($color-primary, 0.25);
+  background: rgba($color-primary, 0.08);
   color: $color-primary;
   font-weight: 500;
   font-size: 0.85rem;
@@ -43,6 +46,7 @@
   background: $bg;
   color: $color;
   @include transition-base(transform, 0.25s);
+  box-shadow: 0 22px 35px -20px rgba(99, 102, 241, 0.45);
 }
 
 @mixin responsive-width {

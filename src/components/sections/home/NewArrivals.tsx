@@ -1,14 +1,15 @@
 'use client'
 
-import { observer } from 'mobx-react-lite'
 import { motion } from 'framer-motion'
 import { Button, SectionHeader, Surface } from '@components/ui'
-import { useStores } from '@stores/StoreProvider'
+import type { Product } from '@/types/product'
 
-export const NewArrivals = observer(() => {
-  const { productStore } = useStores()
+type NewArrivalsProps = {
+  products: Product[]
+}
 
-  if (!productStore.newArrivals.length) {
+export const NewArrivals = ({ products }: NewArrivalsProps) => {
+  if (!products.length) {
     return null
   }
 
@@ -34,7 +35,7 @@ export const NewArrivals = observer(() => {
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
         }}
       >
-        {productStore.newArrivals.map((product) => (
+        {products.map((product) => (
           <Surface
             key={product.id}
             style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}
@@ -42,7 +43,7 @@ export const NewArrivals = observer(() => {
             <div
               style={{
                 background:
-                  'linear-gradient(120deg, rgba(37,99,235,0.1), rgba(14,165,233,0.26))',
+                  'linear-gradient(120deg, rgba(99,102,241,0.14), rgba(34,211,238,0.24))',
                 borderRadius: 'var(--radius-md)',
                 aspectRatio: '4 / 3',
               }}
@@ -66,4 +67,4 @@ export const NewArrivals = observer(() => {
       </motion.div>
     </section>
   )
-})
+}

@@ -7,7 +7,7 @@ import { useStores } from '@stores/StoreProvider'
 export const ProductGrid = observer(() => {
   const { productStore } = useStores()
 
-  if (productStore.loading && !productStore.products.length) {
+  if (!productStore.listLoaded || productStore.loading) {
     return <div>Loading the catalog...</div>
   }
 

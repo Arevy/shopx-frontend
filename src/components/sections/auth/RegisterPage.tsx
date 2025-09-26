@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { observer } from 'mobx-react-lite'
-import type { ReactNode } from 'react'
-import { Button, Surface } from '@components/ui'
+import { Button, FormField, Input, Surface } from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
 
-export const LoginPage = observer(() => {
+export const RegisterPage = observer(() => {
   const { userStore } = useStores()
   const router = useRouter()
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
@@ -22,9 +22,9 @@ export const LoginPage = observer(() => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    await userStore.login(email, password)
+    await userStore.register(email, password, name)
     if (userStore.isAuthenticated) {
-      router.push('/products')
+      router.push('/checkout')
     }
   }
 
@@ -32,64 +32,53 @@ export const LoginPage = observer(() => {
     <Surface
       as="form"
       onSubmit={handleSubmit}
-      style={{ maxWidth: '420px', margin: '0 auto', padding: '2.5rem', display: 'grid', gap: '1.2rem' }}
+      style={{ maxWidth: '480px', margin: '0 auto', padding: '2.85rem', display: 'grid', gap: '1.4rem' }}
     >
-      <h1 className="section-title" style={{ marginBottom: '0.5rem' }}>Sign in</h1>
+      <h1 className="section-title" style={{ marginBottom: '0.5rem' }}>Create account</h1>
       <p className="section-subtitle" style={{ marginBottom: '1rem' }}>
-        Sign in to sync your cart and wishlist across every device.
+        Sign up to store addresses, your wishlist, and order history in one place.
       </p>
-      <Field label="Email">
-        <input
+      <FormField label="Full name" htmlFor="register-name">
+        <Input
+          id="register-name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          autoComplete="name"
+        />
+      </FormField>
+      <FormField label="Email" htmlFor="register-email">
+        <Input
+          id="register-email"
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           required
-          style={{
-            padding: '0.75rem 1rem',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid rgba(148,163,184,0.3)',
-            background: 'rgba(148,163,184,0.08)',
-          }}
+          autoComplete="email"
         />
-      </Field>
-      <Field label="Password">
-        <input
+      </FormField>
+      <FormField label="Password" htmlFor="register-password">
+        <Input
+          id="register-password"
           type="password"
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           required
-          style={{
-            padding: '0.75rem 1rem',
-            borderRadius: 'var(--radius-sm)',
-            border: '1px solid rgba(148,163,184,0.3)',
-            background: 'rgba(148,163,184,0.08)',
-          }}
+          minLength={6}
+          autoComplete="new-password"
         />
-      </Field>
+      </FormField>
 
       {userStore.error && (
         <span style={{ color: 'var(--color-danger)' }}>{userStore.error}</span>
       )}
 
       <Button type="submit" loading={userStore.loading}>
-        {userStore.loading ? 'Signing in...' : 'Sign in'}
+        {userStore.loading ? 'Creating account...' : 'Create account'}
       </Button>
 
       <span style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
-        Don't have an account? <Link href="/auth/register">Create one now →</Link>
+        Already have an account? <Link href="/auth/login">Sign in →</Link>
       </span>
     </Surface>
   )
 })
-
-type FieldProps = {
-  label: string
-  children: ReactNode
-}
-
-const Field = ({ label, children }: FieldProps) => (
-  <label style={{ display: 'grid', gap: '0.4rem' }}>
-    <span>{label}</span>
-    {children}
-  </label>
-)

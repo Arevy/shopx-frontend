@@ -2,7 +2,7 @@
 
 import { observer } from 'mobx-react-lite'
 import { useEffect, useMemo, useState } from 'react'
-import { Button } from '@components/ui'
+import { Button, Input, Surface } from '@components/ui'
 import { useDebouncedValue } from '@hooks/useDebouncedValue'
 import { useStores } from '@stores/StoreProvider'
 
@@ -26,17 +26,9 @@ export const ProductFilters = observer(() => {
   )
 
   return (
-    <div
-      style={{
-        display: 'grid',
-        gap: '1rem',
-        padding: '1.5rem',
-        borderRadius: 'var(--radius-lg)',
-        border: '1px solid rgba(148, 163, 184, 0.2)',
-        background: 'var(--color-surface)',
-        boxShadow: 'var(--shadow-sm)',
-        marginBottom: '2rem',
-      }}
+    <Surface
+      as="section"
+      style={{ display: 'grid', gap: '1.2rem', padding: '1.8rem', marginBottom: '2rem' }}
     >
       <div>
         <label
@@ -46,20 +38,13 @@ export const ProductFilters = observer(() => {
           Search
         </label>
         <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-          <input
+          <Input
             id="search"
             type="search"
             placeholder="Search products, collections, keywords..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            style={{
-              flex: 1,
-              minWidth: '240px',
-              padding: '0.75rem 1rem',
-              borderRadius: '999px',
-              border: '1px solid rgba(148,163,184,0.25)',
-              background: 'rgba(148,163,184,0.08)',
-            }}
+            style={{ flex: 1, minWidth: '240px', borderRadius: '999px' }}
           />
           <Button
             type="button"
@@ -97,6 +82,6 @@ export const ProductFilters = observer(() => {
           })}
         </div>
       </div>
-    </div>
+    </Surface>
   )
 })

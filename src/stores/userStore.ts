@@ -1,10 +1,12 @@
 import { makeAutoObservable } from 'mobx'
 import { requestGraphQL } from '@lib/graphqlClient'
 import {
+  GET_USER_CONTEXT,
   LOGIN,
   REGISTER,
 } from '@graphql/operations'
 import type { AuthPayload, User } from '@/types/user'
+import type { UserContext } from '@/types/userContext'
 import type { RootStore } from './rootStore'
 
 const STORAGE_KEY = 'shopx:auth'
@@ -24,17 +26,14 @@ export class UserStore {
   constructor(root: RootStore) {
     this.root = root
     makeAutoObservable<UserStore, 'root'>(this, { root: false }, { autoBind: true })
-
-    if (typeof window !== 'undefined') {
-      this.hydrate()
-    }
   }
 
   get isAuthenticated() {
     return Boolean(this.user && this.token)
   }
 
-  private hydrate() {
+  hydrateFromStorage() {
+    if (typeof window === 'undefined') return
     try {
       const persisted = window.localStorage.getItem(STORAGE_KEY)
       if (!persisted) return
@@ -42,6 +41,9 @@ export class UserStore {
       const parsed: StoredAuth = JSON.parse(persisted)
       this.user = parsed.user
       this.token = parsed.token
+      if (this.user) {
+        this.user.id = String(this.user.id)
+      }
     } catch (err) {
       console.error('Failed to hydrate auth state', err)
       window.localStorage.removeItem(STORAGE_KEY)
@@ -71,7 +73,10 @@ export class UserStore {
         { email, password },
       )
 
-      this.user = login.user
+      this.user = {
+        ...login.user,
+        id: String(login.user.id),
+      }
       this.token = login.token
       this.persist()
       this.root.uiStore.addToast('Signed in successfully. Welcome back!', 'success')
@@ -81,10 +86,7 @@ export class UserStore {
         this.root.wishlistStore.migrateGuestWishlist(),
       ])
 
-      await Promise.all([
-        this.root.cartStore.syncFromServer(),
-        this.root.wishlistStore.syncFromServer(),
-      ])
+      await this.loadUserContext()
     } catch (err) {
       console.error('Login failed', err)
       this.error = err instanceof Error ? err.message : 'Login failed'
@@ -133,5 +135,52 @@ export class UserStore {
     this.root.cartStore.reset()
     this.root.wishlistStore.reset()
     this.root.uiStore.addToast('You have been signed out. See you soon!', 'info')
+  }
+
+  async loadUserContext(): Promise<UserContext | null> {
+    if (!this.user || !this.token) {
+      return null
+    }
+
+    const numericId = Number(this.user.id)
+    if (!Number.isFinite(numericId) || numericId <= 0) {
+      console.error('Unable to load user context due to invalid id', {
+        id: this.user.id,
+      })
+      return null
+    }
+
+    try {
+      const { getUserContext } = await requestGraphQL<{ getUserContext: UserContext }>(
+        GET_USER_CONTEXT,
+        { userId: numericId },
+        this.token,
+      )
+
+      this.user = {
+        ...getUserContext.user,
+        id: String(getUserContext.user.id),
+      }
+      this.persist()
+
+      this.root.cartStore.setRemoteCart(getUserContext.cart)
+      this.root.wishlistStore.setRemoteProducts(getUserContext.wishlist.products)
+
+      return getUserContext
+    } catch (err) {
+      console.error('Failed to load user context', err)
+      this.root.uiStore.addToast(
+        "We couldn't refresh your account data. Please try again shortly.",
+        'error',
+      )
+      return null
+    }
+  }
+
+  async bootstrapAuthenticatedUser() {
+    if (!this.isAuthenticated) {
+      return
+    }
+    await this.loadUserContext()
   }
 }

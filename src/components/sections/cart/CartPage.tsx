@@ -53,9 +53,10 @@ export const CartPage = observer(() => {
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        border: '1px solid rgba(148,163,184,0.2)',
+                        border: '1px solid var(--color-border)',
                         borderRadius: '999px',
                         padding: '0.25rem',
+                        background: 'var(--color-surface-translucent)',
                       }}
                     >
                       <Button
@@ -108,7 +109,7 @@ export const CartPage = observer(() => {
               <span>Shipping</span>
               <span>Calculated at checkout</span>
             </div>
-            <div style={{ borderTop: '1px solid rgba(148,163,184,0.2)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
+            <div style={{ borderTop: '1px solid rgba(99,102,241,0.16)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
               <span>Estimated total</span>
               <span>
                 {total.toLocaleString('ro-RO', {

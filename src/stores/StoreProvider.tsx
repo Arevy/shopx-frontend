@@ -14,13 +14,13 @@ export const StoreProvider = ({ children }: { children: ReactNode }) => {
   const store = useMemo(() => createRootStore(), [])
 
   useEffect(() => {
-    store.productStore.fetchProducts()
-    store.productStore.fetchCategories()
+    store.userStore.hydrateFromStorage()
+    store.cartStore.hydrateFromStorage()
+    store.wishlistStore.hydrateFromStorage()
     store.cmsStore.fetchPages()
 
     if (store.userStore.isAuthenticated) {
-      store.cartStore.syncFromServer()
-      store.wishlistStore.syncFromServer()
+      void store.userStore.bootstrapAuthenticatedUser()
     }
   }, [store])
 

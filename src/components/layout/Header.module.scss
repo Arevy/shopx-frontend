@@ -5,9 +5,9 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  backdrop-filter: blur(16px);
-  background: rgba($color-background, 0.85);
-  border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+  backdrop-filter: blur(18px);
+  background: rgba($color-background, 0.82);
+  border-bottom: 1px solid rgba($color-primary, 0.12);
 }
 
 .inner {
@@ -64,7 +64,7 @@
 }
 
 .userButton {
-  background: rgba(37, 99, 235, 0.1);
+  background: rgba($color-primary, 0.12);
   border-radius: 999px;
   padding: 0.5rem 1rem;
   border: none;
@@ -76,7 +76,7 @@
   transition: background 0.2s ease;
 
   &:hover {
-    background: rgba(37, 99, 235, 0.16);
+    background: rgba($color-primary, 0.18);
   }
 }
 

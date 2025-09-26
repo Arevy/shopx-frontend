@@ -1,4 +1,5 @@
-import { notFound } from 'next/navigation'
+import { draftMode } from 'next/headers'
+import { notFound, redirect } from 'next/navigation'
 import { unstable_noStore as noStore } from 'next/cache'
 import { SectionHeader, Surface } from '@components/ui'
 import { GET_CMS_PAGE } from '@graphql/operations'
@@ -10,15 +11,33 @@ type CmsPageResponse = {
 }
 
 type CmsPageParams = {
-  params: { slug: string }
+  params: { slug?: string }
+  searchParams?: { slug?: string }
 }
 
-export default async function CmsPageRoute({ params }: CmsPageParams) {
+export default async function CmsPageRoute({ params, searchParams }: CmsPageParams) {
   noStore()
-  const { slug } = params
+  const slugFromParams = params.slug
+  const slugFromQuery = searchParams?.slug
+
+  const decodedParam = slugFromParams ? decodeURIComponent(slugFromParams) : undefined
+
+  if (decodedParam === '[slug]' && slugFromQuery) {
+    redirect(`/cms/${slugFromQuery}`)
+  }
+
+  const slugCandidate = decodedParam && decodedParam !== '[slug]' ? decodedParam : slugFromQuery
+  const slug = slugCandidate?.trim()
+
+  if (!slug) {
+    notFound()
+  }
+
   const { getCmsPage } = await requestGraphQL<CmsPageResponse>(GET_CMS_PAGE, { slug })
 
-  if (!getCmsPage || getCmsPage.status !== 'PUBLISHED') {
+  const { isEnabled } = draftMode()
+
+  if (!getCmsPage || (!isEnabled && getCmsPage.status !== 'PUBLISHED')) {
     notFound()
   }
 

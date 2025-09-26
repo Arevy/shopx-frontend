@@ -1,4 +1,4 @@
-import { ProductDetailPage } from '@components/products/ProductDetailPage'
+import { ProductDetailPage } from '@components/sections/products/ProductDetailPage'
 
 type ProductPageProps = {
   params: { id: string }

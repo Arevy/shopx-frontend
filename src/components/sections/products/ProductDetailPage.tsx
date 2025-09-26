@@ -18,6 +18,12 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
     productStore.fetchProductDetail(productId)
   }, [productId, productStore])
 
+  useEffect(() => {
+    if (!productStore.products.length) {
+      void productStore.fetchProducts()
+    }
+  }, [productStore])
+
   const product = productStore.productDetail
   const reviews = productStore.productReviews
   const recommended = productStore.products
@@ -107,7 +113,7 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
             ))}
           </div>
         ) : (
-          <Surface padding="compact">This product doesn't have any reviews yet. Be the first to share your experience!</Surface>
+          <Surface padding="compact">{`This product doesn't have any reviews yet. Be the first to share your experience!`}</Surface>
         )}
       </section>
 

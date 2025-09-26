@@ -12,6 +12,14 @@ export async function requestGraphQL<
   variables?: TVariables,
   token?: string,
 ): Promise<TData> {
+  if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
+    console.debug('[GraphQL request]', {
+      endpoint,
+      hasToken: Boolean(token),
+      variables,
+    })
+  }
   const client = new GraphQLClient(endpoint, {
     headers: token
       ? {

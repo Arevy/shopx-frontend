@@ -22,9 +22,6 @@ export class CartStore {
   constructor(root: RootStore) {
     this.root = root
     makeAutoObservable<CartStore, 'root'>(this, { root: false }, { autoBind: true })
-    if (typeof window !== 'undefined') {
-      this.hydrateLocalCart()
-    }
   }
 
   get hasItems() {
@@ -45,7 +42,8 @@ export class CartStore {
     )
   }
 
-  private hydrateLocalCart() {
+  hydrateFromStorage() {
+    if (typeof window === 'undefined') return
     try {
       const persisted = window.localStorage.getItem(LOCAL_CART_KEY)
       if (!persisted) return
@@ -65,13 +63,21 @@ export class CartStore {
     window.localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(this.localItems))
   }
 
-  private requireUserId(): string | null {
+  private requireUserId(): number | null {
     const user = this.root.userStore.user
     if (!user) {
       this.root.uiStore.addToast('Please sign in to continue.', 'info')
       return null
     }
-    return user.id
+
+    const parsed = Number(user.id)
+    if (!Number.isFinite(parsed)) {
+      console.error('Invalid user id for cart operation', { id: user.id })
+      this.root.uiStore.addToast('We could not verify your session. Please sign in again.', 'error')
+      return null
+    }
+
+    return parsed
   }
 
   async migrateGuestCart() {
@@ -79,7 +85,7 @@ export class CartStore {
       return
     }
 
-    const userId = this.root.userStore.user?.id
+    const userId = this.requireUserId()
     const token = this.root.userStore.token ?? undefined
     if (!userId) return
 
@@ -89,11 +95,17 @@ export class CartStore {
 
     try {
       for (const item of guestItems) {
+        const productIdValue = Number(item.product.id)
+        if (!Number.isFinite(productIdValue)) {
+          console.error('Invalid product id for cart migration', { id: item.product.id })
+          continue
+        }
+
         await requestGraphQL<{ addToCart: Cart }>(
           ADD_TO_CART,
           {
             userId,
-            productId: item.product.id,
+            productId: productIdValue,
             quantity: item.quantity,
           },
           token,
@@ -117,7 +129,11 @@ export class CartStore {
 
     this.loading = true
     this.error = null
-    const userId = this.root.userStore.user!.id
+    const userId = this.requireUserId()
+    if (!userId) {
+      this.loading = false
+      return
+    }
     const token = this.root.userStore.token ?? undefined
 
     try {
@@ -127,7 +143,7 @@ export class CartStore {
         token,
       )
       runInAction(() => {
-        this.cart = getCart
+        this.setRemoteCart(getCart)
       })
     } catch (err) {
       console.error('Failed to load cart', err)
@@ -138,6 +154,24 @@ export class CartStore {
       )
     } finally {
       this.loading = false
+    }
+  }
+
+  setRemoteCart(cart: Cart) {
+    this.cart = {
+      userId: String(cart.userId),
+      total: cart.total,
+      items: cart.items.map((item) => ({
+        quantity: item.quantity,
+        product: {
+          ...item.product,
+          id: String(item.product.id),
+          categoryId:
+            item.product.categoryId !== undefined && item.product.categoryId !== null
+              ? String(item.product.categoryId)
+              : null,
+        },
+      })),
     }
   }
 
@@ -161,17 +195,25 @@ export class CartStore {
 
     try {
       const token = this.root.userStore.token ?? undefined
+      const productIdValue = Number(product.id)
+      if (!Number.isFinite(productIdValue)) {
+        console.error('Invalid product id for cart add', { id: product.id })
+        return
+      }
       const { addToCart } = await requestGraphQL<{ addToCart: Cart }>(
         ADD_TO_CART,
         {
           userId,
-          productId: product.id,
+          productId: productIdValue,
           quantity,
         },
         token,
       )
       runInAction(() => {
-        this.cart = addToCart
+        this.cart = {
+          ...addToCart,
+          userId: String(addToCart.userId),
+        }
       })
       this.root.uiStore.addToast('Product added to cart.', 'success')
     } catch (err) {
@@ -237,18 +279,26 @@ export class CartStore {
 
     try {
       const token = this.root.userStore.token ?? undefined
+      const productIdValue = Number(productId)
+      if (!Number.isFinite(productIdValue)) {
+        console.error('Invalid product id for cart removal', { productId })
+        return
+      }
       const { removeFromCart } = await requestGraphQL<{
         removeFromCart: Cart
       }>(
         REMOVE_FROM_CART,
         {
           userId,
-          productId,
+          productId: productIdValue,
         },
         token,
       )
       runInAction(() => {
-        this.cart = removeFromCart
+        this.cart = {
+          ...removeFromCart,
+          userId: String(removeFromCart.userId),
+        }
       })
     } catch (err) {
       console.error('Failed to remove from cart', err)
@@ -276,7 +326,7 @@ export class CartStore {
         { userId },
         token,
       )
-      this.cart = { userId, items: [], total: 0 }
+      this.cart = { userId: String(userId), items: [], total: 0 }
     } catch (err) {
       console.error('Failed to clear cart', err)
       this.root.uiStore.addToast(

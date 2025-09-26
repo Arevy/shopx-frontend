@@ -17,7 +17,7 @@ export const WishlistPage = observer(() => {
 
       {items.length === 0 ? (
         <Surface style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ marginBottom: '1.5rem' }}>You haven't saved any products yet.</p>
+          <p style={{ marginBottom: '1.5rem' }}>{"You haven't saved any products yet."}</p>
           <Button href={{ pathname: '/products' }}>Browse the collections</Button>
         </Surface>
       ) : (
@@ -27,7 +27,7 @@ export const WishlistPage = observer(() => {
               <div
                 style={{
                   background:
-                    'linear-gradient(135deg, rgba(37,99,235,0.1), rgba(14,165,233,0.22))',
+                    'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
                   borderRadius: 'var(--radius-md)',
                   aspectRatio: '4 / 3',
                 }}

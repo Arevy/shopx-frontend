@@ -23,6 +23,7 @@ export class ProductStore {
   productReviews: Review[] = []
   loading = false
   detailLoading = false
+  listLoaded = false
   filters = {
     search: '',
     categoryId: 'all',
@@ -56,6 +57,8 @@ export class ProductStore {
   }
 
   async fetchProducts() {
+    if (this.loading) return
+    if (this.products.length) return
     this.loading = true
     try {
       const { getProducts } = await requestGraphQL<{ getProducts: Product[] }>(
@@ -81,10 +84,12 @@ export class ProductStore {
       )
     } finally {
       this.loading = false
+      this.listLoaded = true
     }
   }
 
   async fetchCategories() {
+    if (this.categories.length) return
     try {
       const { getCategories } = await requestGraphQL<{
         getCategories: Category[]

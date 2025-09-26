@@ -1,0 +1,59 @@
+.control {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-translucent);
+  color: var(--color-text);
+  font-size: 0.95rem;
+  line-height: 1.2;
+  transition: border-color 0.2s var(--transition-base), box-shadow 0.2s var(--transition-base),
+    background 0.2s var(--transition-base), transform 0.2s var(--transition-base);
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.75;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: rgba(99, 102, 241, 0.7);
+    box-shadow: 0 0 0 3px var(--color-ring);
+    background: var(--color-surface);
+    transform: translateY(-1px);
+  }
+}
+
+.block {
+  display: block;
+  width: 100%;
+}
+
+.select {
+  appearance: none;
+  padding-right: 2.75rem;
+  cursor: pointer;
+}
+
+.select::-ms-expand {
+  display: none;
+}
+
+.selectWrapper {
+  position: relative;
+  display: block;
+}
+
+.selectWrapper::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  right: 1rem;
+  width: 0.6rem;
+  height: 0.35rem;
+  color: var(--color-text-muted);
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: translateY(-60%) rotate(45deg);
+}

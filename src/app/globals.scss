@@ -4,12 +4,14 @@
 :root {
   color-scheme: light;
   --color-background: #{$color-background};
+  --color-background-alt: #{$color-background-alt};
   --color-surface: #{$color-surface};
   --color-surface-muted: #{$color-surface-muted};
+  --color-surface-translucent: #{$color-surface-translucent};
   --color-border: #{$color-border};
   --color-primary: #{$color-primary};
   --color-primary-dark: #{$color-primary-dark};
-  --color-secondary: #{$color-secondary};
+  --color-accent: #{$color-accent};
   --color-text: #{$color-text};
   --color-text-muted: #{$color-text-muted};
   --color-success: #{$color-success};
@@ -18,10 +20,14 @@
   --shadow-sm: #{$shadow-sm};
   --shadow-md: #{$shadow-md};
   --shadow-lg: #{$shadow-lg};
+  --radius-xs: #{$radius-xs};
   --radius-sm: #{$radius-sm};
   --radius-md: #{$radius-md};
   --radius-lg: #{$radius-lg};
   --transition-base: #{$transition-base};
+  --gradient-primary: linear-gradient(135deg, #{$color-primary}, #{$color-accent});
+  --gradient-surface: linear-gradient(160deg, rgba(99, 102, 241, 0.08), rgba(34, 211, 238, 0.08));
+  --color-ring: rgba(99, 102, 241, 0.18);
 }
 
 * {
@@ -41,6 +47,8 @@ body {
 body {
   min-height: 100vh;
   line-height: 1.5;
+  background: radial-gradient(120% 140% at 50% 0%, rgba(99, 102, 241, 0.16), transparent 55%),
+    linear-gradient(160deg, var(--color-background), var(--color-background-alt));
 }
 
 a {
@@ -66,21 +74,49 @@ img {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(37, 99, 235, 0.5);
+  background: rgba(99, 102, 241, 0.45);
   border-radius: 999px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-translucent);
+  color: var(--color-text);
+  font: inherit;
+  transition: border-color 0.2s var(--transition-base), box-shadow 0.2s var(--transition-base),
+    background 0.2s var(--transition-base);
+
+  &::placeholder {
+    color: var(--color-text-muted);
+    opacity: 0.75;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-ring);
+    background: var(--color-surface);
+  }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --color-background: #0f172a;
-    --color-surface: #111827;
-    --color-surface-muted: rgba(15, 23, 42, 0.85);
-    --color-border: rgba(148, 163, 184, 0.2);
+    --color-background: #050b1a;
+    --color-background-alt: #0b162b;
+    --color-surface: rgba(10, 16, 35, 0.96);
+    --color-surface-muted: rgba(15, 23, 42, 0.82);
+    --color-surface-translucent: rgba(15, 23, 42, 0.72);
+    --color-border: rgba(99, 102, 241, 0.32);
     --color-text: #e2e8f0;
     --color-text-muted: #94a3b8;
-    --shadow-sm: 0 10px 30px rgba(15, 23, 42, 0.4);
-    --shadow-md: 0 25px 50px -12px rgba(15, 23, 42, 0.6);
+    --shadow-sm: 0 18px 40px -26px rgba(15, 23, 42, 0.65);
+    --shadow-md: 0 35px 70px -45px rgba(15, 23, 42, 0.75);
   }
 }
 
@@ -119,12 +155,11 @@ img {
 }
 
 .button-primary {
-  @include m.button-base(linear-gradient(135deg, var(--color-primary), var(--color-secondary)));
-  box-shadow: 0 18px 30px -15px rgba(37, 99, 235, 0.45);
+  @include m.button-base(var(--gradient-primary));
 
   &:hover {
     transform: translateY(-2px);
-    box-shadow: 0 25px 35px -20px rgba(37, 99, 235, 0.55);
+    box-shadow: 0 25px 35px -20px rgba(99, 102, 241, 0.55);
   }
 }
 
@@ -141,7 +176,7 @@ img {
   transition: border 0.2s ease, color 0.2s ease;
 
   &:hover {
-    border-color: var(--color-primary);
+    border-color: rgba(99, 102, 241, 0.65);
     color: var(--color-primary);
   }
 }

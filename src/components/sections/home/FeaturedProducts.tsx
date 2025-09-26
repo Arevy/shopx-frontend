@@ -1,14 +1,15 @@
 'use client'
 
-import { observer } from 'mobx-react-lite'
-import { ProductCard } from '@components/products/ProductCard'
+import { ProductCard } from '@components/sections/products/ProductCard'
 import { SectionHeader } from '@components/ui'
-import { useStores } from '@stores/StoreProvider'
+import type { Product } from '@/types/product'
 
-export const FeaturedProducts = observer(() => {
-  const { productStore } = useStores()
+type FeaturedProductsProps = {
+  products: Product[]
+}
 
-  if (!productStore.featured.length) {
+export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
+  if (!products.length) {
     return null
   }
 
@@ -20,10 +21,10 @@ export const FeaturedProducts = observer(() => {
         description="ShopX community bestsellers designed for contemporary lifestyles and dynamic needs."
       />
       <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
-        {productStore.featured.map((product, index) => (
+        {products.map((product, index) => (
           <ProductCard key={product.id} product={product} index={index} />
         ))}
       </div>
     </section>
   )
-})
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Button, SectionHeader, Surface } from '@components/ui'
+import { Button, FormField, Input, SectionHeader, Select, Surface } from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
 import { requestGraphQL } from '@lib/graphqlClient'
 import {
@@ -48,11 +48,12 @@ export const CheckoutPage = observer(() => {
   const total = cartStore.totalAmount
 
   const isLoggedIn = userStore.isAuthenticated
-  const userId = userStore.user?.id
+  const userIdRaw = userStore.user?.id
+  const userId = Number(userIdRaw)
   const token = userStore.token ?? undefined
 
   useEffect(() => {
-    if (!isLoggedIn || !userId) return
+    if (!isLoggedIn || !Number.isFinite(userId)) return
 
     let isMounted = true
 
@@ -84,7 +85,7 @@ export const CheckoutPage = observer(() => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (!userId) return
+    if (!Number.isFinite(userId)) return
 
     setLoading(true)
     setError(null)
@@ -107,10 +108,14 @@ export const CheckoutPage = observer(() => {
       }
 
       const orderProducts = cartItems.map((item) => ({
-        productId: item.product.id,
+        productId: Number(item.product.id),
         quantity: item.quantity,
         price: item.product.price,
       }))
+
+      if (orderProducts.some((product) => !Number.isFinite(product.productId))) {
+        throw new Error('We could not process one of the products in your cart. Please refresh and try again.')
+      }
 
       const { createOrder } = await requestGraphQL<{ createOrder: Order }>(
         CREATE_ORDER,
@@ -176,7 +181,7 @@ export const CheckoutPage = observer(() => {
       <Surface as="section" style={{ padding: '3rem', display: 'grid', gap: '1.2rem', textAlign: 'center' }}>
         <h1 className="section-title">Order completed</h1>
         <p className="section-subtitle">
-          Thank you! Your order number is #{orderCompleted.id}. We'll email the details and tracking link shortly.
+          {`Thank you! Your order number is #${orderCompleted.id}. We'll email the details and tracking link shortly.`}
         </p>
         <Button href={{ pathname: '/products' }}>Continue shopping</Button>
       </Surface>
@@ -201,16 +206,11 @@ export const CheckoutPage = observer(() => {
           <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Shipping address</h2>
 
           {addresses.length > 0 && (
-            <div style={{ display: 'grid', gap: '0.6rem' }}>
-              <span style={{ fontWeight: 600 }}>Saved address</span>
-              <select
+            <FormField label="Saved address" htmlFor="saved-address">
+              <Select
+                id="saved-address"
                 value={selectedAddressId}
                 onChange={(event) => setSelectedAddressId(event.target.value)}
-                style={{
-                  padding: '0.75rem 1rem',
-                  borderRadius: 'var(--radius-sm)',
-                  border: '1px solid rgba(148,163,184,0.3)',
-                }}
               >
                 {addresses.map((address) => (
                   <option key={address.id} value={address.id}>
@@ -218,41 +218,61 @@ export const CheckoutPage = observer(() => {
                   </option>
                 ))}
                 <option value="new">Add a new address</option>
-              </select>
-            </div>
+              </Select>
+            </FormField>
           )}
 
           {(selectedAddressId === 'new' || !addresses.length) && (
             <div style={{ display: 'grid', gap: '1rem' }}>
-              <InputField
-                label="Street"
-                value={form.street}
-                onChange={(value) => handleChange('street', value)}
-                required
-              />
-              <InputField
-                label="City"
-                value={form.city}
-                onChange={(value) => handleChange('city', value)}
-                required
-              />
-              <InputField
-                label="Postal code"
-                value={form.postalCode}
-                onChange={(value) => handleChange('postalCode', value)}
-                required
-              />
-              <InputField
-                label="Country"
-                value={form.country}
-                onChange={(value) => handleChange('country', value)}
-                required
-              />
+              <FormField label="Street" htmlFor="shipping-street">
+                <Input
+                  id="shipping-street"
+                  value={form.street}
+                  onChange={(event) => handleChange('street', event.target.value)}
+                  required
+                  autoComplete="address-line1"
+                />
+              </FormField>
+              <FormField label="City" htmlFor="shipping-city">
+                <Input
+                  id="shipping-city"
+                  value={form.city}
+                  onChange={(event) => handleChange('city', event.target.value)}
+                  required
+                  autoComplete="address-level2"
+                />
+              </FormField>
+              <FormField label="Postal code" htmlFor="shipping-postal">
+                <Input
+                  id="shipping-postal"
+                  value={form.postalCode}
+                  onChange={(event) => handleChange('postalCode', event.target.value)}
+                  required
+                  autoComplete="postal-code"
+                />
+              </FormField>
+              <FormField label="Country" htmlFor="shipping-country">
+                <Input
+                  id="shipping-country"
+                  value={form.country}
+                  onChange={(event) => handleChange('country', event.target.value)}
+                  required
+                  autoComplete="country-name"
+                />
+              </FormField>
             </div>
           )}
 
           {selectedAddress && (
-            <Surface padding="compact" style={{ background: 'var(--color-surface-muted)' }}>
+            <Surface
+              padding="compact"
+              style={{
+                background: 'var(--color-surface-translucent)',
+                border: '1px solid rgba(99,102,241,0.14)',
+                display: 'grid',
+                gap: '0.35rem',
+              }}
+            >
               <strong>Selected address:</strong>
               <p>{selectedAddress.street}</p>
               <p>
@@ -272,15 +292,24 @@ export const CheckoutPage = observer(() => {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '0.8rem',
-                  padding: '0.75rem 1rem',
+                  gap: '0.85rem',
+                  padding: '0.9rem 1.1rem',
                   borderRadius: 'var(--radius-md)',
-                  border: '1px solid rgba(148,163,184,0.2)',
+                  border:
+                    paymentMethod === method.id
+                      ? '1px solid rgba(99,102,241,0.4)'
+                      : '1px solid var(--color-border)',
                   cursor: 'pointer',
                   background:
                     paymentMethod === method.id
-                      ? 'rgba(37,99,235,0.08)'
-                      : 'transparent',
+                      ? 'linear-gradient(135deg, rgba(99,102,241,0.16), rgba(34,211,238,0.12))'
+                      : 'var(--color-surface-translucent)',
+                  transition:
+                    'border 0.2s var(--transition-base), background 0.2s var(--transition-base), transform 0.2s var(--transition-base), box-shadow 0.2s var(--transition-base)',
+                  boxShadow:
+                    paymentMethod === method.id
+                      ? '0 18px 35px -28px rgba(99,102,241,0.5)'
+                      : 'none',
                 }}
               >
                 <input
@@ -294,7 +323,7 @@ export const CheckoutPage = observer(() => {
               </label>
             ))}
           </div>
-          <div style={{ borderTop: '1px solid rgba(148,163,184,0.2)', paddingTop: '1rem' }}>
+          <div style={{ borderTop: '1px solid rgba(99,102,241,0.16)', paddingTop: '1rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
               <span>Subtotal</span>
               <span>
@@ -327,30 +356,3 @@ export const CheckoutPage = observer(() => {
     </form>
   )
 })
-
-interface InputFieldProps {
-  label: string
-  value: string
-  onChange: (value: string) => void
-  required?: boolean
-}
-
-const InputField = ({ label, value, onChange, required }: InputFieldProps) => (
-  <label style={{ display: 'grid', gap: '0.4rem' }}>
-    <span style={{ fontWeight: 600 }}>
-      {label}
-      {required ? ' *' : ''}
-    </span>
-    <input
-      value={value}
-      onChange={(event) => onChange(event.target.value)}
-      required={required}
-      style={{
-        padding: '0.75rem 1rem',
-        borderRadius: 'var(--radius-sm)',
-        border: '1px solid rgba(148,163,184,0.3)',
-        background: 'rgba(148,163,184,0.08)',
-      }}
-    />
-  </label>
-)
