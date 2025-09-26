@@ -26,12 +26,26 @@ export const WishlistPage = observer(() => {
             <Surface key={product.id} style={{ display: 'grid', gap: '0.8rem' }}>
               <div
                 style={{
-                  background:
-                    'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
                   borderRadius: 'var(--radius-md)',
                   aspectRatio: '4 / 3',
+                  overflow: 'hidden',
+                  background:
+                    'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
-              />
+              >
+                {product.image?.url ? (
+                  <img
+                    src={product.image.url}
+                    alt={product.image.filename ?? product.name}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>No image</span>
+                )}
+              </div>
               <Button
                 href={{ pathname: '/products/[id]', query: { id: product.id } }}
                 variant="ghost"

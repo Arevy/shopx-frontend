@@ -25,12 +25,19 @@ export const ProductCard = observer(({ product, index = 0 }: ProductCardProps) =
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25) }}
     >
-      <div className={styles.imageMock}>
-        <motion.div
-          className={styles.imageShine}
-          animate={{ transform: ['translateX(-80%)', 'translateX(40%)', 'translateX(-80%)'] }}
-          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
+      <div className={styles.imageWrapper}>
+        {product.image?.url ? (
+          <img
+            src={product.image.url}
+            alt={product.image.filename ?? product.name}
+            className={styles.productImage}
+            loading="lazy"
+          />
+        ) : (
+          <div className={styles.imagePlaceholder}>
+            <span>No image</span>
+          </div>
+        )}
       </div>
       <Link
         href={{ pathname: '/products/[id]', query: { id: product.id } }}

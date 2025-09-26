@@ -6,6 +6,12 @@ export const GET_PRODUCTS = /* GraphQL */ `
       price
       description
       categoryId
+      image {
+        url
+        filename
+        mimeType
+        updatedAt
+      }
     }
   }
 `
@@ -18,6 +24,12 @@ export const GET_PRODUCT_DETAIL = /* GraphQL */ `
       price
       description
       categoryId
+      image {
+        url
+        filename
+        mimeType
+        updatedAt
+      }
     }
     reviews: getReviews(productId: $id) {
       id
@@ -52,6 +64,9 @@ export const GET_CART = /* GraphQL */ `
           price
           description
           categoryId
+          image {
+            url
+          }
         }
       }
     }
@@ -71,6 +86,9 @@ export const ADD_TO_CART = /* GraphQL */ `
           price
           description
           categoryId
+          image {
+            url
+          }
         }
       }
     }
@@ -90,6 +108,9 @@ export const REMOVE_FROM_CART = /* GraphQL */ `
           price
           description
           categoryId
+          image {
+            url
+          }
         }
       }
     }
@@ -112,6 +133,9 @@ export const GET_WISHLIST = /* GraphQL */ `
         price
         description
         categoryId
+        image {
+          url
+        }
       }
     }
   }
@@ -137,6 +161,9 @@ export const GET_USER_CONTEXT = /* GraphQL */ `
             price
             description
             categoryId
+            image {
+              url
+            }
           }
         }
       }
@@ -148,6 +175,9 @@ export const GET_USER_CONTEXT = /* GraphQL */ `
           price
           description
           categoryId
+          image {
+            url
+          }
         }
       }
       addresses {
@@ -172,6 +202,9 @@ export const ADD_TO_WISHLIST = /* GraphQL */ `
         price
         description
         categoryId
+        image {
+          url
+        }
       }
     }
   }
@@ -187,6 +220,9 @@ export const REMOVE_FROM_WISHLIST = /* GraphQL */ `
         price
         description
         categoryId
+        image {
+          url
+        }
       }
     }
   }

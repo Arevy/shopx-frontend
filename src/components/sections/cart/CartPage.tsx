@@ -34,8 +34,43 @@ export const CartPage = observer(() => {
             {items.map((item) => (
               <Surface
                 key={item.product.id}
-                style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'minmax(0, 1fr) auto' }}
+                style={{
+                  display: 'grid',
+                  gap: '1rem',
+                  gridTemplateColumns: 'auto minmax(0, 1fr) auto',
+                  alignItems: 'center',
+                }}
               >
+                <div
+                  style={{
+                    width: '96px',
+                    height: '96px',
+                    borderRadius: 'var(--radius-md)',
+                    overflow: 'hidden',
+                    background:
+                      'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
+                  }}
+                >
+                  {item.product.image?.url ? (
+                    <img
+                      src={item.product.image.url}
+                      alt={item.product.image.filename ?? item.product.name}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <span
+                      style={{
+                        display: 'grid',
+                        placeItems: 'center',
+                        height: '100%',
+                        color: 'rgba(255,255,255,0.7)',
+                        fontSize: '0.8rem',
+                      }}
+                    >
+                      No image
+                    </span>
+                  )}
+                </div>
                 <div style={{ display: 'grid', gap: '0.4rem' }}>
                   <span style={{ fontWeight: 600 }}>{item.product.name}</span>
                   <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>

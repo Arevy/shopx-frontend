@@ -56,12 +56,27 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
             style={{
-              background:
-                'radial-gradient(circle at top, rgba(37,99,235,0.25), rgba(14,165,233,0.3))',
               borderRadius: 'var(--radius-lg)',
               minHeight: '360px',
+              overflow: 'hidden',
+              background: product.image?.url
+                ? 'transparent'
+                : 'radial-gradient(circle at top, rgba(37,99,235,0.25), rgba(14,165,233,0.3))',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-          />
+          >
+            {product.image?.url ? (
+              <img
+                src={product.image.url}
+                alt={product.image.filename ?? product.name}
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            ) : (
+              <span style={{ color: 'rgba(255,255,255,0.7)' }}>No image available</span>
+            )}
+          </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}

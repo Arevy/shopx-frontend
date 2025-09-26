@@ -112,6 +112,25 @@ export const Hero = ({ product }: HeroProps) => {
                 Save for later
               </Button>
             </div>
+            {product.image?.url && (
+              <motion.img
+                initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.96 }}
+                animate={prefersReducedMotion ? undefined : { opacity: 0.95, scale: 1 }}
+                transition={{ duration: 0.6, ease: 'easeOut', delay: 0.35 }}
+                src={product.image.url}
+                alt={product.image.filename ?? product.name}
+                style={{
+                  position: 'absolute',
+                  right: '-5%',
+                  bottom: '-8%',
+                  maxWidth: '300px',
+                  width: '45vw',
+                  pointerEvents: 'none',
+                  borderRadius: 'var(--radius-md)',
+                  boxShadow: '0 25px 55px -35px rgba(15, 23, 42, 0.6)',
+                }}
+              />
+            )}
           </div>
         </motion.div>
       )}

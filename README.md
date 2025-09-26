@@ -47,6 +47,7 @@ Any variable prefixed with `NEXT_PUBLIC_` is automatically exposed to the browse
 ## Feature Overview
 - **CMS-driven homepage** – dynamic hero, highlights, featured products, new arrivals, and a rich-text block fed by the admin portal’s WYSIWYG editor.
 - **Catalog browsing** – server-sourced product list with category filtering, instant search, wishlist toggles, and graceful loading states.
+- **Product imagery** – all catalog, cart, and wishlist views render the backend-hosted `/products/:id/image` URL returned by GraphQL for a consistent media pipeline.
 - **Product detail** – price, description, reviews, recommendations, CTA buttons (“Add to cart”, “Save for later”).
 - **Cart workflow** – guest cart stored in local storage with automatic migration once the user authenticates; authenticated carts live server-side with Redis-backed caching and are pulled via the new `getUserContext` aggregate immediately after login.
 - **Wishlist** – same hybrid behaviour as cart, with Redis-backed persistence and instant refresh driven by `getUserContext`.
