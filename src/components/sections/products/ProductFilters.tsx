@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button, Input, Surface } from '@components/ui'
 import { useDebouncedValue } from '@hooks/useDebouncedValue'
 import { useStores } from '@stores/StoreProvider'
+import styles from './ProductFilters.module.scss'
 
 export const ProductFilters = observer(() => {
   const { productStore } = useStores()
@@ -26,25 +27,19 @@ export const ProductFilters = observer(() => {
   )
 
   return (
-    <Surface
-      as="section"
-      style={{ display: 'grid', gap: '1.2rem', padding: '1.8rem', marginBottom: '2rem' }}
-    >
+    <Surface as="section" className={styles.filters}>
       <div>
-        <label
-          htmlFor="search"
-          style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-        >
+        <label htmlFor="search" className={styles.label}>
           Search
         </label>
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div className={styles.searchControls}>
           <Input
             id="search"
             type="search"
             placeholder="Search products, collections, keywords..."
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            style={{ flex: 1, minWidth: '240px', borderRadius: '999px' }}
+            className={styles.searchInput}
           />
           <Button
             type="button"
@@ -59,13 +54,10 @@ export const ProductFilters = observer(() => {
         </div>
       </div>
       <div>
-        <label
-          htmlFor="category"
-          style={{ display: 'block', fontWeight: 600, marginBottom: '0.5rem' }}
-        >
+        <label htmlFor="category" className={styles.label}>
           Category
         </label>
-        <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+        <div className={styles.categoryControls}>
           {categories.map((category) => {
             const isActive = productStore.filters.categoryId === category.id
             return (

@@ -1,0 +1,17 @@
+.section {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+}
+
+.panel {
+  max-width: 420px;
+  text-align: center;
+  display: grid;
+  gap: 1rem;
+}
+
+.error {
+  color: var(--danger);
+}

@@ -6,6 +6,7 @@ import { Highlights } from './Highlights'
 import { FeaturedProducts } from './FeaturedProducts'
 import { NewArrivals } from './NewArrivals'
 import { CustomerJourney } from './CustomerJourney'
+import styles from './HomePage.module.scss'
 
 type HomePageProps = {
   heroProduct: Product | null
@@ -30,7 +31,7 @@ export const HomePage = ({ heroProduct, featuredProducts, newArrivals, cmsPage }
           />
           <Surface
             dangerouslySetInnerHTML={{ __html: cmsPage.body }}
-            style={{ display: 'grid', gap: '1.2rem', lineHeight: 1.7 }}
+            className={styles.cmsContent}
           />
         </section>
       )}

@@ -1,8 +1,10 @@
 'use client'
 
+import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { Button, SectionHeader, Surface } from '@components/ui'
 import type { Product } from '@/types/product'
+import styles from './NewArrivals.module.scss'
 
 type NewArrivalsProps = {
   products: Product[]
@@ -14,7 +16,7 @@ export const NewArrivals = ({ products }: NewArrivalsProps) => {
   }
 
   return (
-    <section className="section" style={{ overflow: 'hidden' }}>
+    <section className={classNames('section', styles.section)}>
       <SectionHeader
         title="New Arrivals"
         description="Fresh drops straight from the studio. Limited stock, fast delivery, extended warranty."
@@ -29,34 +31,23 @@ export const NewArrivals = ({ products }: NewArrivalsProps) => {
         whileInView={{ x: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        style={{
-          display: 'grid',
-          gap: '1.2rem',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-        }}
+        className={styles.carousel}
       >
         {products.map((product) => (
           <Surface
             key={product.id}
-            style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}
+            className={styles.card}
           >
-            <div
-              style={{
-                background:
-                  'linear-gradient(120deg, rgba(99,102,241,0.14), rgba(34,211,238,0.24))',
-                borderRadius: 'var(--radius-md)',
-                aspectRatio: '4 / 3',
-              }}
-            />
+            <div className={styles.imagePlaceholder} />
             <Button
               href={{ pathname: '/products/[id]', query: { id: product.id } }}
               variant="ghost"
               size="sm"
-              style={{ justifyContent: 'flex-start' }}
+              className={styles.link}
             >
               {product.name}
             </Button>
-            <span style={{ fontWeight: 700 }}>
+            <span className={styles.price}>
               {product.price.toLocaleString('ro-RO', {
                 style: 'currency',
                 currency: 'RON',

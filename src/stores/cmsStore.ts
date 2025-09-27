@@ -1,6 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
 import { GET_CMS_PAGE, GET_CMS_PAGES } from '@graphql/operations'
 import { requestGraphQL } from '@lib/graphqlClient'
+import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import type { CmsPage } from '@/types/cms'
 import type { RootStore } from './rootStore'
 
@@ -28,7 +29,7 @@ export class CmsStore {
       })
     } catch (err) {
       console.error('Failed to load CMS pages', err)
-      const message = err instanceof Error ? err.message : 'Failed to load CMS pages'
+      const message = getUserFriendlyMessage(err, "We couldn't load the CMS pages.")
       this.error = message
       this.root.uiStore.addToast(message, 'error')
     } finally {
@@ -54,7 +55,7 @@ export class CmsStore {
       return getCmsPage
     } catch (err) {
       console.error('Failed to load CMS page', err)
-      const message = err instanceof Error ? err.message : 'Failed to load CMS page'
+      const message = getUserFriendlyMessage(err, "We couldn't load the CMS page.")
       this.root.uiStore.addToast(message, 'error')
       return null
     }

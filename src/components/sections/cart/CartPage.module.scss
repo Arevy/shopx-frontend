@@ -1,0 +1,133 @@
+.container {
+  display: grid;
+  gap: 2rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+}
+
+.emptyMessage {
+  margin-bottom: 1.5rem;
+}
+
+.layout {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+}
+
+.itemsGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.itemCard {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.imageFrame {
+  width: 96px;
+  height: 96px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(34, 211, 238, 0.18));
+  position: relative;
+}
+
+.productImage {
+  object-fit: cover;
+}
+
+.imageFallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+}
+
+.details {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.productName {
+  font-weight: 600;
+}
+
+.productDescription {
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.priceRow {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.price {
+  font-weight: 600;
+}
+
+.quantityControl {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.25rem;
+  background: var(--color-surface-translucent);
+}
+
+.quantityValue {
+  min-width: 2rem;
+  text-align: center;
+}
+
+.clearButton {
+  justify-self: flex-start;
+}
+
+.summary {
+  display: grid;
+  gap: 1rem;
+  align-self: start;
+}
+
+.summaryTitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryRowMuted {
+  color: var(--color-text-muted);
+}
+
+.summaryTotal {
+  border-top: 1px solid rgba(99, 102, 241, 0.16);
+  padding-top: 1rem;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.authPrompt {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.authCopy {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}

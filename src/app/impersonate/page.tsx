@@ -1,12 +1,15 @@
 'use client'
 
+import classNames from 'classnames'
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { requestGraphQL } from '@lib/graphqlClient'
+import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import { REDEEM_IMPERSONATION } from '@graphql/operations'
 import { useStores } from '@stores/StoreProvider'
 import type { User } from '@/types/user'
 import { Button, Surface } from '@components/ui'
+import styles from './page.module.scss'
 
 const ImpersonateContent = () => {
   const router = useRouter()
@@ -60,11 +63,11 @@ const ImpersonateContent = () => {
         if (cancelled) {
           return
         }
-        setError(
-          err instanceof Error
-            ? err.message
-            : 'Unable to impersonate the requested user. The link may have expired.',
+        const message = getUserFriendlyMessage(
+          err,
+          'Unable to impersonate the requested user. The link may have expired.',
         )
+        setError(message)
         setStatus('')
       }
     }
@@ -77,20 +80,12 @@ const ImpersonateContent = () => {
   }, [searchParams, userStore, cartStore, wishlistStore, uiStore, router])
 
   return (
-    <Surface
-      as="section"
-      style={{
-        minHeight: '100vh',
-        display: 'grid',
-        placeItems: 'center',
-        padding: '2rem',
-      }}
-    >
-      <div style={{ maxWidth: 420, textAlign: 'center', display: 'grid', gap: '1rem' }}>
+    <Surface as="section" className={styles.section}>
+      <div className={styles.panel}>
         <h1 className="section-title">Switching session</h1>
         {error ? (
           <>
-            <p className="section-subtitle" style={{ color: 'var(--danger)' }}>
+            <p className={classNames('section-subtitle', styles.error)}>
               {error}
             </p>
             <Button onClick={() => router.replace('/auth/login')}>Back to sign in</Button>
@@ -107,16 +102,8 @@ const ImpersonatePage = () => {
   return (
     <Suspense
       fallback={
-        <Surface
-          as="section"
-          style={{
-            minHeight: '100vh',
-            display: 'grid',
-            placeItems: 'center',
-            padding: '2rem',
-          }}
-        >
-          <div style={{ maxWidth: 420, textAlign: 'center', display: 'grid', gap: '1rem' }}>
+        <Surface as="section" className={styles.section}>
+          <div className={styles.panel}>
             <h1 className="section-title">Switching session</h1>
             <p className="section-subtitle">Preparing impersonation session…</p>
           </div>

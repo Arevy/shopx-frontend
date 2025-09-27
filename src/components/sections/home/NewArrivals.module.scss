@@ -1,0 +1,29 @@
+.section {
+  overflow: hidden;
+}
+
+.carousel {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.imagePlaceholder {
+  background: linear-gradient(120deg, rgba(99, 102, 241, 0.14), rgba(34, 211, 238, 0.24));
+  border-radius: var(--radius-md);
+  aspect-ratio: 4 / 3;
+}
+
+.link {
+  justify-content: flex-start;
+}
+
+.price {
+  font-weight: 700;
+}

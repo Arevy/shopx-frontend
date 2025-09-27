@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { observer } from 'mobx-react-lite'
 import { Button, FormField, Input, Surface } from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
+import styles from './LoginPage.module.scss'
 
 export const LoginPage = observer(() => {
   const { userStore } = useStores()
@@ -28,13 +29,9 @@ export const LoginPage = observer(() => {
   }
 
   return (
-    <Surface
-      as="form"
-      onSubmit={handleSubmit}
-      style={{ maxWidth: '440px', margin: '0 auto', padding: '2.75rem', display: 'grid', gap: '1.4rem' }}
-    >
-      <h1 className="section-title" style={{ marginBottom: '0.5rem' }}>Sign in</h1>
-      <p className="section-subtitle" style={{ marginBottom: '1rem' }}>
+    <Surface as="form" onSubmit={handleSubmit} className={styles.form}>
+      <h1 className={`section-title ${styles.heading}`}>Sign in</h1>
+      <p className={`section-subtitle ${styles.subheading}`}>
         Sign in to sync your cart and wishlist across every device.
       </p>
 
@@ -61,15 +58,13 @@ export const LoginPage = observer(() => {
         />
       </FormField>
 
-      {userStore.error && (
-        <span style={{ color: 'var(--color-danger)' }}>{userStore.error}</span>
-      )}
+      {userStore.error && <span className={styles.error}>{userStore.error}</span>}
 
       <Button type="submit" loading={userStore.loading}>
         {userStore.loading ? 'Signing in...' : 'Sign in'}
       </Button>
 
-      <span style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+      <span className={styles.footer}>
         {"Don't have an account? "}
         <Link href="/auth/register">Create one now →</Link>
       </span>

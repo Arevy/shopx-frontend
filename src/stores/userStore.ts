@@ -1,5 +1,6 @@
 import { makeAutoObservable } from 'mobx'
 import { requestGraphQL } from '@lib/graphqlClient'
+import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import {
   GET_USER_CONTEXT,
   LOGIN,
@@ -90,11 +91,18 @@ export class UserStore {
       await this.loadUserContext()
     } catch (err) {
       console.error('Login failed', err)
-      this.error = err instanceof Error ? err.message : 'Login failed'
-      this.root.uiStore.addToast(
-        this.error ?? 'We couldn\'t sign you in.',
-        'error',
-      )
+      const message = getUserFriendlyMessage(err, "We couldn't sign you in. Please try again.", {
+        knownMessages: [
+          { match: /invalid credentials/i, value: 'Email or password are incorrect.' },
+          { match: /user not found/i, value: 'Email or password are incorrect.' },
+          {
+            match: /account (?:locked|disabled)/i,
+            value: 'This account is locked. Contact support to regain access.',
+          },
+        ],
+      })
+      this.error = message
+      this.root.uiStore.addToast(message, 'error')
     } finally {
       this.loading = false
     }
@@ -119,11 +127,20 @@ export class UserStore {
       await this.login(email, password)
     } catch (err) {
       console.error('Register failed', err)
-      this.error = err instanceof Error ? err.message : 'Register failed'
-      this.root.uiStore.addToast(
-        this.error ?? 'We couldn\'t create the account.',
-        'error',
+      const message = getUserFriendlyMessage(
+        err,
+        "We couldn't create the account. Please try again.",
+        {
+          knownMessages: [
+            {
+              match: /already exists|duplicate/i,
+              value: 'An account with this email already exists. Try signing in instead.',
+            },
+          ],
+        },
       )
+      this.error = message
+      this.root.uiStore.addToast(message, 'error')
     } finally {
       this.loading = false
     }

@@ -1,0 +1,20 @@
+.stepsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.stepCard {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.stepBadge {
+  margin-bottom: 1rem;
+}
+
+.stepTitle {
+  font-size: 1.2rem;
+}
+
+.stepDescription {
+  color: var(--color-text-muted);
+}

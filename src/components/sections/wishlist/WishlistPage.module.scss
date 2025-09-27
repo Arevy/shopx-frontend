@@ -1,0 +1,68 @@
+.container {
+  display: grid;
+  gap: 2rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem;
+}
+
+.emptyMessage {
+  margin-bottom: 1.5rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.itemCard {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.imageFrame {
+  border-radius: var(--radius-md);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.14), rgba(34, 211, 238, 0.18));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.imageFallback {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.productLink {
+  justify-content: flex-start;
+}
+
+.productImage {
+  object-fit: cover;
+}
+
+.description {
+  color: var(--color-text-muted);
+}
+
+.price {
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.actionButton {
+  flex: 1;
+}
+
+.proTip {
+  padding: 1.5rem;
+}

@@ -21,8 +21,11 @@ export const SectionHeader = ({
 }: SectionHeaderProps) => {
   return (
     <header
-      className={classNames(styles.sectionHeader, className)}
-      style={{ textAlign: align === 'center' ? 'center' : 'left' }}
+      className={classNames(
+        styles.sectionHeader,
+        align === 'center' && styles.alignCenter,
+        className,
+      )}
     >
       {eyebrow ? <span className={styles.eyebrow}>{eyebrow}</span> : null}
       <h2 className={styles.title}>{title}</h2>

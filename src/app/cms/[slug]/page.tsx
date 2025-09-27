@@ -1,10 +1,12 @@
 import { draftMode } from 'next/headers'
 import { notFound, redirect } from 'next/navigation'
 import { unstable_noStore as noStore } from 'next/cache'
+import classNames from 'classnames'
 import { SectionHeader, Surface } from '@components/ui'
 import { GET_CMS_PAGE } from '@graphql/operations'
 import { requestGraphQL } from '@lib/graphqlClient'
 import type { CmsPage } from '@/types/cms'
+import styles from './page.module.scss'
 
 type CmsPageResponse = {
   getCmsPage: CmsPage | null
@@ -42,13 +44,13 @@ export default async function CmsPageRoute({ params, searchParams }: CmsPagePara
   }
 
   return (
-    <section className="section" style={{ display: 'grid', gap: '1.5rem' }}>
+    <section className={classNames('section', styles.container)}>
       <SectionHeader title={getCmsPage.title} description={getCmsPage.excerpt ?? undefined} />
       <Surface
         dangerouslySetInnerHTML={{ __html: getCmsPage.body }}
-        style={{ display: 'grid', gap: '1rem', lineHeight: 1.7 }}
+        className={styles.content}
       />
-      <span style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem' }}>
+      <span className={styles.meta}>
         Ultima actualizare: {new Date(getCmsPage.updatedAt).toLocaleString('ro-RO')}
       </span>
     </section>

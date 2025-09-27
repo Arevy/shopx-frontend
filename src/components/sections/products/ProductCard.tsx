@@ -50,7 +50,7 @@ export const ProductCard = observer(({ product, index = 0 }: ProductCardProps) =
         {product.description ?? 'Premium experience with sustainable materials and extended warranty.'}
       </p>
       <div className={styles.priceRow}>
-        <span style={{ fontWeight: 700 }}>
+        <span className={styles.price}>
           {product.price.toLocaleString('ro-RO', {
             style: 'currency',
             currency: 'RON',

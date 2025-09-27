@@ -1,5 +1,6 @@
 'use client'
 
+import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -7,6 +8,7 @@ import { Button, SectionHeader, Surface } from '@components/ui'
 import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
 import { ProductCard } from './ProductCard'
+import styles from './ProductDetailPage.module.scss'
 
 interface ProductDetailPageProps {
   productId: string
@@ -32,12 +34,12 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
     .slice(0, 4)
 
   if (productStore.detailLoading && !product) {
-    return <div style={{ minHeight: '60vh', display: 'grid', placeItems: 'center' }}>Loading product details...</div>
+    return <div className={styles.loader}>Loading product details...</div>
   }
 
   if (!product) {
     return (
-      <div style={{ minHeight: '60vh', display: 'grid', placeItems: 'center', textAlign: 'center', gap: '1rem' }}>
+      <div className={styles.notFound}>
         <span>The product was not found.</span>
         <Button href={{ pathname: '/products' }}>
           Back to catalog
@@ -49,51 +51,43 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
   const isInWishlist = wishlistStore.items.some((item) => item.id === product.id)
 
   return (
-    <div style={{ display: 'grid', gap: '4rem' }}>
-      <section className="section" style={{ marginBottom: 0 }}>
-        <div style={{ display: 'grid', gap: '2.5rem', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+    <div className={styles.page}>
+      <section className={classNames('section', styles.heroSection)}>
+        <div className={styles.heroGrid}>
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4 }}
-            style={{
-              borderRadius: 'var(--radius-lg)',
-              minHeight: '360px',
-              overflow: 'hidden',
-              background: product.image?.url
-                ? 'transparent'
-                : 'radial-gradient(circle at top, rgba(37,99,235,0.25), rgba(14,165,233,0.3))',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              position: 'relative',
-            }}
+            className={classNames(
+              styles.imageWrapper,
+              product.image?.url && styles.imageHasMedia,
+            )}
           >
             <ModularImage
               src={product.image?.url ?? null}
               alt={product.image?.filename ?? product.name}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              style={{ objectFit: 'cover' }}
-              fallback={<span style={{ color: 'rgba(255,255,255,0.7)' }}>No image available</span>}
+              className={styles.productImage}
+              fallback={<span className={styles.imageFallback}>No image available</span>}
             />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            style={{ display: 'grid', gap: '1.2rem' }}
+            className={styles.details}
           >
             <span className="tag">ShopX Collection · Available now</span>
-            <h1 className="section-title" style={{ marginBottom: 0 }}>{product.name}</h1>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '1.05rem' }}>
+            <h1 className={classNames('section-title', styles.title)}>{product.name}</h1>
+            <p className={styles.description}>
               {product.description ?? 'An innovative product designed to give you a real advantage every day. Durable materials, extended warranty, premium support.'}
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-              <span style={{ fontSize: '2rem', fontWeight: 700 }}>
+            <div className={styles.infoRow}>
+              <span className={styles.price}>
                 {product.price.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}
               </span>
-              <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap' }}>
+              <div className={styles.actions}>
                 <Button onClick={() => cartStore.addItem(product)}>
                   Add to cart
                 </Button>
@@ -102,7 +96,7 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
                 </Button>
               </div>
             </div>
-            <ul style={{ color: 'var(--color-text-muted)', lineHeight: 1.6 }}>
+            <ul className={styles.featureList}>
               <li>Scheduled delivery in 24-48h with confirmation SMS.</li>
               <li>Dedicated support 6 days a week, live chat, and 30-day returns.</li>
               <li>Integration with the ShopX mobile app for real-time tracking.</li>
@@ -117,12 +111,12 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
           description="Real feedback from the ShopX community. Tell us how it improved your life."
         />
         {reviews.length ? (
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+          <div className={classNames('grid', styles.reviewsGrid)}>
             {reviews.map((review) => (
-              <Surface key={review.id} style={{ display: 'grid', gap: '0.8rem' }}>
-                <span style={{ fontWeight: 600 }}>Rating: {review.rating}/5</span>
-                <p style={{ color: 'var(--color-text-muted)' }}>{review.reviewText ?? 'Excellent experience, highly recommend!'}</p>
-                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+              <Surface key={review.id} className={styles.reviewCard}>
+                <span className={styles.reviewHeading}>Rating: {review.rating}/5</span>
+                <p className={styles.reviewBody}>{review.reviewText ?? 'Excellent experience, highly recommend!'}</p>
+                <span className={styles.reviewMeta}>
                   {new Date(review.createdAt).toLocaleDateString('ro-RO')}
                 </span>
               </Surface>
@@ -136,7 +130,7 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
       {recommended.length > 0 && (
         <section className="section">
           <SectionHeader title="Recommended for you" />
-          <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+          <div className={classNames('grid', styles.recommendationsGrid)}>
             {recommended.map((product, index) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}

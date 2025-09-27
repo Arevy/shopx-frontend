@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { Button, FormField, Input, SectionHeader, Select, Surface } from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
 import { requestGraphQL } from '@lib/graphqlClient'
+import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import {
   ADD_ADDRESS,
   CREATE_ORDER,
@@ -13,6 +15,7 @@ import {
 } from '@graphql/operations'
 import type { Address } from '@/types/address'
 import type { Order } from '@/types/order'
+import styles from './CheckoutPage.module.scss'
 
 const paymentMethods = [
   { id: 'card', label: 'Credit/debit card (Visa / Mastercard)' },
@@ -129,7 +132,10 @@ export const CheckoutPage = observer(() => {
       uiStore.addToast('Order placed successfully!', 'success')
     } catch (err) {
       console.error('Checkout failed', err)
-      const message = err instanceof Error ? err.message : 'Checkout failed'
+      const message = getUserFriendlyMessage(
+        err,
+        'Checkout failed. Please try again.',
+      )
       setError(message)
       uiStore.addToast(message, 'error')
     } finally {
@@ -139,12 +145,12 @@ export const CheckoutPage = observer(() => {
 
   if (!isLoggedIn) {
     return (
-      <Surface as="section" style={{ padding: '3rem', textAlign: 'center', display: 'grid', gap: '1.2rem' }}>
+      <Surface as="section" className={styles.guard}>
         <h1 className="section-title">You need an account to check out</h1>
         <p className="section-subtitle">
           Sign in or create an account in just a few seconds to complete your order.
         </p>
-        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <div className={styles.guardActions}>
           <Button href={{ pathname: '/auth/login' }}>Sign in</Button>
           <Button href={{ pathname: '/auth/register' }} variant="outline">
             Create account
@@ -156,7 +162,7 @@ export const CheckoutPage = observer(() => {
 
   if (!cartItems.length) {
     return (
-      <Surface as="section" style={{ padding: '3rem', textAlign: 'center', display: 'grid', gap: '1.2rem' }}>
+      <Surface as="section" className={styles.guard}>
         <p>Your cart is empty. Add products to continue.</p>
         <Button href={{ pathname: '/products' }}>Back to catalog</Button>
       </Surface>
@@ -165,7 +171,7 @@ export const CheckoutPage = observer(() => {
 
   if (orderCompleted) {
     return (
-      <Surface as="section" style={{ padding: '3rem', display: 'grid', gap: '1.2rem', textAlign: 'center' }}>
+      <Surface as="section" className={styles.successState}>
         <h1 className="section-title">Order completed</h1>
         <p className="section-subtitle">
           {`Thank you! Your order number is #${orderCompleted.id}. We'll email the details and tracking link shortly.`}
@@ -176,21 +182,15 @@ export const CheckoutPage = observer(() => {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '2rem' }}>
+    <form onSubmit={handleSubmit} className={styles.checkoutForm}>
       <SectionHeader
         title="Checkout"
         description="Enter your shipping details and choose a payment method. Processing is secure and only takes a few seconds."
       />
 
-      <div
-        style={{
-          display: 'grid',
-          gap: '2rem',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        }}
-      >
-        <Surface as="section" style={{ display: 'grid', gap: '1.2rem' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Shipping address</h2>
+      <div className={styles.columns}>
+        <Surface as="section" className={styles.section}>
+          <h2 className={styles.sectionHeading}>Shipping address</h2>
 
           {addresses.length > 0 && (
             <FormField label="Saved address" htmlFor="saved-address">
@@ -210,7 +210,7 @@ export const CheckoutPage = observer(() => {
           )}
 
           {(selectedAddressId === 'new' || !addresses.length) && (
-            <div style={{ display: 'grid', gap: '1rem' }}>
+            <div className={styles.addressForm}>
               <FormField label="Street" htmlFor="shipping-street">
                 <Input
                   id="shipping-street"
@@ -253,12 +253,7 @@ export const CheckoutPage = observer(() => {
           {selectedAddress && (
             <Surface
               padding="compact"
-              style={{
-                background: 'var(--color-surface-translucent)',
-                border: '1px solid rgba(99,102,241,0.14)',
-                display: 'grid',
-                gap: '0.35rem',
-              }}
+              className={styles.selectedAddress}
             >
               <strong>Selected address:</strong>
               <p>{selectedAddress.street}</p>
@@ -270,34 +265,16 @@ export const CheckoutPage = observer(() => {
           )}
         </Surface>
 
-        <Surface as="section" style={{ display: 'grid', gap: '1.2rem' }}>
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Payment</h2>
-          <div style={{ display: 'grid', gap: '0.75rem' }}>
+        <Surface as="section" className={styles.section}>
+          <h2 className={styles.sectionHeading}>Payment</h2>
+          <div className={styles.paymentOptions}>
             {paymentMethods.map((method) => (
               <label
                 key={method.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.85rem',
-                  padding: '0.9rem 1.1rem',
-                  borderRadius: 'var(--radius-md)',
-                  border:
-                    paymentMethod === method.id
-                      ? '1px solid rgba(99,102,241,0.4)'
-                      : '1px solid var(--color-border)',
-                  cursor: 'pointer',
-                  background:
-                    paymentMethod === method.id
-                      ? 'linear-gradient(135deg, rgba(99,102,241,0.16), rgba(34,211,238,0.12))'
-                      : 'var(--color-surface-translucent)',
-                  transition:
-                    'border 0.2s var(--transition-base), background 0.2s var(--transition-base), transform 0.2s var(--transition-base), box-shadow 0.2s var(--transition-base)',
-                  boxShadow:
-                    paymentMethod === method.id
-                      ? '0 18px 35px -28px rgba(99,102,241,0.5)'
-                      : 'none',
-                }}
+                className={classNames(
+                  styles.paymentOption,
+                  paymentMethod === method.id && styles.paymentOptionSelected,
+                )}
               >
                 <input
                   type="radio"
@@ -310,8 +287,8 @@ export const CheckoutPage = observer(() => {
               </label>
             ))}
           </div>
-          <div style={{ borderTop: '1px solid rgba(99,102,241,0.16)', paddingTop: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+          <div className={styles.paymentSummary}>
+            <div className={styles.summaryRow}>
               <span>Subtotal</span>
               <span>
                 {total.toLocaleString('ro-RO', {
@@ -320,11 +297,11 @@ export const CheckoutPage = observer(() => {
                 })}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', color: 'var(--color-text-muted)' }}>
+            <div className={classNames(styles.summaryRow, styles.summaryRowMuted)}>
               <span>Shipping</span>
               <span>FREE</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 700 }}>
+            <div className={classNames(styles.summaryRow, styles.summaryTotal)}>
               <span>Total</span>
               <span>
                 {total.toLocaleString('ro-RO', {
@@ -334,7 +311,7 @@ export const CheckoutPage = observer(() => {
               </span>
             </div>
           </div>
-          {error && <div style={{ color: 'var(--color-danger)' }}>{error}</div>}
+          {error && <div className={styles.error}>{error}</div>}
           <Button type="submit" block loading={loading}>
             {loading ? 'Processing order...' : 'Place order'}
           </Button>

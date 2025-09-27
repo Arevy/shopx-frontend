@@ -1,0 +1,17 @@
+.gridColumns {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.highlightCard {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.highlightTitle {
+  font-size: 1.25rem;
+}
+
+.highlightDescription {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}

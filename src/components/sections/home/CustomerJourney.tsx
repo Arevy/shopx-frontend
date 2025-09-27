@@ -1,7 +1,9 @@
 'use client'
 
+import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { SectionHeader, Surface } from '@components/ui'
+import styles from './CustomerJourney.module.scss'
 
 const journeySteps = [
   {
@@ -24,7 +26,7 @@ export const CustomerJourney = () => (
       title="A complete flow built for conversion"
       description="From the first interaction to the final order, ShopX delivers a cohesive, fast experience that boosts customer satisfaction."
     />
-    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+    <div className={classNames('grid', styles.stepsGrid)}>
       {journeySteps.map((step, index) => (
         <motion.div
           key={step.title}
@@ -33,12 +35,12 @@ export const CustomerJourney = () => (
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.45, delay: index * 0.07 }}
         >
-          <Surface style={{ display: 'grid', gap: '0.8rem' }}>
-            <span className="tag" style={{ marginBottom: '1rem' }}>
+          <Surface className={styles.stepCard}>
+            <span className={classNames('tag', styles.stepBadge)}>
               Step {index + 1}
             </span>
-            <h3 style={{ fontSize: '1.2rem' }}>{step.title}</h3>
-            <p style={{ color: 'var(--color-text-muted)' }}>{step.description}</p>
+            <h3 className={styles.stepTitle}>{step.title}</h3>
+            <p className={styles.stepDescription}>{step.description}</p>
           </Surface>
         </motion.div>
       ))}

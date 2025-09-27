@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { observer } from 'mobx-react-lite'
 import { Button, FormField, Input, Surface } from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
+import styles from './RegisterPage.module.scss'
 
 export const RegisterPage = observer(() => {
   const { userStore } = useStores()
@@ -29,13 +30,9 @@ export const RegisterPage = observer(() => {
   }
 
   return (
-    <Surface
-      as="form"
-      onSubmit={handleSubmit}
-      style={{ maxWidth: '480px', margin: '0 auto', padding: '2.85rem', display: 'grid', gap: '1.4rem' }}
-    >
-      <h1 className="section-title" style={{ marginBottom: '0.5rem' }}>Create account</h1>
-      <p className="section-subtitle" style={{ marginBottom: '1rem' }}>
+    <Surface as="form" onSubmit={handleSubmit} className={styles.form}>
+      <h1 className={`section-title ${styles.heading}`}>Create account</h1>
+      <p className={`section-subtitle ${styles.subheading}`}>
         Sign up to store addresses, your wishlist, and order history in one place.
       </p>
       <FormField label="Full name" htmlFor="register-name">
@@ -68,15 +65,13 @@ export const RegisterPage = observer(() => {
         />
       </FormField>
 
-      {userStore.error && (
-        <span style={{ color: 'var(--color-danger)' }}>{userStore.error}</span>
-      )}
+      {userStore.error && <span className={styles.error}>{userStore.error}</span>}
 
       <Button type="submit" loading={userStore.loading}>
         {userStore.loading ? 'Creating account...' : 'Create account'}
       </Button>
 
-      <span style={{ textAlign: 'center', fontSize: '0.9rem', color: 'var(--color-text-muted)' }}>
+      <span className={styles.footer}>
         Already have an account? <Link href="/auth/login">Sign in →</Link>
       </span>
     </Surface>

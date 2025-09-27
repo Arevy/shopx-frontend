@@ -1,0 +1,113 @@
+.container {
+  display: grid;
+  gap: 2rem;
+}
+
+.guard {
+  padding: 3rem;
+  text-align: center;
+  display: grid;
+  gap: 1.2rem;
+}
+
+.guardActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.checkoutForm {
+  display: grid;
+  gap: 2rem;
+}
+
+.columns {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.section {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.sectionHeading {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.addressForm {
+  display: grid;
+  gap: 1rem;
+}
+
+.selectedAddress {
+  background: var(--color-surface-translucent);
+  border: 1px solid rgba(99, 102, 241, 0.14);
+  display: grid;
+  gap: 0.35rem;
+}
+
+.paymentOptions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.paymentOption {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-translucent);
+  cursor: pointer;
+  transition: border 0.2s var(--transition-base),
+    background 0.2s var(--transition-base),
+    transform 0.2s var(--transition-base),
+    box-shadow 0.2s var(--transition-base);
+}
+
+.paymentOptionSelected {
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(34, 211, 238, 0.12));
+  box-shadow: 0 18px 35px -28px rgba(99, 102, 241, 0.5);
+}
+
+.paymentSummary {
+  border-top: 1px solid rgba(99, 102, 241, 0.16);
+  padding-top: 1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.summaryRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.summaryRowMuted {
+  color: var(--color-text-muted);
+}
+
+.summaryTotal {
+  font-weight: 700;
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+.orderSummary {
+  display: grid;
+  gap: 1rem;
+}
+
+.successState {
+  padding: 3rem;
+  display: grid;
+  gap: 1.2rem;
+  text-align: center;
+}

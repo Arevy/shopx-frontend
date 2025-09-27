@@ -6,6 +6,7 @@ import {
   REMOVE_FROM_CART,
 } from '@graphql/operations'
 import { requestGraphQL } from '@lib/graphqlClient'
+import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import type { Cart, CartItem } from '@/types/cart'
 import type { Product } from '@/types/product'
 import { isSessionExpiredError } from '@lib/authEvents'
@@ -143,11 +144,12 @@ export class CartStore {
       }
 
       console.error('Failed to load cart', err)
-      this.error = err instanceof Error ? err.message : 'Cart fetch failed'
-      this.root.uiStore.addToast(
+      const message = getUserFriendlyMessage(
+        err,
         'We couldn’t load the cart. Please try again.',
-        'error',
       )
+      this.error = message
+      this.root.uiStore.addToast(message, 'error')
     } finally {
       this.loading = false
     }

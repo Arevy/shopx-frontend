@@ -24,7 +24,7 @@ export const Footer = () => {
       <div className={styles.inner}>
         <div>
           <div className={styles.brand}>ShopX</div>
-          <p style={{ color: 'var(--color-text-muted)', marginTop: '0.75rem' }}>
+          <p className={styles.description}>
             The e-commerce platform that blends technology with design for a contemporary shopping experience.
           </p>
         </div>

@@ -1,10 +1,12 @@
 'use client'
 
+import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { Button } from '@components/ui'
 import { usePrefersReducedMotion } from '@hooks/usePrefersReducedMotion'
 import { useStores } from '@stores/StoreProvider'
 import type { Product } from '@/types/product'
+import styles from './Hero.module.scss'
 
 type HeroProps = {
   product: Product | null
@@ -22,8 +24,8 @@ export const Hero = ({ product }: HeroProps) => {
   }
 
   return (
-    <section className="section" style={{ display: 'grid', gap: '3rem' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <section className={classNames('section', styles.heroSection)}>
+      <div className={styles.content}>
         <motion.span
           className="tag"
           initial={prefersReducedMotion ? undefined : { opacity: 0, y: -12 }}
@@ -41,7 +43,7 @@ export const Hero = ({ product }: HeroProps) => {
           Contemporary design, smart technology, rapid delivery
         </motion.h1>
         <motion.p
-          style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', maxWidth: '620px' }}
+          className={styles.description}
           initial={revealInitial}
           animate={revealAnimate}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.16 }}
@@ -49,7 +51,7 @@ export const Hero = ({ product }: HeroProps) => {
           Explore expert-curated collections, sustainable products, and limited offers. With ShopX, every interaction is seamless, personal, and conversion-ready.
         </motion.p>
         <motion.div
-          style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
+          className={styles.actions}
           initial={revealInitial}
           animate={revealAnimate}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.22 }}
@@ -66,42 +68,24 @@ export const Hero = ({ product }: HeroProps) => {
           initial={prefersReducedMotion ? undefined : { opacity: 0, scale: 0.98 }}
           animate={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, ease: 'easeOut', delay: 0.28 }}
-          style={{
-            background:
-              'linear-gradient(140deg, rgba(99,102,241,0.18) 0%, rgba(34,211,238,0.14) 45%, rgba(255,255,255,0.12) 100%)',
-            borderRadius: 'var(--radius-lg)',
-            padding: '2.75rem',
-            position: 'relative',
-            overflow: 'hidden',
-            minHeight: '320px',
-            border: '1px solid rgba(99,102,241,0.18)',
-            boxShadow: '0 35px 80px -50px rgba(99,102,241,0.55)',
-          }}
+          className={styles.showcase}
         >
-          <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
+          <div className={styles.overlay}>
             <motion.span
               initial={prefersReducedMotion ? undefined : { opacity: 0 }}
               animate={prefersReducedMotion ? undefined : { opacity: 0.2 }}
               transition={{ duration: 1 }}
-              style={{
-                position: 'absolute',
-                top: '-60%',
-                left: '10%',
-                width: '80%',
-                height: '160%',
-                background: 'conic-gradient(from 90deg at 50% 50%, rgba(255,255,255,0.5), rgba(99,102,241,0.22))',
-                filter: 'blur(120px)',
-              }}
+              className={styles.glow}
             />
           </div>
-          <div style={{ position: 'relative', display: 'grid', gap: '1.2rem' }}>
+          <div className={styles.details}>
             <span className="tag">{"Featured · Editor's pick"}</span>
-            <h3 style={{ fontSize: '2rem', fontWeight: 700 }}>{product.name}</h3>
-            <p style={{ color: 'var(--color-text-muted)', maxWidth: '540px' }}>
+            <h3 className={styles.productTitle}>{product.name}</h3>
+            <p className={styles.productDescription}>
               {product.description ?? "Premium product selected by our team for impeccable performance and aesthetics."}
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1.2rem', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '1.5rem', fontWeight: 700 }}>
+            <div className={styles.productActions}>
+              <span className={styles.productPrice}>
                 {product.price.toLocaleString('ro-RO', {
                   style: 'currency',
                   currency: 'RON',
@@ -119,16 +103,7 @@ export const Hero = ({ product }: HeroProps) => {
                 transition={{ duration: 0.6, ease: 'easeOut', delay: 0.35 }}
                 src={product.image.url}
                 alt={product.image.filename ?? product.name}
-                style={{
-                  position: 'absolute',
-                  right: '-5%',
-                  bottom: '-8%',
-                  maxWidth: '300px',
-                  width: '45vw',
-                  pointerEvents: 'none',
-                  borderRadius: 'var(--radius-md)',
-                  boxShadow: '0 25px 55px -35px rgba(15, 23, 42, 0.6)',
-                }}
+                className={styles.productImage}
               />
             )}
           </div>

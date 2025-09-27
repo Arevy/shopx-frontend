@@ -1,73 +1,63 @@
 'use client'
 
+import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { Button, SectionHeader, Surface } from '@components/ui'
 import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
+import styles from './WishlistPage.module.scss'
 
 export const WishlistPage = observer(() => {
   const { wishlistStore, cartStore, userStore } = useStores()
   const items = wishlistStore.items
 
   return (
-    <div style={{ display: 'grid', gap: '2rem' }}>
+    <div className={styles.container}>
       <SectionHeader
         title="Wishlist"
         description="Save the products that inspire you and return anytime to add them to the cart."
       />
 
       {items.length === 0 ? (
-        <Surface style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ marginBottom: '1.5rem' }}>{"You haven't saved any products yet."}</p>
+        <Surface className={styles.emptyState}>
+          <p className={styles.emptyMessage}>{"You haven't saved any products yet."}</p>
           <Button href={{ pathname: '/products' }}>Browse the collections</Button>
         </Surface>
       ) : (
-        <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+        <div className={classNames('grid', styles.grid)}>
           {items.map((product) => (
-            <Surface key={product.id} style={{ display: 'grid', gap: '0.8rem' }}>
-              <div
-                style={{
-                  borderRadius: 'var(--radius-md)',
-                  aspectRatio: '4 / 3',
-                  overflow: 'hidden',
-                  background:
-                    'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  position: 'relative',
-                }}
-              >
+            <Surface key={product.id} className={styles.itemCard}>
+              <div className={styles.imageFrame}>
                 <ModularImage
                   src={product.image?.url ?? null}
                   alt={product.image?.filename ?? product.name}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  style={{ objectFit: 'cover' }}
-                  fallback={<span style={{ color: 'rgba(255,255,255,0.7)' }}>No image</span>}
+                  className={styles.productImage}
+                  fallback={<span className={styles.imageFallback}>No image</span>}
                 />
               </div>
               <Button
                 href={{ pathname: '/products/[id]', query: { id: product.id } }}
                 variant="ghost"
                 size="sm"
-                style={{ justifyContent: 'flex-start' }}
+                className={styles.productLink}
               >
                 {product.name}
               </Button>
-              <p style={{ color: 'var(--color-text-muted)' }}>
+              <p className={styles.description}>
                 {product.description ?? 'Curated pick recommended by the ShopX team.'}
               </p>
-              <span style={{ fontWeight: 600 }}>
+              <span className={styles.price}>
                 {product.price.toLocaleString('ro-RO', {
                   style: 'currency',
                   currency: 'RON',
                 })}
               </span>
-              <div style={{ display: 'flex', gap: '0.6rem' }}>
+              <div className={styles.actions}>
                 <Button
                   type="button"
-                  style={{ flex: 1 }}
+                  className={styles.actionButton}
                   onClick={() => {
                     cartStore.addItem(product)
                     wishlistStore.remove(product)
@@ -78,7 +68,7 @@ export const WishlistPage = observer(() => {
                 <Button
                   type="button"
                   variant="outline"
-                  style={{ flex: 1 }}
+                  className={styles.actionButton}
                   onClick={() => wishlistStore.remove(product)}
                 >
                   Remove
@@ -90,7 +80,7 @@ export const WishlistPage = observer(() => {
       )}
 
       {!userStore.isAuthenticated && items.length > 0 && (
-        <Surface style={{ padding: '1.5rem' }}>
+        <Surface className={styles.proTip}>
           <strong>Pro tip:</strong> Create an account to keep your wishlist synced across every device.
         </Surface>
       )}

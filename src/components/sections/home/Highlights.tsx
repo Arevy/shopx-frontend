@@ -1,7 +1,9 @@
 'use client'
 
+import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { SectionHeader, Surface } from '@components/ui'
+import styles from './Highlights.module.scss'
 
 const highlights = [
   {
@@ -24,7 +26,7 @@ export const Highlights = () => (
       title="Built for conversion"
       description="ShopX blends intelligent analytics with contemporary design to improve conversion and retention rates."
     />
-    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+    <div className={classNames('grid', styles.gridColumns)}>
       {highlights.map((item, index) => (
         <motion.div
           key={item.title}
@@ -33,9 +35,9 @@ export const Highlights = () => (
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.4, delay: index * 0.08 }}
         >
-          <Surface style={{ display: 'grid', gap: '0.6rem' }}>
-            <h3 style={{ fontSize: '1.25rem' }}>{item.title}</h3>
-            <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.6 }}>{item.description}</p>
+          <Surface className={styles.highlightCard}>
+            <h3 className={styles.highlightTitle}>{item.title}</h3>
+            <p className={styles.highlightDescription}>{item.description}</p>
           </Surface>
         </motion.div>
       ))}

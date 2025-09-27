@@ -5,6 +5,10 @@
   gap: 0.8rem;
 }
 
+.alignCenter {
+  text-align: center;
+}
+
 .eyebrow {
   @include m.tag;
 }

@@ -1,0 +1,117 @@
+.loader {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+}
+
+.notFound {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: 1rem;
+}
+
+.page {
+  display: grid;
+  gap: 4rem;
+}
+
+.heroSection {
+  margin-bottom: 0;
+}
+
+.heroGrid {
+  display: grid;
+  gap: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.imageWrapper {
+  border-radius: var(--radius-lg);
+  min-height: 360px;
+  overflow: hidden;
+  background: radial-gradient(
+    circle at top,
+    rgba(37, 99, 235, 0.25),
+    rgba(14, 165, 233, 0.3)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.imageHasMedia {
+  background: transparent;
+}
+
+.productImage {
+  object-fit: cover;
+}
+
+.imageFallback {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.details {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.title {
+  margin-bottom: 0;
+}
+
+.description {
+  color: var(--color-text-muted);
+  font-size: 1.05rem;
+}
+
+.infoRow {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.featureList {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.reviewsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.reviewCard {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.reviewHeading {
+  font-weight: 600;
+}
+
+.reviewBody {
+  color: var(--color-text-muted);
+}
+
+.reviewMeta {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+}
+
+.recommendationsGrid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}

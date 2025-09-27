@@ -1,8 +1,10 @@
 'use client'
 
+import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { ProductCard } from './ProductCard'
 import { useStores } from '@stores/StoreProvider'
+import styles from './ProductGrid.module.scss'
 
 export const ProductGrid = observer(() => {
   const { productStore } = useStores()
@@ -16,7 +18,7 @@ export const ProductGrid = observer(() => {
   }
 
   return (
-    <div className="grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
+    <div className={classNames('grid', styles.grid)}>
       {productStore.filteredProducts.map((product, index) => (
         <ProductCard key={product.id} product={product} index={index} />
       ))}

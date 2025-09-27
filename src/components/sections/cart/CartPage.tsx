@@ -1,9 +1,11 @@
 'use client'
 
+import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { Button, SectionHeader, Surface } from '@components/ui'
 import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
+import styles from './CartPage.module.scss'
 
 export const CartPage = observer(() => {
   const { cartStore, userStore } = useStores()
@@ -12,91 +14,49 @@ export const CartPage = observer(() => {
   const total = cartStore.totalAmount
 
   return (
-    <div style={{ display: 'grid', gap: '2rem' }}>
+    <div className={styles.container}>
       <SectionHeader
         title="Your cart"
         description="Review the items you selected before placing your order. Adjust quantities or save them for later."
       />
 
       {items.length === 0 ? (
-        <Surface style={{ textAlign: 'center', padding: '3rem' }}>
-          <p style={{ marginBottom: '1.5rem' }}>Your cart is currently empty.</p>
+        <Surface className={styles.emptyState}>
+          <p className={styles.emptyMessage}>Your cart is currently empty.</p>
           <Button href={{ pathname: '/products' }}>Continue shopping</Button>
         </Surface>
       ) : (
-        <div
-          style={{
-            display: 'grid',
-            gap: '1.5rem',
-            gridTemplateColumns: 'minmax(0, 1fr) minmax(260px, 320px)',
-          }}
-        >
-          <div className="grid" style={{ gap: '1rem' }}>
+        <div className={styles.layout}>
+          <div className={classNames('grid', styles.itemsGrid)}>
             {items.map((item) => (
-              <Surface
-                key={item.product.id}
-                style={{
-                  display: 'grid',
-                  gap: '1rem',
-                  gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-                  alignItems: 'center',
-                }}
-              >
-                <div
-                  style={{
-                    width: '96px',
-                    height: '96px',
-                    borderRadius: 'var(--radius-md)',
-                    overflow: 'hidden',
-                    background:
-                      'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
-                    position: 'relative',
-                  }}
-                >
+              <Surface key={item.product.id} className={styles.itemCard}>
+                <div className={styles.imageFrame}>
                   <ModularImage
                     src={item.product.image?.url ?? null}
                     alt={item.product.image?.filename ?? item.product.name}
                     fill
                     sizes="96px"
-                    style={{ objectFit: 'cover' }}
+                    className={styles.productImage}
                     fallback={
-                      <span
-                        style={{
-                          display: 'grid',
-                          placeItems: 'center',
-                          height: '100%',
-                          color: 'rgba(255,255,255,0.7)',
-                          fontSize: '0.8rem',
-                        }}
-                      >
+                      <span className={styles.imageFallback}>
                         No image
                       </span>
                     }
                   />
                 </div>
-                <div style={{ display: 'grid', gap: '0.4rem' }}>
-                  <span style={{ fontWeight: 600 }}>{item.product.name}</span>
-                  <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>
+                <div className={styles.details}>
+                  <span className={styles.productName}>{item.product.name}</span>
+                  <p className={styles.productDescription}>
                     {item.product.description ?? 'Premium product backed by an extended warranty.'}
                   </p>
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <span style={{ fontWeight: 600 }}>
+                  <div className={styles.priceRow}>
+                    <span className={styles.price}>
                       {item.product.price.toLocaleString('ro-RO', {
                         style: 'currency',
                         currency: 'RON',
                       })}
                     </span>
-                    <div
-                      style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        border: '1px solid var(--color-border)',
-                        borderRadius: '999px',
-                        padding: '0.25rem',
-                        background: 'var(--color-surface-translucent)',
-                      }}
-                    >
+                    <div className={styles.quantityControl}>
                       <Button
                         type="button"
                         variant="outline"
@@ -105,7 +65,7 @@ export const CartPage = observer(() => {
                       >
                         −
                       </Button>
-                      <span style={{ minWidth: '2rem', textAlign: 'center' }}>{item.quantity}</span>
+                      <span className={styles.quantityValue}>{item.quantity}</span>
                       <Button
                         type="button"
                         variant="outline"
@@ -126,15 +86,15 @@ export const CartPage = observer(() => {
               type="button"
               variant="outline"
               onClick={() => cartStore.clearCart()}
-              style={{ justifySelf: 'flex-start' }}
+              className={styles.clearButton}
             >
               Empty cart
             </Button>
           </div>
 
-          <Surface style={{ display: 'grid', gap: '1rem', alignSelf: 'start' }}>
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 600 }}>Order summary</h2>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Surface className={styles.summary}>
+            <h2 className={styles.summaryTitle}>Order summary</h2>
+            <div className={styles.summaryRow}>
               <span>Subtotal</span>
               <span>
                 {total.toLocaleString('ro-RO', {
@@ -143,11 +103,11 @@ export const CartPage = observer(() => {
                 })}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--color-text-muted)' }}>
+            <div className={classNames(styles.summaryRow, styles.summaryRowMuted)}>
               <span>Shipping</span>
               <span>Calculated at checkout</span>
             </div>
-            <div style={{ borderTop: '1px solid rgba(99,102,241,0.16)', paddingTop: '1rem', display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
+            <div className={styles.summaryTotal}>
               <span>Estimated total</span>
               <span>
                 {total.toLocaleString('ro-RO', {
@@ -162,8 +122,8 @@ export const CartPage = observer(() => {
                 Proceed to checkout
               </Button>
             ) : (
-              <div style={{ display: 'grid', gap: '0.8rem' }}>
-                <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem' }}>
+              <div className={styles.authPrompt}>
+                <span className={styles.authCopy}>
                   Please sign in to complete your order.
                 </span>
                 <Button href={{ pathname: '/auth/login' }} block>
