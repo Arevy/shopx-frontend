@@ -2,6 +2,7 @@
 
 import { observer } from 'mobx-react-lite'
 import { Button, SectionHeader, Surface } from '@components/ui'
+import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
 
 export const CartPage = observer(() => {
@@ -49,27 +50,29 @@ export const CartPage = observer(() => {
                     overflow: 'hidden',
                     background:
                       'linear-gradient(135deg, rgba(99,102,241,0.14), rgba(34,211,238,0.18))',
+                    position: 'relative',
                   }}
                 >
-                  {item.product.image?.url ? (
-                    <img
-                      src={item.product.image.url}
-                      alt={item.product.image.filename ?? item.product.name}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  ) : (
-                    <span
-                      style={{
-                        display: 'grid',
-                        placeItems: 'center',
-                        height: '100%',
-                        color: 'rgba(255,255,255,0.7)',
-                        fontSize: '0.8rem',
-                      }}
-                    >
-                      No image
-                    </span>
-                  )}
+                  <ModularImage
+                    src={item.product.image?.url ?? null}
+                    alt={item.product.image?.filename ?? item.product.name}
+                    fill
+                    sizes="96px"
+                    style={{ objectFit: 'cover' }}
+                    fallback={
+                      <span
+                        style={{
+                          display: 'grid',
+                          placeItems: 'center',
+                          height: '100%',
+                          color: 'rgba(255,255,255,0.7)',
+                          fontSize: '0.8rem',
+                        }}
+                      >
+                        No image
+                      </span>
+                    }
+                  />
                 </div>
                 <div style={{ display: 'grid', gap: '0.4rem' }}>
                   <span style={{ fontWeight: 600 }}>{item.product.name}</span>

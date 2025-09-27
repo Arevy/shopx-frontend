@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { observer } from 'mobx-react-lite'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/Button'
+import { ModularImage } from '@components/ui/ModularImage'
 import type { Product } from '@/types/product'
 import { useStores } from '@stores/StoreProvider'
 import styles from './ProductCard.module.scss'
@@ -26,18 +27,18 @@ export const ProductCard = observer(({ product, index = 0 }: ProductCardProps) =
       transition={{ duration: 0.4, delay: Math.min(index * 0.05, 0.25) }}
     >
       <div className={styles.imageWrapper}>
-        {product.image?.url ? (
-          <img
-            src={product.image.url}
-            alt={product.image.filename ?? product.name}
-            className={styles.productImage}
-            loading="lazy"
-          />
-        ) : (
-          <div className={styles.imagePlaceholder}>
-            <span>No image</span>
-          </div>
-        )}
+        <ModularImage
+          src={product.image?.url ?? null}
+          alt={product.image?.filename ?? product.name}
+          fill
+          className={styles.productImage}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          fallback={
+            <div className={styles.imagePlaceholder}>
+              <span>No image</span>
+            </div>
+          }
+        />
       </div>
       <Link
         href={{ pathname: '/products/[id]', query: { id: product.id } }}

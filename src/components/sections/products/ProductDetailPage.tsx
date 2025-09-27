@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Button, SectionHeader, Surface } from '@components/ui'
+import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
 import { ProductCard } from './ProductCard'
 
@@ -65,17 +66,17 @@ export const ProductDetailPage = observer(({ productId }: ProductDetailPageProps
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              position: 'relative',
             }}
           >
-            {product.image?.url ? (
-              <img
-                src={product.image.url}
-                alt={product.image.filename ?? product.name}
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-              />
-            ) : (
-              <span style={{ color: 'rgba(255,255,255,0.7)' }}>No image available</span>
-            )}
+            <ModularImage
+              src={product.image?.url ?? null}
+              alt={product.image?.filename ?? product.name}
+              fill
+              sizes="(max-width: 768px) 100vw, 50vw"
+              style={{ objectFit: 'cover' }}
+              fallback={<span style={{ color: 'rgba(255,255,255,0.7)' }}>No image available</span>}
+            />
           </motion.div>
           <motion.div
             initial={{ opacity: 0, x: 20 }}

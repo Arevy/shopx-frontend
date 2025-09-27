@@ -2,6 +2,7 @@
 
 import { observer } from 'mobx-react-lite'
 import { Button, SectionHeader, Surface } from '@components/ui'
+import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
 
 export const WishlistPage = observer(() => {
@@ -34,17 +35,17 @@ export const WishlistPage = observer(() => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  position: 'relative',
                 }}
               >
-                {product.image?.url ? (
-                  <img
-                    src={product.image.url}
-                    alt={product.image.filename ?? product.name}
-                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  />
-                ) : (
-                  <span style={{ color: 'rgba(255,255,255,0.7)' }}>No image</span>
-                )}
+                <ModularImage
+                  src={product.image?.url ?? null}
+                  alt={product.image?.filename ?? product.name}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  style={{ objectFit: 'cover' }}
+                  fallback={<span style={{ color: 'rgba(255,255,255,0.7)' }}>No image</span>}
+                />
               </div>
               <Button
                 href={{ pathname: '/products/[id]', query: { id: product.id } }}
