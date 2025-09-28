@@ -1,0 +1,63 @@
+{
+  "intro": {
+    "title": "Paiement",
+    "description": "Saisissez votre adresse de livraison et choisissez un moyen de paiement. La validation est sécurisée et ne prend que quelques secondes."
+  },
+  "guard": {
+    "title": "Un compte est nécessaire pour finaliser la commande",
+    "subtitle": "Connectez-vous ou créez un compte en quelques secondes pour terminer votre commande.",
+    "actions": {
+      "sign_in": "Se connecter",
+      "register": "Créer un compte"
+    }
+  },
+  "empty": {
+    "message": "Votre panier est vide. Ajoutez des produits pour continuer.",
+    "cta": "Retour au catalogue"
+  },
+  "success": {
+    "title": "Commande confirmée",
+    "subtitle": "Merci ! Le numéro de votre commande est #{{orderId}}. Nous vous enverrons bientôt les détails et le lien de suivi.",
+    "cta": "Continuer vos achats"
+  },
+  "form": {
+    "default_country": "Roumanie",
+    "address": {
+      "title": "Adresse de livraison",
+      "saved_label": "Adresse enregistrée",
+      "add_new": "Ajouter une nouvelle adresse",
+      "selected_heading": "Adresse sélectionnée",
+      "fields": {
+        "street": "Rue",
+        "city": "Ville",
+        "postal_code": "Code postal",
+        "country": "Pays"
+      }
+    },
+    "payment": {
+      "title": "Paiement",
+      "methods": {
+        "card": "Carte bancaire (Visa / Mastercard)",
+        "transfer": "Virement bancaire",
+        "cash": "Paiement à la livraison"
+      },
+      "summary": {
+        "subtotal": "Sous-total",
+        "shipping": "Livraison",
+        "shipping_free": "OFFERT",
+        "total": "Total"
+      },
+      "actions": {
+        "submit": "Valider la commande",
+        "processing": "Traitement de la commande..."
+      }
+    },
+    "errors": {
+      "generic": "La commande a échoué. Veuillez réessayer.",
+      "missing_product": "Impossible de traiter l'un des produits de votre panier. Actualisez et réessayez."
+    }
+  },
+  "toast": {
+    "success": "Commande enregistrée avec succès !"
+  }
+}

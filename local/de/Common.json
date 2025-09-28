@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "Sprache",
+    "accessibility_label": "Interface-Sprache auswählen",
+    "options": {
+      "en": "English",
+      "ro": "Română",
+      "fr": "Français",
+      "de": "Deutsch",
+      "ar": "العربية",
+      "he": "עברית"
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "Startseite",
+      "catalog": "Katalog",
+      "wishlist": "Merkzettel",
+      "cart": "Warenkorb"
+    },
+    "actions": {
+      "sign_in": "Anmelden",
+      "sign_out": "Abmelden",
+      "toggle_navigation": "Navigation ein-/ausblenden"
+    }
+  },
+  "footer": {
+    "description": "Die E-Commerce-Plattform, die Technologie und Design für ein zeitgemäßes Einkaufserlebnis vereint.",
+    "sections": {
+      "support": "Support",
+      "company": "Unternehmen",
+      "social": "Social"
+    },
+    "links": {
+      "support": {
+        "contact": "Kontakt",
+        "faq": "FAQ",
+        "returns": "Retouren & Garantie"
+      },
+      "company": {
+        "about": "Über ShopX",
+        "careers": "Karriere",
+        "blog": "Blog"
+      },
+      "social": {
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "tiktok": "TikTok"
+      }
+    },
+    "bottom": {
+      "copyright": "© {{year}} ShopX. Alle Rechte vorbehalten.",
+      "credit": "Mit Liebe entwickelt mit Next.js und GraphQL."
+    }
+  }
+}

@@ -1,6 +1,10 @@
-import type { CartItem } from './cart'
-
 export interface OrderProductInput {
+  productId: string
+  quantity: number
+  price: number
+}
+
+export interface OrderProductSummary {
   productId: string
   quantity: number
   price: number
@@ -13,5 +17,5 @@ export interface Order {
   status: string
   createdAt?: string
   updatedAt?: string
-  products: CartItem[]
+  products: OrderProductSummary[]
 }

@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@components/ui'
 import { usePrefersReducedMotion } from '@hooks/usePrefersReducedMotion'
 import { useStores } from '@stores/StoreProvider'
+import { useTranslation } from '@/i18n'
 import type { Product } from '@/types/product'
 import styles from './Hero.module.scss'
 
@@ -14,6 +15,7 @@ type HeroProps = {
 
 export const Hero = ({ product }: HeroProps) => {
   const { cartStore, wishlistStore } = useStores()
+  const { t } = useTranslation('Page_Home')
   const prefersReducedMotion = usePrefersReducedMotion()
 
   const revealInitial = prefersReducedMotion ? undefined : { opacity: 0, y: 12 }
@@ -32,7 +34,7 @@ export const Hero = ({ product }: HeroProps) => {
           animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
         >
-          New on ShopX · Premium experience
+          {t('hero.badge')}
         </motion.span>
         <motion.h1
           className="section-title"
@@ -40,7 +42,7 @@ export const Hero = ({ product }: HeroProps) => {
           animate={revealAnimate}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.1 }}
         >
-          Contemporary design, smart technology, rapid delivery
+          {t('hero.title')}
         </motion.h1>
         <motion.p
           className={styles.description}
@@ -48,7 +50,7 @@ export const Hero = ({ product }: HeroProps) => {
           animate={revealAnimate}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.16 }}
         >
-          Explore expert-curated collections, sustainable products, and limited offers. With ShopX, every interaction is seamless, personal, and conversion-ready.
+          {t('hero.description')}
         </motion.p>
         <motion.div
           className={styles.actions}
@@ -56,9 +58,9 @@ export const Hero = ({ product }: HeroProps) => {
           animate={revealAnimate}
           transition={{ duration: 0.6, ease: 'easeOut', delay: 0.22 }}
         >
-          <Button href={{ pathname: '/products' }}>View full catalog</Button>
+          <Button href={{ pathname: '/products' }}>{t('hero.actions.view_catalog')}</Button>
           <Button href={{ pathname: '/checkout' }} variant="outline">
-            Instant checkout
+            {t('hero.actions.instant_checkout')}
           </Button>
         </motion.div>
       </div>
@@ -79,10 +81,10 @@ export const Hero = ({ product }: HeroProps) => {
             />
           </div>
           <div className={styles.details}>
-            <span className="tag">{"Featured · Editor's pick"}</span>
+            <span className="tag">{t('hero.featured_badge')}</span>
             <h3 className={styles.productTitle}>{product.name}</h3>
             <p className={styles.productDescription}>
-              {product.description ?? "Premium product selected by our team for impeccable performance and aesthetics."}
+              {product.description ?? t('hero.product_fallback')}
             </p>
             <div className={styles.productActions}>
               <span className={styles.productPrice}>
@@ -91,9 +93,9 @@ export const Hero = ({ product }: HeroProps) => {
                   currency: 'RON',
                 })}
               </span>
-              <Button onClick={() => cartStore.addItem(product)}>Add to cart</Button>
+              <Button onClick={() => cartStore.addItem(product)}>{t('hero.actions.add_to_cart')}</Button>
               <Button variant="outline" onClick={() => wishlistStore.toggle(product)}>
-                Save for later
+                {t('hero.actions.save_for_later')}
               </Button>
             </div>
             {product.image?.url && (

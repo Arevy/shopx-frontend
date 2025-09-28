@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.scss'
+import { TranslationProvider } from '@/i18n'
 import { StoreProvider } from '@stores/StoreProvider'
 import { Header } from '@components/layout/Header'
 import { Footer } from '@components/layout/Footer'
@@ -15,14 +16,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <StoreProvider>
-          <div className="app-shell">
-            <Header />
-            <main className="app-main">{children}</main>
-            <Footer />
-          </div>
-          <ToastStack />
-        </StoreProvider>
+        <TranslationProvider>
+          <StoreProvider>
+            <div className="app-shell">
+              <Header />
+              <main className="app-main">{children}</main>
+              <Footer />
+            </div>
+            <ToastStack />
+          </StoreProvider>
+        </TranslationProvider>
       </body>
     </html>
   )

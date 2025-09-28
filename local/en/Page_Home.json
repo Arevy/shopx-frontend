@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "badge": "New on ShopX · Premium experience",
+    "title": "Contemporary design, smart technology, rapid delivery",
+    "description": "Explore expert-curated collections, sustainable products, and limited offers. With ShopX, every interaction is seamless, personal, and conversion-ready.",
+    "featured_badge": "Featured · Editor's pick",
+    "product_fallback": "Premium product selected by our team for impeccable performance and aesthetics.",
+    "actions": {
+      "view_catalog": "View full catalog",
+      "instant_checkout": "Instant checkout",
+      "add_to_cart": "Add to cart",
+      "save_for_later": "Save for later"
+    }
+  },
+  "highlights": {
+    "title": "Built for conversion",
+    "description": "ShopX blends intelligent analytics with contemporary design to improve conversion and retention rates.",
+    "items": {
+      "0": {
+        "title": "24h delivery",
+        "description": "Integrated logistics with real-time track & trace and flexible delivery options."
+      },
+      "1": {
+        "title": "Personalized experience",
+        "description": "Dynamic recommendations based on user behavior and best sellers."
+      },
+      "2": {
+        "title": "Secure payments",
+        "description": "Optimized checkout with multiple payment methods and guaranteed security."
+      }
+    }
+  },
+  "featured": {
+    "eyebrow": "ShopX collection",
+    "title": "Curated selections",
+    "description": "ShopX community bestsellers designed for contemporary lifestyles and dynamic needs."
+  },
+  "new_arrivals": {
+    "title": "New Arrivals",
+    "description": "Fresh drops straight from the studio. Limited stock, fast delivery, extended warranty.",
+    "actions": {
+      "view_all": "View all"
+    }
+  },
+  "journey": {
+    "title": "A complete flow built for conversion",
+    "description": "From the first interaction to the final order, ShopX delivers a cohesive, fast experience that boosts customer satisfaction.",
+    "step_badge": "Step {{step}}",
+    "steps": {
+      "0": {
+        "title": "Discover",
+        "description": "Curated collections, smart filters, and instant search to quickly find the right product."
+      },
+      "1": {
+        "title": "Evaluate",
+        "description": "Rich product pages, real reviews, and contextual recommendations for cross-sell opportunities."
+      },
+      "2": {
+        "title": "Checkout",
+        "description": "Optimized checkout, multiple payment integrations, and real-time cart updates."
+      }
+    }
+  }
+}

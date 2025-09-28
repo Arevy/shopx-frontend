@@ -1,0 +1,63 @@
+{
+  "intro": {
+    "title": "Zur Kasse",
+    "description": "Geben Sie Ihre Lieferadresse ein und wählen Sie eine Zahlungsmethode. Die Verarbeitung ist sicher und dauert nur wenige Sekunden."
+  },
+  "guard": {
+    "title": "Für den Checkout ist ein Konto erforderlich",
+    "subtitle": "Melden Sie sich an oder erstellen Sie in wenigen Sekunden ein Konto, um Ihre Bestellung abzuschließen.",
+    "actions": {
+      "sign_in": "Anmelden",
+      "register": "Konto erstellen"
+    }
+  },
+  "empty": {
+    "message": "Ihr Warenkorb ist leer. Fügen Sie Produkte hinzu, um fortzufahren.",
+    "cta": "Zurück zum Katalog"
+  },
+  "success": {
+    "title": "Bestellung abgeschlossen",
+    "subtitle": "Vielen Dank! Ihre Bestellnummer lautet #{{orderId}}. Wir senden Ihnen in Kürze die Details und den Tracking-Link.",
+    "cta": "Weiter einkaufen"
+  },
+  "form": {
+    "default_country": "Rumänien",
+    "address": {
+      "title": "Lieferadresse",
+      "saved_label": "Gespeicherte Adresse",
+      "add_new": "Neue Adresse hinzufügen",
+      "selected_heading": "Ausgewählte Adresse",
+      "fields": {
+        "street": "Straße",
+        "city": "Stadt",
+        "postal_code": "Postleitzahl",
+        "country": "Land"
+      }
+    },
+    "payment": {
+      "title": "Zahlung",
+      "methods": {
+        "card": "Kredit-/Debitkarte (Visa / Mastercard)",
+        "transfer": "Banküberweisung",
+        "cash": "Nachnahme"
+      },
+      "summary": {
+        "subtotal": "Zwischensumme",
+        "shipping": "Versand",
+        "shipping_free": "KOSTENLOS",
+        "total": "Gesamt"
+      },
+      "actions": {
+        "submit": "Bestellung abschicken",
+        "processing": "Bestellung wird verarbeitet..."
+      }
+    },
+    "errors": {
+      "generic": "Der Checkout ist fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "missing_product": "Eines der Produkte im Warenkorb konnte nicht verarbeitet werden. Aktualisieren Sie die Seite und versuchen Sie es erneut."
+    }
+  },
+  "toast": {
+    "success": "Bestellung erfolgreich aufgegeben!"
+  }
+}

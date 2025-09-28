@@ -1,0 +1,63 @@
+{
+  "intro": {
+    "title": "Checkout",
+    "description": "Enter your shipping details and choose a payment method. Processing is secure and only takes a few seconds."
+  },
+  "guard": {
+    "title": "You need an account to check out",
+    "subtitle": "Sign in or create an account in just a few seconds to complete your order.",
+    "actions": {
+      "sign_in": "Sign in",
+      "register": "Create account"
+    }
+  },
+  "empty": {
+    "message": "Your cart is empty. Add products to continue.",
+    "cta": "Back to catalog"
+  },
+  "success": {
+    "title": "Order completed",
+    "subtitle": "Thank you! Your order number is #{{orderId}}. We'll email the details and tracking link shortly.",
+    "cta": "Continue shopping"
+  },
+  "form": {
+    "default_country": "Romania",
+    "address": {
+      "title": "Shipping address",
+      "saved_label": "Saved address",
+      "add_new": "Add a new address",
+      "selected_heading": "Selected address",
+      "fields": {
+        "street": "Street",
+        "city": "City",
+        "postal_code": "Postal code",
+        "country": "Country"
+      }
+    },
+    "payment": {
+      "title": "Payment",
+      "methods": {
+        "card": "Credit/debit card (Visa / Mastercard)",
+        "transfer": "Bank transfer",
+        "cash": "Cash on delivery"
+      },
+      "summary": {
+        "subtotal": "Subtotal",
+        "shipping": "Shipping",
+        "shipping_free": "FREE",
+        "total": "Total"
+      },
+      "actions": {
+        "submit": "Place order",
+        "processing": "Processing order..."
+      }
+    },
+    "errors": {
+      "generic": "Checkout failed. Please try again.",
+      "missing_product": "We could not process one of the products in your cart. Please refresh and try again."
+    }
+  },
+  "toast": {
+    "success": "Order placed successfully!"
+  }
+}

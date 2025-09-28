@@ -3,6 +3,7 @@
 import classNames from 'classnames'
 import { motion } from 'framer-motion'
 import { Button, SectionHeader, Surface } from '@components/ui'
+import { useTranslation } from '@/i18n'
 import type { Product } from '@/types/product'
 import styles from './NewArrivals.module.scss'
 
@@ -11,6 +12,8 @@ type NewArrivalsProps = {
 }
 
 export const NewArrivals = ({ products }: NewArrivalsProps) => {
+  const { t } = useTranslation('Page_Home')
+
   if (!products.length) {
     return null
   }
@@ -18,11 +21,11 @@ export const NewArrivals = ({ products }: NewArrivalsProps) => {
   return (
     <section className={classNames('section', styles.section)}>
       <SectionHeader
-        title="New Arrivals"
-        description="Fresh drops straight from the studio. Limited stock, fast delivery, extended warranty."
+        title={t('new_arrivals.title')}
+        description={t('new_arrivals.description')}
         actions={
           <Button href={{ pathname: '/products' }} variant="outline">
-            View all
+            {t('new_arrivals.actions.view_all')}
           </Button>
         }
       />
@@ -34,13 +37,10 @@ export const NewArrivals = ({ products }: NewArrivalsProps) => {
         className={styles.carousel}
       >
         {products.map((product) => (
-          <Surface
-            key={product.id}
-            className={styles.card}
-          >
+          <Surface key={product.id} className={styles.card}>
             <div className={styles.imagePlaceholder} />
             <Button
-              href={{ pathname: '/products/[id]', query: { id: product.id } }}
+              href={`/products/${product.id}`}
               variant="ghost"
               size="sm"
               className={styles.link}

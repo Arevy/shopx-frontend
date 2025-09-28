@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "badge": "Nouveau sur ShopX · Expérience premium",
+    "title": "Design contemporain, technologie intelligente, livraison rapide",
+    "description": "Découvrez des collections sélectionnées par des experts, des produits durables et des offres limitées. Avec ShopX, chaque interaction est fluide, personnalisée et prête à convertir.",
+    "featured_badge": "Coup de cœur de l’éditeur",
+    "product_fallback": "Produit premium sélectionné par notre équipe pour ses performances et son esthétique irréprochables.",
+    "actions": {
+      "view_catalog": "Voir tout le catalogue",
+      "instant_checkout": "Paiement instantané",
+      "add_to_cart": "Ajouter au panier",
+      "save_for_later": "Enregistrer pour plus tard"
+    }
+  },
+  "highlights": {
+    "title": "Conçu pour convertir",
+    "description": "ShopX associe analyses intelligentes et design contemporain pour améliorer vos taux de conversion et de fidélisation.",
+    "items": {
+      "0": {
+        "title": "Livraison 24 h",
+        "description": "Logistique intégrée avec suivi en temps réel et options de livraison flexibles."
+      },
+      "1": {
+        "title": "Expérience personnalisée",
+        "description": "Recommandations dynamiques basées sur le comportement des utilisateurs et les meilleures ventes."
+      },
+      "2": {
+        "title": "Paiements sécurisés",
+        "description": "Checkout optimisé, multi-moyens de paiement et sécurité garantie."
+      }
+    }
+  },
+  "featured": {
+    "eyebrow": "Collection ShopX",
+    "title": "Sélections curatoriales",
+    "description": "Les best-sellers de la communauté ShopX, pensés pour des modes de vie contemporains."
+  },
+  "new_arrivals": {
+    "title": "Nouveautés",
+    "description": "Nouvelles sorties directement du studio. Stock limité, livraison rapide, garantie étendue.",
+    "actions": {
+      "view_all": "Tout voir"
+    }
+  },
+  "journey": {
+    "title": "Un parcours complet orienté conversion",
+    "description": "De la première interaction à la commande finale, ShopX offre une expérience cohérente et rapide qui renforce la satisfaction client.",
+    "step_badge": "Étape {{step}}",
+    "steps": {
+      "0": {
+        "title": "Découvrir",
+        "description": "Collections sélectionnées, filtres intelligents et recherche instantanée pour trouver le bon produit."
+      },
+      "1": {
+        "title": "Évaluer",
+        "description": "Pages produit riches, avis authentiques et recommandations contextuelles pour le cross-sell."
+      },
+      "2": {
+        "title": "Commander",
+        "description": "Checkout optimisé, multiples moyens de paiement et mise à jour du panier en temps réel."
+      }
+    }
+  }
+}

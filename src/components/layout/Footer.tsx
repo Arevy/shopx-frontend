@@ -1,61 +1,54 @@
+'use client'
+
+import classNames from 'classnames'
+import { LanguageSelector } from './LanguageSelector'
+import { useRTL, useTranslation } from '@/i18n'
 import styles from './Footer.module.scss'
 
-const supportLinks = [
-  { href: '#', label: 'Contact' },
-  { href: '#', label: 'FAQ' },
-  { href: '#', label: 'Returns & Warranty' },
-]
-
-const companyLinks = [
-  { href: '#', label: 'About ShopX' },
-  { href: '#', label: 'Careers' },
-  { href: '#', label: 'Blog' },
-]
-
-const socialLinks = [
-  { href: '#', label: 'Instagram' },
-  { href: '#', label: 'Facebook' },
-  { href: '#', label: 'TikTok' },
-]
+const supportLinkKeys = ['contact', 'faq', 'returns'] as const
+const companyLinkKeys = ['about', 'careers', 'blog'] as const
+const socialLinkKeys = ['instagram', 'facebook', 'tiktok'] as const
 
 export const Footer = () => {
+  const { t } = useTranslation('Common')
+  const isRtl = useRTL()
+
   return (
-    <footer className={styles.footer}>
+    <footer className={classNames(styles.footer, { [styles.footerRtl]: isRtl })}>
       <div className={styles.inner}>
         <div>
           <div className={styles.brand}>ShopX</div>
-          <p className={styles.description}>
-            The e-commerce platform that blends technology with design for a contemporary shopping experience.
-          </p>
+          <p className={styles.description}>{t('footer.description')}</p>
         </div>
         <div>
-          <div className={styles.sectionTitle}>Support</div>
-          {supportLinks.map((link) => (
-            <a key={link.label} href={link.href} className={styles.link}>
-              {link.label}
+          <div className={styles.sectionTitle}>{t('footer.sections.support')}</div>
+          {supportLinkKeys.map((key) => (
+            <a key={key} href="#" className={styles.link}>
+              {t(`footer.links.support.${key}`)}
             </a>
           ))}
         </div>
         <div>
-          <div className={styles.sectionTitle}>Company</div>
-          {companyLinks.map((link) => (
-            <a key={link.label} href={link.href} className={styles.link}>
-              {link.label}
+          <div className={styles.sectionTitle}>{t('footer.sections.company')}</div>
+          {companyLinkKeys.map((key) => (
+            <a key={key} href="#" className={styles.link}>
+              {t(`footer.links.company.${key}`)}
             </a>
           ))}
         </div>
         <div>
-          <div className={styles.sectionTitle}>Social</div>
-          {socialLinks.map((link) => (
-            <a key={link.label} href={link.href} className={styles.link}>
-              {link.label}
+          <div className={styles.sectionTitle}>{t('footer.sections.social')}</div>
+          {socialLinkKeys.map((key) => (
+            <a key={key} href="#" className={styles.link}>
+              {t(`footer.links.social.${key}`)}
             </a>
           ))}
         </div>
       </div>
-      <div className={styles.bottomBar}>
-        <span>© {new Date().getFullYear()} ShopX. All rights reserved.</span>
-        <span>Crafted with care using Next.js & GraphQL.</span>
+      <div className={classNames(styles.bottomBar, { [styles.bottomBarRtl]: isRtl })}>
+        <LanguageSelector className={styles.languageSelector} />
+        <span>{t('footer.bottom.copyright', { year: new Date().getFullYear() })}</span>
+        <span>{t('footer.bottom.credit')}</span>
       </div>
     </footer>
   )

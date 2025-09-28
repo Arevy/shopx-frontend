@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "Limba",
+    "accessibility_label": "Selectează limba interfeței",
+    "options": {
+      "en": "English",
+      "ro": "Română",
+      "fr": "Français",
+      "de": "Deutsch",
+      "ar": "العربية",
+      "he": "עברית"
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "Acasă",
+      "catalog": "Catalog",
+      "wishlist": "Listă de dorințe",
+      "cart": "Coș"
+    },
+    "actions": {
+      "sign_in": "Autentificare",
+      "sign_out": "Deconectare",
+      "toggle_navigation": "Comută navigarea"
+    }
+  },
+  "footer": {
+    "description": "Platforma de comerț electronic care îmbină tehnologia cu designul pentru o experiență modernă.",
+    "sections": {
+      "support": "Suport",
+      "company": "Companie",
+      "social": "Social"
+    },
+    "links": {
+      "support": {
+        "contact": "Contact",
+        "faq": "Întrebări frecvente",
+        "returns": "Returnări și garanții"
+      },
+      "company": {
+        "about": "Despre ShopX",
+        "careers": "Cariere",
+        "blog": "Blog"
+      },
+      "social": {
+        "instagram": "Instagram",
+        "facebook": "Facebook",
+        "tiktok": "TikTok"
+      }
+    },
+    "bottom": {
+      "copyright": "© {{year}} ShopX. Toate drepturile rezervate.",
+      "credit": "Creat cu grijă folosind Next.js și GraphQL."
+    }
+  }
+}

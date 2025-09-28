@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "שפה",
+    "accessibility_label": "בחר את שפת הממשק",
+    "options": {
+      "en": "English",
+      "ro": "Română",
+      "fr": "Français",
+      "de": "Deutsch",
+      "ar": "العربية",
+      "he": "עברית"
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "בית",
+      "catalog": "קטלוג",
+      "wishlist": "רשימת משאלות",
+      "cart": "עגלה"
+    },
+    "actions": {
+      "sign_in": "התחברות",
+      "sign_out": "התנתקות",
+      "toggle_navigation": "הצג/הסתר תפריט"
+    }
+  },
+  "footer": {
+    "description": "פלטפורמת המסחר האלקטרוני המחברת טכנולוגיה ועיצוב לחוויית קנייה עדכנית.",
+    "sections": {
+      "support": "תמיכה",
+      "company": "חברה",
+      "social": "חברתי"
+    },
+    "links": {
+      "support": {
+        "contact": "צור קשר",
+        "faq": "שאלות ותשובות",
+        "returns": "החזרות ואחריות"
+      },
+      "company": {
+        "about": "על ShopX",
+        "careers": "קריירה",
+        "blog": "בלוג"
+      },
+      "social": {
+        "instagram": "אינסטגרם",
+        "facebook": "פייסבוק",
+        "tiktok": "טיקטוק"
+      }
+    },
+    "bottom": {
+      "copyright": "© {{year}} ShopX. כל הזכויות שמורות.",
+      "credit": "פותח באהבה באמצעות Next.js ו‑GraphQL."
+    }
+  }
+}

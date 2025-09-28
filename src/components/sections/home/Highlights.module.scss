@@ -5,6 +5,10 @@
 .highlightCard {
   display: grid;
   gap: 0.6rem;
+
+  .rtl & {
+    text-align: right;
+  }
 }
 
 .highlightTitle {

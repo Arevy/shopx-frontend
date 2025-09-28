@@ -40,10 +40,7 @@ export const ProductCard = observer(({ product, index = 0 }: ProductCardProps) =
           }
         />
       </div>
-      <Link
-        href={{ pathname: '/products/[id]', query: { id: product.id } }}
-        className={styles.title}
-      >
+      <Link href={`/products/${product.id}`} className={styles.title}>
         {product.name}
       </Link>
       <p className={styles.description}>
@@ -57,7 +54,7 @@ export const ProductCard = observer(({ product, index = 0 }: ProductCardProps) =
           })}
         </span>
         <Button
-          href={{ pathname: '/products/[id]', query: { id: product.id } }}
+          href={`/products/${product.id}`}
           variant="outline"
           size="sm"
         >

@@ -1,0 +1,63 @@
+{
+  "intro": {
+    "title": "Finalizare comandă",
+    "description": "Introdu adresa de livrare și alege metoda de plată. Procesarea este sigură și durează doar câteva secunde."
+  },
+  "guard": {
+    "title": "Ai nevoie de un cont pentru a finaliza comanda",
+    "subtitle": "Autentifică-te sau creează un cont în câteva secunde pentru a finaliza comanda.",
+    "actions": {
+      "sign_in": "Autentificare",
+      "register": "Creează cont"
+    }
+  },
+  "empty": {
+    "message": "Coșul tău este gol. Adaugă produse pentru a continua.",
+    "cta": "Înapoi la catalog"
+  },
+  "success": {
+    "title": "Comandă finalizată",
+    "subtitle": "Îți mulțumim! Numărul comenzii tale este #{{orderId}}. Îți trimitem în curând detaliile și link-ul de urmărire.",
+    "cta": "Continuă cumpărăturile"
+  },
+  "form": {
+    "default_country": "România",
+    "address": {
+      "title": "Adresă de livrare",
+      "saved_label": "Adresă salvată",
+      "add_new": "Adaugă o adresă nouă",
+      "selected_heading": "Adresă selectată",
+      "fields": {
+        "street": "Stradă",
+        "city": "Oraș",
+        "postal_code": "Cod poștal",
+        "country": "Țară"
+      }
+    },
+    "payment": {
+      "title": "Plată",
+      "methods": {
+        "card": "Card bancar (Visa / Mastercard)",
+        "transfer": "Transfer bancar",
+        "cash": "Plată la livrare"
+      },
+      "summary": {
+        "subtotal": "Subtotal",
+        "shipping": "Livrare",
+        "shipping_free": "GRATUIT",
+        "total": "Total"
+      },
+      "actions": {
+        "submit": "Plasează comanda",
+        "processing": "Procesăm comanda..."
+      }
+    },
+    "errors": {
+      "generic": "Finalizarea comenzii a eșuat. Încearcă din nou.",
+      "missing_product": "Nu am putut procesa unul dintre produsele din coș. Reîmprospătează și încearcă din nou."
+    }
+  },
+  "toast": {
+    "success": "Comanda a fost plasată cu succes!"
+  }
+}

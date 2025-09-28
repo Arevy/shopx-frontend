@@ -6,14 +6,18 @@ import type { UrlObject } from 'url'
 import { usePathname } from 'next/navigation'
 import { observer } from 'mobx-react-lite'
 import { motion, AnimatePresence } from 'framer-motion'
+import classNames from 'classnames'
 import { Button } from '@components/ui'
 import { useDisclosure } from '@hooks/useDisclosure'
 import { useStores } from '@stores/StoreProvider'
+import { useRTL, useTranslation } from '@/i18n'
 import styles from './Header.module.scss'
 
 export const Header = observer(() => {
   const pathname = usePathname()
   const { cartStore, wishlistStore, userStore, cmsStore } = useStores()
+  const { t } = useTranslation('Common')
+  const isRtl = useRTL()
   type NavLink = {
     href: Route | UrlObject
     label: string
@@ -21,10 +25,10 @@ export const Header = observer(() => {
   }
 
   const staticLinks: NavLink[] = [
-    { href: '/' as Route, label: 'Home', matchPath: '/' },
-    { href: '/products' as Route, label: 'Catalog', matchPath: '/products' },
-    { href: '/wishlist' as Route, label: 'Wishlist', matchPath: '/wishlist' },
-    { href: '/cart' as Route, label: 'Cart', matchPath: '/cart' },
+    { href: '/' as Route, label: t('header.nav.home'), matchPath: '/' },
+    { href: '/products' as Route, label: t('header.nav.catalog'), matchPath: '/products' },
+    { href: '/wishlist' as Route, label: t('header.nav.wishlist'), matchPath: '/wishlist' },
+    { href: '/cart' as Route, label: t('header.nav.cart'), matchPath: '/cart' },
   ]
 
   const cmsLinks: NavLink[] = cmsStore.pages.map((page) => ({
@@ -40,8 +44,8 @@ export const Header = observer(() => {
   const wishlistCount = wishlistStore.items.length
 
   return (
-    <header className={styles.header}>
-      <div className={styles.inner}>
+    <header className={classNames(styles.header, { [styles.headerRtl]: isRtl })}>
+      <div className={classNames(styles.inner, { [styles.innerRtl]: isRtl })}>
         <Link href="/" className={styles.brand}>
           <motion.span
             initial={{ opacity: 0, x: -12 }}
@@ -52,7 +56,7 @@ export const Header = observer(() => {
           </motion.span>
         </Link>
 
-        <nav className={styles.nav}>
+        <nav className={classNames(styles.nav, { [styles.navRtl]: isRtl })}>
           {navLinks.map((link) => (
             <Link
               key={link.matchPath}
@@ -72,25 +76,21 @@ export const Header = observer(() => {
           ))}
         </nav>
 
-        <div className={styles.actions}>
+        <div className={classNames(styles.actions, { [styles.actionsRtl]: isRtl })}>
           {userStore.isAuthenticated ? (
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={userStore.logout}
-            >
-              {userStore.user?.name ?? userStore.user?.email}
+            <Button variant="secondary" size="sm" onClick={userStore.logout}>
+              {userStore.user?.name ?? userStore.user?.email ?? t('header.actions.sign_out')}
             </Button>
           ) : (
             <Button href={{ pathname: '/auth/login' }} variant="outline" size="sm">
-              Sign in
+              {t('header.actions.sign_in')}
             </Button>
           )}
           <button
             type="button"
             className={styles.menuToggle}
             onClick={onToggle}
-            aria-label="Toggle navigation"
+            aria-label={t('header.actions.toggle_navigation')}
           >
             ☰
           </button>
@@ -104,7 +104,7 @@ export const Header = observer(() => {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className={styles.mobileNav}
+            className={classNames(styles.mobileNav, { [styles.mobileNavRtl]: isRtl })}
           >
             {navLinks.map((link) => (
               <Link
@@ -133,7 +133,7 @@ export const Header = observer(() => {
                   onClose()
                 }}
               >
-                Sign out
+                {t('header.actions.sign_out')}
               </Button>
             ) : (
               <Button
@@ -142,7 +142,7 @@ export const Header = observer(() => {
                 size="sm"
                 onClick={onClose}
               >
-                Sign in
+                {t('header.actions.sign_in')}
               </Button>
             )}
           </motion.div>

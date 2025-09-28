@@ -1,0 +1,56 @@
+{
+  "language": {
+    "label": "اللغة",
+    "accessibility_label": "اختر لغة الواجهة",
+    "options": {
+      "en": "English",
+      "ro": "Română",
+      "fr": "Français",
+      "de": "Deutsch",
+      "ar": "العربية",
+      "he": "עברית"
+    }
+  },
+  "header": {
+    "nav": {
+      "home": "الرئيسية",
+      "catalog": "الكتالوج",
+      "wishlist": "قائمة الرغبات",
+      "cart": "عربة التسوق"
+    },
+    "actions": {
+      "sign_in": "تسجيل الدخول",
+      "sign_out": "تسجيل الخروج",
+      "toggle_navigation": "تبديل القائمة"
+    }
+  },
+  "footer": {
+    "description": "منصة تجارة إلكترونية تجمع بين التقنية والتصميم لتجربة تسوق عصرية.",
+    "sections": {
+      "support": "الدعم",
+      "company": "الشركة",
+      "social": "التواصل"
+    },
+    "links": {
+      "support": {
+        "contact": "اتصل بنا",
+        "faq": "الأسئلة الشائعة",
+        "returns": "الإرجاع والضمان"
+      },
+      "company": {
+        "about": "عن ShopX",
+        "careers": "الوظائف",
+        "blog": "المدونة"
+      },
+      "social": {
+        "instagram": "إنستغرام",
+        "facebook": "فيسبوك",
+        "tiktok": "تيك توك"
+      }
+    },
+    "bottom": {
+      "copyright": "© {{year}} ‏ShopX. جميع الحقوق محفوظة.",
+      "credit": "صُمم بعناية باستخدام Next.js و GraphQL."
+    }
+  }
+}

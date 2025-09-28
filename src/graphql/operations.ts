@@ -279,11 +279,8 @@ export const CREATE_ORDER = /* GraphQL */ `
       status
       products {
         quantity
-        product {
-          id
-          name
-          price
-        }
+        productId
+        price
       }
     }
   }

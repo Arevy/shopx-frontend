@@ -5,6 +5,10 @@
 .stepCard {
   display: grid;
   gap: 0.8rem;
+
+  .rtl & {
+    text-align: right;
+  }
 }
 
 .stepBadge {

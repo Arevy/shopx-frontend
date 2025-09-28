@@ -7,6 +7,11 @@
   margin-top: auto;
 }
 
+.footerRtl {
+  direction: rtl;
+  text-align: right;
+}
+
 .inner {
   @include m.responsive-width;
   padding: 3rem 0;
@@ -39,6 +44,10 @@
   &:hover {
     color: var(--color-primary);
   }
+
+  .footerRtl & {
+    justify-content: flex-end;
+  }
 }
 
 .bottomBar {
@@ -47,8 +56,20 @@
   @include m.responsive-width;
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
   color: var(--color-text-muted);
   font-size: 0.85rem;
+}
+
+.bottomBarRtl {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.languageSelector {
+  min-width: 10rem;
 }
 
 @media (max-width: 700px) {

@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "badge": "Neu bei ShopX · Premium-Erlebnis",
+    "title": "Zeitgemäßes Design, intelligente Technologie, schnelle Lieferung",
+    "description": "Entdecke kuratierte Kollektionen, nachhaltige Produkte und limitierte Angebote. Mit ShopX ist jede Interaktion nahtlos, persönlich und auf Conversion ausgerichtet.",
+    "featured_badge": "Empfehlung der Redaktion",
+    "product_fallback": "Premium-Produkt, ausgewählt von unserem Team für hervorragende Leistung und Ästhetik.",
+    "actions": {
+      "view_catalog": "Gesamten Katalog ansehen",
+      "instant_checkout": "Sofort zur Kasse",
+      "add_to_cart": "In den Warenkorb",
+      "save_for_later": "Für später speichern"
+    }
+  },
+  "highlights": {
+    "title": "Für Conversion gebaut",
+    "description": "ShopX kombiniert intelligente Analysen mit modernem Design, um Conversion- und Bindungsraten zu steigern.",
+    "items": {
+      "0": {
+        "title": "Lieferung in 24 h",
+        "description": "Integrierte Logistik mit Live-Tracking und flexiblen Lieferoptionen."
+      },
+      "1": {
+        "title": "Personalisierte Experience",
+        "description": "Dynamische Empfehlungen basierend auf Nutzerverhalten und Bestsellern."
+      },
+      "2": {
+        "title": "Sichere Zahlungen",
+        "description": "Optimierter Checkout mit mehreren Zahlungsmethoden und garantierter Sicherheit."
+      }
+    }
+  },
+  "featured": {
+    "eyebrow": "ShopX Kollektion",
+    "title": "Kuratierte Auswahl",
+    "description": "Bestseller aus der ShopX-Community, konzipiert für moderne Lebensstile und dynamische Bedürfnisse."
+  },
+  "new_arrivals": {
+    "title": "Neu eingetroffen",
+    "description": "Frische Releases direkt aus dem Studio. Limitierter Bestand, schnelle Lieferung, verlängerte Garantie.",
+    "actions": {
+      "view_all": "Alle anzeigen"
+    }
+  },
+  "journey": {
+    "title": "Ein vollständiger, conversionsstarker Flow",
+    "description": "Vom ersten Kontakt bis zur finalen Bestellung liefert ShopX ein kohärentes, schnelles Erlebnis, das die Kundenzufriedenheit steigert.",
+    "step_badge": "Schritt {{step}}",
+    "steps": {
+      "0": {
+        "title": "Entdecken",
+        "description": "Kuratierte Kollektionen, intelligente Filter und Sofortsuche für das perfekte Produkt."
+      },
+      "1": {
+        "title": "Bewerten",
+        "description": "Umfangreiche Produktseiten, echte Bewertungen und kontextuelle Cross-Sell-Empfehlungen."
+      },
+      "2": {
+        "title": "Abschließen",
+        "description": "Optimierter Checkout, mehrere Zahlungsintegrationen und Echtzeit-Updates im Warenkorb."
+      }
+    }
+  }
+}

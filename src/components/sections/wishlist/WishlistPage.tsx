@@ -38,7 +38,7 @@ export const WishlistPage = observer(() => {
                 />
               </div>
               <Button
-                href={{ pathname: '/products/[id]', query: { id: product.id } }}
+                href={`/products/${product.id}`}
                 variant="ghost"
                 size="sm"
                 className={styles.productLink}

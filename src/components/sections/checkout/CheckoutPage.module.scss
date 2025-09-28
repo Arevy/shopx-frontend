@@ -111,3 +111,32 @@
   gap: 1.2rem;
   text-align: center;
 }
+
+.checkoutFormRtl {
+  direction: rtl;
+
+  .sectionHeading,
+  .selectedAddress {
+    text-align: right;
+  }
+
+  .paymentOptions {
+    text-align: right;
+  }
+
+  .paymentOption {
+    flex-direction: row-reverse;
+  }
+
+  .paymentSummary {
+    text-align: right;
+  }
+
+  .summaryRow {
+    flex-direction: row-reverse;
+  }
+
+  .summaryRow span:last-child {
+    text-align: left;
+  }
+}

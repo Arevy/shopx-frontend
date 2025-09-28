@@ -1,0 +1,64 @@
+{
+  "hero": {
+    "badge": "Noutăți ShopX · Experiență premium",
+    "title": "Design contemporan, tehnologie inteligentă, livrare rapidă",
+    "description": "Descoperă colecții curatoriate de experți, produse sustenabile și oferte limitate. Cu ShopX, fiecare interacțiune este fluidă, personalizată și pregătită de conversie.",
+    "featured_badge": "Recomandarea editorului",
+    "product_fallback": "Produs premium selectat de echipa noastră pentru performanță și estetică impecabile.",
+    "actions": {
+      "view_catalog": "Vezi catalogul complet",
+      "instant_checkout": "Checkout instant",
+      "add_to_cart": "Adaugă în coș",
+      "save_for_later": "Salvează pentru mai târziu"
+    }
+  },
+  "highlights": {
+    "title": "Construit pentru conversie",
+    "description": "ShopX îmbină analize inteligente cu design contemporan pentru a crește ratele de conversie și retenție.",
+    "items": {
+      "0": {
+        "title": "Livrare în 24 h",
+        "description": "Logistică integrată cu urmărire în timp real și opțiuni flexibile de livrare."
+      },
+      "1": {
+        "title": "Experiență personalizată",
+        "description": "Recomandări dinamice bazate pe comportamentul utilizatorilor și bestsellere."
+      },
+      "2": {
+        "title": "Plăți sigure",
+        "description": "Checkout optimizat cu multiple metode de plată și securitate garantată."
+      }
+    }
+  },
+  "featured": {
+    "eyebrow": "Colecția ShopX",
+    "title": "Selecții curatoriate",
+    "description": "Cele mai populare produse din comunitatea ShopX, create pentru stiluri de viață moderne."
+  },
+  "new_arrivals": {
+    "title": "Noutăți",
+    "description": "Lansări proaspete direct din studio. Stoc limitat, livrare rapidă, garanție extinsă.",
+    "actions": {
+      "view_all": "Vezi tot"
+    }
+  },
+  "journey": {
+    "title": "Un flux complet orientat spre conversie",
+    "description": "De la prima interacțiune până la comanda finală, ShopX asigură o experiență coerentă și rapidă ce crește satisfacția clienților.",
+    "step_badge": "Pasul {{step}}",
+    "steps": {
+      "0": {
+        "title": "Descoperă",
+        "description": "Colecții curatoriate, filtre inteligente și căutare instant pentru a găsi rapid produsul potrivit."
+      },
+      "1": {
+        "title": "Evaluează",
+        "description": "Pagini de produs bogate, recenzii reale și recomandări contextuale pentru cross-sell."
+      },
+      "2": {
+        "title": "Finalizează",
+        "description": "Checkout optimizat, integrare cu multiple plăți și actualizare în timp real a coșului."
+      }
+    }
+  }
+}

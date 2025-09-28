@@ -3,6 +3,7 @@
 import classNames from 'classnames'
 import { ProductCard } from '@components/sections/products/ProductCard'
 import { SectionHeader } from '@components/ui'
+import { useTranslation } from '@/i18n'
 import type { Product } from '@/types/product'
 import styles from './FeaturedProducts.module.scss'
 
@@ -11,6 +12,8 @@ type FeaturedProductsProps = {
 }
 
 export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
+  const { t } = useTranslation('Page_Home')
+
   if (!products.length) {
     return null
   }
@@ -18,9 +21,9 @@ export const FeaturedProducts = ({ products }: FeaturedProductsProps) => {
   return (
     <section className="section">
       <SectionHeader
-        eyebrow="ShopX collection"
-        title="Curated selections"
-        description="ShopX community bestsellers designed for contemporary lifestyles and dynamic needs."
+        eyebrow={t('featured.eyebrow')}
+        title={t('featured.title')}
+        description={t('featured.description')}
       />
       <div className={classNames('grid', styles.productsGrid)}>
         {products.map((product, index) => (
