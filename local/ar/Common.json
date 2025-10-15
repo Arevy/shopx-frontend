@@ -24,6 +24,14 @@
       "toggle_navigation": "تبديل القائمة"
     }
   },
+  "routes": {
+    "checkout": "إتمام الطلب",
+    "impersonate": "جلسة انتحال الهوية",
+    "product_detail": "تفاصيل المنتج",
+    "cms_page": "صفحة محتوى",
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب"
+  },
   "footer": {
     "description": "منصة تجارة إلكترونية تجمع بين التقنية والتصميم لتجربة تسوق عصرية.",
     "sections": {

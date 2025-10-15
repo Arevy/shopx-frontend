@@ -24,6 +24,14 @@
       "toggle_navigation": "Navigation ein-/ausblenden"
     }
   },
+  "routes": {
+    "checkout": "Zur Kasse",
+    "impersonate": "Session übernehmen",
+    "product_detail": "Produktdetails",
+    "cms_page": "Inhaltsseite",
+    "login": "Anmelden",
+    "register": "Konto erstellen"
+  },
   "footer": {
     "description": "Die E-Commerce-Plattform, die Technologie und Design für ein zeitgemäßes Einkaufserlebnis vereint.",
     "sections": {

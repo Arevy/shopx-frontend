@@ -24,6 +24,14 @@
       "toggle_navigation": "הצג/הסתר תפריט"
     }
   },
+  "routes": {
+    "checkout": "סיום הזמנה",
+    "impersonate": "התחזות",
+    "product_detail": "פרטי מוצר",
+    "cms_page": "עמוד תוכן",
+    "login": "התחברות",
+    "register": "יצירת חשבון"
+  },
   "footer": {
     "description": "פלטפורמת המסחר האלקטרוני המחברת טכנולוגיה ועיצוב לחוויית קנייה עדכנית.",
     "sections": {

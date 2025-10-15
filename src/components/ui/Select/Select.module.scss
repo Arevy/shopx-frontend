@@ -1,0 +1,17 @@
+@use '../_formControl.scss' as formControl;
+
+.selectWrapper {
+  @include formControl.select-wrapper;
+}
+
+.control {
+  @include formControl.control;
+}
+
+.select {
+  @include formControl.select;
+}
+
+.block {
+  @include formControl.block;
+}

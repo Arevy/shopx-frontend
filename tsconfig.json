@@ -20,6 +20,7 @@
     "jsx": "preserve",
     "incremental": true,
     "baseUrl": ".",
+    "ignoreDeprecations": "5.0",
     "paths": {
       "@/*": [
         "./src/*"
@@ -41,6 +42,9 @@
       ],
       "@styles/*": [
         "./src/styles/*"
+      ],
+      "@pages/*": [
+        "./src/pages/*"
       ],
       "@local/*": [
         "./local/*"

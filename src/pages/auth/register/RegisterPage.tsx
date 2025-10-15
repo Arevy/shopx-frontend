@@ -1,0 +1,81 @@
+'use client'
+
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { observer } from 'mobx-react-lite'
+import { Button, FormField, Input, Surface } from '@components/ui'
+import { useStores } from '@stores/StoreProvider'
+import styles from './RegisterPage.module.scss'
+
+const RegisterPage = observer(() => {
+  const { userStore } = useStores()
+  const router = useRouter()
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  useEffect(() => {
+    if (userStore.isAuthenticated) {
+      void router.replace('/')
+    }
+  }, [userStore.isAuthenticated, router])
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    await userStore.register(email, password, name)
+    if (userStore.isAuthenticated) {
+      void router.push('/checkout')
+    }
+  }
+
+  return (
+    <Surface as="form" onSubmit={handleSubmit} className={styles.form}>
+      <h1 className={`section-title ${styles.heading}`}>Create account</h1>
+      <p className={`section-subtitle ${styles.subheading}`}>
+        Sign up to store addresses, your wishlist, and order history in one place.
+      </p>
+      <FormField label="Full name" htmlFor="register-name">
+        <Input
+          id="register-name"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          autoComplete="name"
+        />
+      </FormField>
+      <FormField label="Email" htmlFor="register-email">
+        <Input
+          id="register-email"
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          required
+          autoComplete="email"
+        />
+      </FormField>
+      <FormField label="Password" htmlFor="register-password">
+        <Input
+          id="register-password"
+          type="password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          required
+          minLength={6}
+          autoComplete="new-password"
+        />
+      </FormField>
+
+      {userStore.error && <span className={styles.error}>{userStore.error}</span>}
+
+      <Button type="submit" loading={userStore.loading}>
+        {userStore.loading ? 'Creating account...' : 'Create account'}
+      </Button>
+
+      <span className={styles.footer}>
+        Already have an account? <Link href="/auth/login">Sign in →</Link>
+      </span>
+    </Surface>
+  )
+})
+
+export default RegisterPage

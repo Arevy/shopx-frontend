@@ -24,6 +24,14 @@
       "toggle_navigation": "Toggle navigation"
     }
   },
+  "routes": {
+    "checkout": "Checkout",
+    "impersonate": "Impersonate session",
+    "product_detail": "Product details",
+    "cms_page": "Content page",
+    "login": "Sign in",
+    "register": "Create account"
+  },
   "footer": {
     "description": "The e-commerce platform that blends technology with design for a contemporary shopping experience.",
     "sections": {

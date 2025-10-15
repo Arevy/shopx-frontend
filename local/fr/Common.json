@@ -24,6 +24,14 @@
       "toggle_navigation": "Ouvrir la navigation"
     }
   },
+  "routes": {
+    "checkout": "Finaliser la commande",
+    "impersonate": "Session d’emprunt",
+    "product_detail": "Détails du produit",
+    "cms_page": "Page de contenu",
+    "login": "Connexion",
+    "register": "Créer un compte"
+  },
   "footer": {
     "description": "La plateforme e-commerce qui marie technologie et design pour une expérience moderne.",
     "sections": {

@@ -1,0 +1,9 @@
+@use '../_formControl.scss' as formControl;
+
+.control {
+  @include formControl.control;
+}
+
+.block {
+  @include formControl.block;
+}

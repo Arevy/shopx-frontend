@@ -2,9 +2,9 @@ import { ClientError, GraphQLClient } from 'graphql-request'
 import type { Variables } from 'graphql-request'
 
 import { emitSessionExpired, markSessionExpired } from '@lib/authEvents'
+import { getGraphqlEndpoint } from '@/config/env'
 
-const endpoint =
-  process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT ?? 'http://localhost:4000/graphql'
+const endpoint = getGraphqlEndpoint()
 
 export async function requestGraphQL<
   TData,

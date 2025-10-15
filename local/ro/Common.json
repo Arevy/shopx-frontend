@@ -24,6 +24,14 @@
       "toggle_navigation": "Comută navigarea"
     }
   },
+  "routes": {
+    "checkout": "Finalizare comandă",
+    "impersonate": "Impersonare sesiune",
+    "product_detail": "Detalii produs",
+    "cms_page": "Pagină de conținut",
+    "login": "Autentificare",
+    "register": "Creare cont"
+  },
   "footer": {
     "description": "Platforma de comerț electronic care îmbină tehnologia cu designul pentru o experiență modernă.",
     "sections": {

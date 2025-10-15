@@ -1,6 +1,6 @@
 # ShopX Frontend
 
-The store front experience of the ShopX platform, implemented with **Next.js 14 (App Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
+The store front experience of the ShopX platform, implemented with **Next.js 14 (Pages Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
 
 ---
 
@@ -64,24 +64,27 @@ shopx-frontend/
 ├── Dockerfile                 # Multi-stage build for production bundles
 ├── public/                    # Static assets
 ├── src/
-│   ├── app/                   # Next.js App Router routes
-│   │   ├── (routes)/          # Pages (products, cart, wishlist, checkout, auth, CMS)
-│   │   ├── impersonate/       # Redeems admin-issued impersonation tickets
-│   │   └── layout.tsx         # Root layout + Providers
 │   ├── components/
-│   │   ├── home/              # Homepage sections (hero, highlights, etc.)
-│   │   ├── layout/            # Header, footer, shell
-│   │   ├── products/          # Catalog widgets (cards, filters, grids)
-│   │   └── ui/                # Surface, Button, SectionHeader, toasts, etc.
-│   ├── graphql/operations.ts  # Centralised GraphQL queries & mutations
-│   ├── hooks/                 # UI-level hooks (debounced search, store access)
-│   ├── lib/                   # GraphQL client helper
-│   ├── stores/                # MobX root store + domain stores (cart, wishlist, CMS, product, user, UI)
-│   ├── styles/                # SCSS modules and design tokens
-│   └── types/                 # Shared TypeScript models (products, CMS, auth)
+│   │   ├── layout/
+│   │   │   ├── Header/        # Header.tsx + Header.module.scss + index.ts
+│   │   │   ├── Footer/        # Footer + styles
+│   │   │   └── LanguageSelector/
+│   │   └── ui/                # Button, Surface, SectionHeader, ToastStack, etc.
+│   ├── config/                # Environment helpers
+│   ├── graphql/               # Operations & generated types
+│   ├── hooks/                 # UI-level hooks (disclosure, debounced search)
+│   ├── i18n/                  # Translation provider & helpers
+│   ├── lib/                   # GraphQL client helper, utilities
+│   ├── pages/
+│   │   ├── *.page.tsx         # Route entrypoints (e.g. index.page.tsx, cart/index.page.tsx)
+│   │   └── <route>/           # Page implementations + `Route.ts` metadata
+│   ├── routes/                # Centralised navigation metadata & helpers
+│   ├── stores/                # MobX stores (cart, wishlist, cms, user, etc.)
+│   ├── styles/                # Design tokens, mixins, globals (SCSS)
+│   └── types/                 # Shared TypeScript models & SCSS declarations
 └── README.md
 ```
-MobX stores orchestrate API calls and stateful logic. Components consume them via `useStores()` creating a clear separation between data layer and presentation.
+Route files use the custom extension pattern configured in `next.config.mjs` (`pageExtensions: ['page.tsx', ...]`). A thin `*.page.tsx` re-export lives next to each page module (for example `src/pages/cart/index.page.tsx` re-exports `./CartPage`) so the Next.js router stays lightweight while the implementation remains in a dedicated folder. MobX stores orchestrate API calls and stateful logic, which components consume via `useStores()` to keep data and presentation decoupled.
 
 ---
 
@@ -89,7 +92,8 @@ MobX stores orchestrate API calls and stateful logic. Components consume them vi
 - **Internationalisation**: The UI is currently English-only. Future translation work can leverage Next’s built-in routing or third-party libs; all copy now lives in English for easier globalization.
 - **CMS integration**: CMS pages are cached via Redis in the backend. On the frontend we memoize responses in the `CmsStore` to avoid redundant queries during a session.
 - **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, and profile data stay in sync with Redis-backed caches. If the backend revokes the session (e.g., via the admin portal), shared helpers detect the `Authentication required` error, clear local state, and prompt the shopper to sign back in.
-- **Design tokens**: Global palette, typography, and spacing live in `src/app/globals.scss`. Repurpose or swap with Tailwind/CSS-in-JS if necessary.
+- **Design tokens & SCSS**: Global palette, typography, and spacing live in `src/styles/globals.scss`. Sass imports use the alias `@styles/...`, configured via `next.config.mjs` so component styles no longer rely on deep relative paths.
+- **Custom App & Document**: The Pages Router entrypoints (`src/pages/_app.page.tsx` and `src/pages/_document.page.tsx`) host the providers and custom document markup directly—no intermediate exports required.
 - **Typed routes**: `next.config.mjs` disables `typedRoutes` due to the custom linking strategy. Re-enable once all dynamic routes are upgraded to `Route` types.
 - **Testing**: TypeScript compile (`tsc --noEmit`) is wired into CI. Add Playwright or Testing Library tests for end-to-end confidence.
 - **Docker**: `yarn build` creates a production bundle inside `/app/.next`. The Dockerfile first builds with dependencies, then copies the minimal runtime image ready for `yarn start`.
