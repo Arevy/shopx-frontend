@@ -3,6 +3,7 @@ import { GET_PRODUCTS } from '@graphql/products/GetProducts'
 import { GET_PRODUCT_DETAIL } from '@graphql/products/GetProductDetail'
 import { GET_CATEGORIES } from '@graphql/products/GetCategories'
 import type { Category, Product, Review } from '@/types/product'
+import { createCacheKey } from '@lib/cacheKeys'
 import type { RootStore } from './rootStore'
 
 interface ProductDetailResponse {
@@ -58,10 +59,15 @@ export class ProductStore {
     if (this.products.length) return
     this.loading = true
     try {
+      const variables = { limit: 100 }
+      const cacheKey = createCacheKey('products:list', variables)
+
       const { getProducts } = await this.root.apiService.execute<{ getProducts: Product[] }>(
         GET_PRODUCTS,
+        variables,
         {
-          limit: 100,
+          cacheKey,
+          ttlSeconds: 600,
         },
       )
 
@@ -88,9 +94,10 @@ export class ProductStore {
   async fetchCategories() {
     if (this.categories.length) return
     try {
+      const cacheKey = createCacheKey('products:categories')
       const { getCategories } = await this.root.apiService.execute<{
         getCategories: Category[]
-      }>(GET_CATEGORIES)
+      }>(GET_CATEGORIES, undefined, { cacheKey, ttlSeconds: 600 })
       runInAction(() => {
         this.categories = getCategories
       })
@@ -106,9 +113,15 @@ export class ProductStore {
   async fetchProductDetail(id: string) {
     this.detailLoading = true
     try {
+      const variables = { id }
+      const cacheKey = createCacheKey('products:detail', id)
       const { product, reviews } = await this.root.apiService.execute<ProductDetailResponse>(
         GET_PRODUCT_DETAIL,
-        { id },
+        variables,
+        {
+          cacheKey,
+          ttlSeconds: 900,
+        },
       )
 
       runInAction(() => {

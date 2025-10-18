@@ -141,9 +141,15 @@ export class CartStore {
       return
     }
     try {
-      const { getCart } = await this.root.apiService.execute<{ getCart: Cart }>(GET_CART, {
-        userId,
-      })
+      const { getCart } = await this.root.apiService.execute<{ getCart: Cart }>(
+        GET_CART,
+        {
+          userId,
+        },
+        {
+          skipCache: true,
+        },
+      )
       runInAction(() => {
         this.setRemoteCart(getCart)
       })

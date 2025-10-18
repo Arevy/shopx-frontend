@@ -64,7 +64,7 @@ export class WishlistStore {
     try {
       const { getWishlist } = await this.root.apiService.execute<{
         getWishlist: { products: Product[] }
-      }>(GET_WISHLIST, { userId })
+      }>(GET_WISHLIST, { userId }, { skipCache: true })
       runInAction(() => {
         this.setRemoteProducts(getWishlist.products)
       })

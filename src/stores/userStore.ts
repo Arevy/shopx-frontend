@@ -106,7 +106,7 @@ export class UserStore {
     try {
       const { getAddresses } = await this.root.apiService.execute<{
         getAddresses: Array<Partial<Address>>
-      }>(GET_ADDRESSES, { userId })
+      }>(GET_ADDRESSES, { userId }, { skipCache: true })
 
       const normalized = normalizeAddresses(getAddresses)
       runInAction(() => {
@@ -310,10 +310,7 @@ export class UserStore {
     try {
       const { getUserContext } = await this.root.apiService.execute<{
         getUserContext: Partial<UserContext> | null
-      }>(
-        GET_USER_CONTEXT,
-        { userId: numericId },
-      )
+      }>(GET_USER_CONTEXT, { userId: numericId }, { skipCache: true })
 
       const normalizedContext = normalizeUserContext(getUserContext)
 

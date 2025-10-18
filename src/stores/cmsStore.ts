@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { GET_CMS_PAGES } from '@graphql/cms/GetCmsPages'
 import { GET_CMS_PAGE } from '@graphql/cms/GetCmsPage'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
+import { createCacheKey } from '@lib/cacheKeys'
 import type { CmsPage } from '@/types/cms'
 import type { RootStore } from './rootStore'
 
@@ -22,8 +23,11 @@ export class CmsStore {
     this.loading = true
     this.error = null
     try {
+      const cacheKey = createCacheKey('cms:pages')
       const { getCmsPages } = await this.root.apiService.execute<{ getCmsPages: CmsPage[] }>(
         GET_CMS_PAGES,
+        undefined,
+        { cacheKey, ttlSeconds: 900 },
       )
       runInAction(() => {
         this.pages = getCmsPages
@@ -45,9 +49,15 @@ export class CmsStore {
     }
 
     try {
+      const variables = { slug }
+      const cacheKey = createCacheKey('cms:page', slug)
       const { getCmsPage } = await this.root.apiService.execute<{ getCmsPage: CmsPage | null }>(
         GET_CMS_PAGE,
-        { slug },
+        variables,
+        {
+          cacheKey,
+          ttlSeconds: 900,
+        },
       )
       if (getCmsPage) {
         runInAction(() => {
