@@ -8,6 +8,7 @@ import loginRoute from '@pages/auth/login/Route'
 import registerRoute from '@pages/auth/register/Route'
 import productDetailRoute from '@pages/products/detail/Route'
 import cmsPageRoute from '@pages/cms/Route'
+import accountRoute from '@pages/account/Route'
 import type { NavigationRoute, RouteDefinition } from '@/routes/types'
 
 const toOrderKey = (route: RouteDefinition) => route.order ?? Number.MAX_SAFE_INTEGER
@@ -23,6 +24,7 @@ const additionalRoutes: RouteDefinition[] = [
   registerRoute,
   productDetailRoute,
   cmsPageRoute,
+  accountRoute,
 ]
 
 export const allRoutes: RouteDefinition[] = [...navigationRoutes, ...additionalRoutes].sort(

@@ -1,0 +1,60 @@
+{
+  "title": "Contul tău",
+  "subtitle": "Gestionează datele personale, securitatea contului și istoricul comenzilor.",
+  "menu": {
+    "overview": "Profil",
+    "security": "Securitate",
+    "orders": "Comenzi"
+  },
+  "sections": {
+    "overview": {
+      "title": "Detalii de profil",
+      "description": "Actualizează numele și adresa de e-mail folosite în ShopX. Modificările se aplică imediat după salvare.",
+      "form": {
+        "name_label": "Nume complet",
+        "name_placeholder": "Adaugă numele complet",
+        "email_label": "Adresă de e-mail",
+        "email_placeholder": "nume@exemplu.com",
+        "enable_edit": "Activează editarea profilului",
+        "password_label": "Confirmă cu parola",
+        "password_placeholder": "Introdu parola pentru confirmare",
+        "password_required": "Introdu parola pentru a confirma modificările.",
+        "submit": "Salvează modificările"
+      }
+    },
+    "security": {
+      "title": "Securitatea contului",
+      "description": "Alege o parolă puternică pentru a-ți proteja informațiile.",
+      "form": {
+        "current_label": "Parola curentă",
+        "current_placeholder": "Introdu parola curentă",
+        "new_label": "Parolă nouă",
+        "new_placeholder": "Introdu o parolă nouă",
+        "confirm_label": "Confirmă parola nouă",
+        "confirm_placeholder": "Repetă parola nouă",
+        "submit": "Actualizează parola",
+        "mismatch": "Parolele noi nu coincid."
+      }
+    },
+    "orders": {
+      "title": "Istoric comenzi",
+      "description": "Verifică achizițiile anterioare și starea lor curentă.",
+      "loading": "Încărcăm comenzile tale...",
+      "empty": "Nu ai plasat încă nicio comandă.",
+      "total": "Total: {{value}}",
+      "status": "Status: {{value}}",
+      "placed": "Plasată în {{value}}",
+      "items": "{{count}} articole",
+      "order_id": "Comanda #{{id}}",
+      "product_line": "Produs {{id}}"
+    }
+  },
+  "guard": {
+    "title": "Autentifică-te pentru a-ți accesa contul",
+    "subtitle": "Intră în cont pentru a-ți vedea detaliile, a-ți actualiza profilul și a verifica comenzile.",
+    "actions": {
+      "sign_in": "Autentificare",
+      "register": "Creează cont"
+    }
+  }
+}

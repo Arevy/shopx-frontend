@@ -21,6 +21,7 @@
     "actions": {
       "sign_in": "Anmelden",
       "sign_out": "Abmelden",
+      "profile": "Profil",
       "toggle_navigation": "Navigation ein-/ausblenden"
     }
   },
@@ -30,7 +31,8 @@
     "product_detail": "Produktdetails",
     "cms_page": "Inhaltsseite",
     "login": "Anmelden",
-    "register": "Konto erstellen"
+    "register": "Konto erstellen",
+    "account": "Konto"
   },
   "footer": {
     "description": "Die E-Commerce-Plattform, die Technologie und Design für ein zeitgemäßes Einkaufserlebnis vereint.",

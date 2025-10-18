@@ -1,0 +1,234 @@
+@use '@styles/tokens' as *;
+@use '@styles/mixins' as m;
+
+.page {
+  @include m.responsive-width;
+  display: grid;
+  gap: 2rem;
+  padding: 2.5rem 0;
+}
+
+.header {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.title {
+  font-size: clamp(1.6rem, 2vw + 1rem, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.subtitle {
+  color: var(--color-text-muted);
+  max-width: 620px;
+}
+
+.layout {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  align-items: start;
+}
+
+.layoutRtl {
+  direction: rtl;
+}
+
+.sidebar {
+  display: grid;
+  gap: 0.6rem;
+  position: sticky;
+  top: 6rem;
+  align-self: start;
+}
+
+.sidebarButtons {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.sidebarRtl {
+  text-align: right;
+}
+
+.menuButton {
+  border: 1px solid rgba($color-primary, 0.16);
+  background: var(--color-surface-translucent);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border 0.2s ease, transform 0.2s ease;
+}
+
+.menuButtonActive {
+  border-color: rgba($color-primary, 0.38);
+  background: linear-gradient(
+    135deg,
+    rgba($color-primary, 0.18),
+    rgba($color-accent, 0.12)
+  );
+  color: var(--color-primary-strong);
+  box-shadow: 0 18px 32px -26px rgba($color-primary, 0.6);
+}
+
+.sidebarRtl .menuButton {
+  text-align: right;
+}
+
+.content {
+  display: grid;
+  gap: 2rem;
+}
+
+.sectionCard {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.sectionHeader {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.sectionDescription {
+  color: var(--color-text-muted);
+  max-width: 48ch;
+}
+
+.formGrid {
+  display: grid;
+  gap: 1rem;
+  max-width: 420px;
+}
+
+.editToggle {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.editToggleLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.editToggle input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-primary);
+}
+
+.editToggleRtl {
+  justify-content: flex-end;
+}
+
+.formActions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.errorMessage {
+  color: var(--color-danger);
+  font-size: 0.92rem;
+}
+
+.ordersList {
+  display: grid;
+  gap: 1rem;
+}
+
+.orderCard {
+  border: 1px solid rgba($color-primary, 0.12);
+  border-radius: var(--radius-md);
+  padding: 1.1rem 1.3rem;
+  display: grid;
+  gap: 0.75rem;
+  background: var(--color-surface-translucent);
+}
+
+.orderHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+}
+
+.orderMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  color: var(--color-text-muted);
+  font-size: 0.95rem;
+}
+
+.orderProducts {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.orderProduct {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+}
+
+.guard {
+  padding: 3rem;
+  text-align: center;
+  display: grid;
+  gap: 1.2rem;
+}
+
+.guardActions {
+  display: flex;
+  gap: 0.9rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@media (max-width: $breakpoint-md) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: initial;
+    order: -1;
+  }
+
+  .sidebarRtl {
+    text-align: initial;
+  }
+
+  .sidebar .menuButton {
+    text-align: center;
+  }
+
+  .sidebarRtl .menuButton {
+    text-align: center;
+  }
+
+  .sidebarButtons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .sidebar {
+    gap: 0.75rem;
+  }
+}

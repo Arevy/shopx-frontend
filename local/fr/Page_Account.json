@@ -1,0 +1,60 @@
+{
+  "title": "Your account",
+  "subtitle": "Manage your personal details, account security, and the history of your orders.",
+  "menu": {
+    "overview": "Profile",
+    "security": "Security",
+    "orders": "Orders"
+  },
+  "sections": {
+    "overview": {
+      "title": "Profile details",
+      "description": "Update the way your name and email appear across ShopX. Changes apply immediately after saving.",
+      "form": {
+        "name_label": "Full name",
+        "name_placeholder": "Add your full name",
+        "email_label": "Email address",
+        "email_placeholder": "name@example.com",
+        "enable_edit": "Enable profile editing",
+        "password_label": "Confirm with password",
+        "password_placeholder": "Enter your password to confirm",
+        "password_required": "Please enter your password to confirm these changes.",
+        "submit": "Save changes"
+      }
+    },
+    "security": {
+      "title": "Account security",
+      "description": "Choose a strong password that keeps your information safe.",
+      "form": {
+        "current_label": "Current password",
+        "current_placeholder": "Enter your current password",
+        "new_label": "New password",
+        "new_placeholder": "Enter a new password",
+        "confirm_label": "Confirm new password",
+        "confirm_placeholder": "Repeat the new password",
+        "submit": "Update password",
+        "mismatch": "The new passwords do not match."
+      }
+    },
+    "orders": {
+      "title": "Order history",
+      "description": "Review past purchases and keep track of their status.",
+      "loading": "Loading your orders...",
+      "empty": "You have not placed any orders yet.",
+      "total": "Total: {{value}}",
+      "status": "Status: {{value}}",
+      "placed": "Placed on {{value}}",
+      "items": "{{count}} items",
+      "order_id": "Order #{{id}}",
+      "product_line": "Product {{id}}"
+    }
+  },
+  "guard": {
+    "title": "Sign in to access your account",
+    "subtitle": "Log in to view your details, update your profile, and review orders.",
+    "actions": {
+      "sign_in": "Sign in",
+      "register": "Create account"
+    }
+  }
+}

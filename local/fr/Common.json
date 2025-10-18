@@ -21,6 +21,7 @@
     "actions": {
       "sign_in": "Connexion",
       "sign_out": "Déconnexion",
+      "profile": "Profil",
       "toggle_navigation": "Ouvrir la navigation"
     }
   },
@@ -30,7 +31,8 @@
     "product_detail": "Détails du produit",
     "cms_page": "Page de contenu",
     "login": "Connexion",
-    "register": "Créer un compte"
+    "register": "Créer un compte",
+    "account": "Compte"
   },
   "footer": {
     "description": "La plateforme e-commerce qui marie technologie et design pour une expérience moderne.",

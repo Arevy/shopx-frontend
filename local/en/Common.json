@@ -21,6 +21,7 @@
     "actions": {
       "sign_in": "Sign in",
       "sign_out": "Sign out",
+      "profile": "Account",
       "toggle_navigation": "Toggle navigation"
     }
   },
@@ -30,7 +31,8 @@
     "product_detail": "Product details",
     "cms_page": "Content page",
     "login": "Sign in",
-    "register": "Create account"
+    "register": "Create account",
+    "account": "Account"
   },
   "footer": {
     "description": "The e-commerce platform that blends technology with design for a contemporary shopping experience.",

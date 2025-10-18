@@ -12,8 +12,18 @@ import type { Cart } from '@/types/cart'
 import type { AuthPayload, User } from '@/types/user'
 import type { UserContext } from '@/types/userContext'
 import { isSessionExpiredError } from '@lib/authEvents'
-import { normalizeAddress, normalizeAddresses, normalizeUserContext } from '@graphql/user/normalizers'
+import {
+  normalizeAddress,
+  normalizeAddresses,
+  normalizeUser,
+  normalizeUserContext,
+} from '@graphql/user/normalizers'
+import { UPDATE_USER_PROFILE } from '@graphql/user/UpdateProfile'
+import { CHANGE_USER_PASSWORD } from '@graphql/user/ChangePassword'
+import { GET_ORDERS } from '@graphql/orders/GetOrders'
+import { normalizeOrders } from '@graphql/orders/normalizers'
 import type { RootStore } from './rootStore'
+import type { Order } from '@/types/order'
 
 const STORAGE_KEY = 'shopx:auth'
 
@@ -37,6 +47,13 @@ export class UserStore {
   addressesLoading = false
   addressesError: string | null = null
   savingAddress = false
+  orders: Order[] = []
+  ordersLoading = false
+  ordersError: string | null = null
+  profileSaving = false
+  profileError: string | null = null
+  passwordChanging = false
+  passwordError: string | null = null
 
   constructor(root: RootStore) {
     this.root = root
@@ -91,6 +108,12 @@ export class UserStore {
     this.addressesLoading = false
     this.addressesError = null
     this.savingAddress = false
+  }
+
+  resetOrders() {
+    this.orders = []
+    this.ordersLoading = false
+    this.ordersError = null
   }
 
   async loadAddresses(): Promise<Address[]> {
@@ -163,6 +186,214 @@ export class UserStore {
     } finally {
       runInAction(() => {
         this.savingAddress = false
+      })
+    }
+  }
+
+  async loadOrders({ force = false }: { force?: boolean } = {}): Promise<Order[]> {
+    const userId = this.numericUserId
+    if (!userId) {
+      this.resetOrders()
+      return []
+    }
+
+    if (!force && this.orders.length) {
+      return this.orders
+    }
+
+    this.ordersLoading = true
+    this.ordersError = null
+
+    try {
+      const { getOrders } = await this.root.apiService.execute<{
+        getOrders: Array<Partial<Order>>
+      }>(
+        GET_ORDERS,
+        { userId },
+        { skipCache: true },
+      )
+
+      const normalized = normalizeOrders(getOrders)
+      runInAction(() => {
+        this.orders = normalized
+      })
+      return normalized
+    } catch (error) {
+      const message = getUserFriendlyMessage(
+        error,
+        'We could not load your orders. Please try again later.',
+      )
+      runInAction(() => {
+        this.ordersError = message
+      })
+      this.root.uiStore.addToast(message, 'error')
+      return []
+    } finally {
+      runInAction(() => {
+        this.ordersLoading = false
+      })
+    }
+  }
+
+  async updateProfile(
+    input: {
+      name?: string | null
+      email?: string
+      currentPassword?: string
+    },
+  ): Promise<User | null> {
+    if (!this.isAuthenticated) {
+      throw new Error('Authentication required')
+    }
+
+    const payload: {
+      name?: string | null
+      email?: string
+    } = {}
+
+    let trimmedPassword = ''
+
+    if (Object.prototype.hasOwnProperty.call(input, 'name')) {
+      payload.name = input.name ?? null
+    }
+
+    if (Object.prototype.hasOwnProperty.call(input, 'email')) {
+      const email = input.email?.trim() ?? ''
+      if (!email) {
+        const message = 'Email address cannot be empty.'
+        runInAction(() => {
+          this.profileError = message
+        })
+        this.root.uiStore.addToast(message, 'error')
+        return null
+      }
+      payload.email = email
+    }
+
+    if (!Object.keys(payload).length) {
+      runInAction(() => {
+        this.profileError = null
+      })
+      return this.user
+    }
+
+    if (Object.prototype.hasOwnProperty.call(input, 'currentPassword')) {
+      trimmedPassword = input.currentPassword?.trim() ?? ''
+    }
+
+    if (!trimmedPassword) {
+      const message = 'Please confirm the change with your password.'
+      runInAction(() => {
+        this.profileError = message
+      })
+      this.root.uiStore.addToast(message, 'error')
+      return null
+    }
+
+    this.profileSaving = true
+    this.profileError = null
+
+    try {
+      const { updateUserProfile } = await this.root.apiService.execute<{
+        updateUserProfile: { user: User; message: string }
+      }>(
+        UPDATE_USER_PROFILE,
+        { input: { ...payload, currentPassword: trimmedPassword } },
+        { skipCache: true },
+      )
+
+      const normalized = normalizeUser(updateUserProfile.user)
+      if (normalized) {
+        runInAction(() => {
+          this.profileError = null
+        })
+        this.adoptUserSession(normalized)
+        this.root.uiStore.addToast(
+          updateUserProfile.message || 'Profile updated successfully.',
+          'success',
+        )
+        return normalized
+      }
+
+      return this.user
+    } catch (error) {
+      const message = getUserFriendlyMessage(
+        error,
+        'We could not update your profile. Please try again later.',
+        {
+          knownMessages: [
+            {
+              match: /email already registered/i,
+              value: 'Another account is already using this email address.',
+            },
+            {
+              match: /email address is required/i,
+              value: 'Email address cannot be empty.',
+            },
+            {
+              match: /password confirmation is required/i,
+              value: 'Please enter your password to confirm these changes.',
+            },
+            {
+              match: /current password is incorrect/i,
+              value: 'The password you entered is incorrect.',
+            },
+          ],
+        },
+      )
+      runInAction(() => {
+        this.profileError = message
+      })
+      this.root.uiStore.addToast(message, 'error')
+      return null
+    } finally {
+      runInAction(() => {
+        this.profileSaving = false
+      })
+    }
+  }
+
+  async changePassword(currentPassword: string, newPassword: string): Promise<boolean> {
+    if (!this.isAuthenticated) {
+      throw new Error('Authentication required')
+    }
+
+    this.passwordChanging = true
+    this.passwordError = null
+
+    try {
+      await this.root.apiService.execute<{ changeUserPassword: boolean }>(
+        CHANGE_USER_PASSWORD,
+        { currentPassword, newPassword },
+        { skipCache: true },
+      )
+      this.root.uiStore.addToast('Password updated successfully.', 'success')
+      return true
+    } catch (error) {
+      const message = getUserFriendlyMessage(
+        error,
+        'We could not change your password. Please try again later.',
+        {
+          knownMessages: [
+            {
+              match: /incorrect/i,
+              value: 'The current password you entered is incorrect.',
+            },
+            {
+              match: /at least 8/i,
+              value: 'Password should be at least 8 characters long.',
+            },
+          ],
+        },
+      )
+      runInAction(() => {
+        this.passwordError = message
+      })
+      this.root.uiStore.addToast(message, 'error')
+      return false
+    } finally {
+      runInAction(() => {
+        this.passwordChanging = false
       })
     }
   }
@@ -276,6 +507,11 @@ export class UserStore {
     this.root.cartStore.reset()
     this.root.wishlistStore.reset()
     this.resetAddresses()
+    this.resetOrders()
+    this.profileSaving = false
+    this.profileError = null
+    this.passwordChanging = false
+    this.passwordError = null
     this.root.uiStore.addToast('You have been signed out. See you soon!', 'info')
   }
 
@@ -290,6 +526,11 @@ export class UserStore {
     this.root.cartStore.reset()
     this.root.wishlistStore.reset()
     this.resetAddresses()
+    this.resetOrders()
+    this.profileSaving = false
+    this.profileError = null
+    this.passwordChanging = false
+    this.passwordError = null
     this.root.uiStore.addToast('Your session expired. Please sign in again.', 'info')
   }
 

@@ -74,10 +74,19 @@
   gap: 0.5rem;
   cursor: pointer;
   transition: background 0.2s ease;
+  text-decoration: none;
 
   &:hover {
     background: rgba($color-primary, 0.18);
   }
+}
+
+.mobileUserLink {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
 .menuToggle {

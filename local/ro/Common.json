@@ -21,6 +21,7 @@
     "actions": {
       "sign_in": "Autentificare",
       "sign_out": "Deconectare",
+      "profile": "Profil",
       "toggle_navigation": "Comută navigarea"
     }
   },
@@ -30,7 +31,8 @@
     "product_detail": "Detalii produs",
     "cms_page": "Pagină de conținut",
     "login": "Autentificare",
-    "register": "Creare cont"
+    "register": "Creare cont",
+    "account": "Contul meu"
   },
   "footer": {
     "description": "Platforma de comerț electronic care îmbină tehnologia cu designul pentru o experiență modernă.",

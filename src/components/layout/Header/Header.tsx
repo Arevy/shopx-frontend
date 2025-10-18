@@ -95,9 +95,14 @@ export const Header = observer(() => {
 
         <div className={classNames(styles.actions, { [styles.actionsRtl]: isRtl })}>
           {userStore.isAuthenticated ? (
-            <Button variant="secondary" size="sm" onClick={userStore.logout}>
-              {userStore.user?.name ?? userStore.user?.email ?? t('header.actions.sign_out')}
-            </Button>
+            <>
+              <Link href="/account" className={styles.userButton}>
+                {userStore.user?.name ?? userStore.user?.email ?? t('header.actions.profile')}
+              </Link>
+              <Button variant="outline" size="sm" onClick={userStore.logout}>
+                {t('header.actions.sign_out')}
+              </Button>
+            </>
           ) : (
             <Button href={{ pathname: '/auth/login' }} variant="outline" size="sm">
               {t('header.actions.sign_in')}
@@ -143,16 +148,21 @@ export const Header = observer(() => {
               </Link>
             ))}
             {userStore.isAuthenticated ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={async () => {
-                  await userStore.logout()
-                  onClose()
-                }}
-              >
-                {t('header.actions.sign_out')}
-              </Button>
+              <>
+                <Link href="/account" className={styles.mobileUserLink} onClick={onClose}>
+                  {userStore.user?.name ?? userStore.user?.email ?? t('header.actions.profile')}
+                </Link>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    await userStore.logout()
+                    onClose()
+                  }}
+                >
+                  {t('header.actions.sign_out')}
+                </Button>
+              </>
             ) : (
               <Button
                 href={{ pathname: '/auth/login' }}
