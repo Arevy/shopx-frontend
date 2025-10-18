@@ -5,24 +5,15 @@ import { REMOVE_FROM_CART } from '@graphql/cart/RemoveFromCart'
 import { CLEAR_CART } from '@graphql/cart/ClearCart'
 import { CREATE_ORDER } from '@graphql/checkout/CreateOrder'
 import { CREATE_PAYMENT } from '@graphql/checkout/CreatePayment'
+import { normalizeCart, normalizeOrder, GraphQLOrder } from '@graphql/cart/normalizers'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import type { Cart, CartItem } from '@/types/cart'
-import type { Order, OrderProductSummary } from '@/types/order'
+import type { Order } from '@/types/order'
 import type { Product } from '@/types/product'
 import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
 
 const LOCAL_CART_KEY = 'shopx:cart'
-
-type GraphQLOrderProduct = Omit<OrderProductSummary, 'productId'> & {
-  productId: string | number
-}
-
-type GraphQLOrder = Omit<Order, 'id' | 'userId' | 'products'> & {
-  id: string | number
-  userId: string | number
-  products: GraphQLOrderProduct[]
-}
 
 interface PlaceOrderParams {
   cartItems: CartItem[]
@@ -30,16 +21,6 @@ interface PlaceOrderParams {
   paymentMethod: string
   missingProductMessage?: string
 }
-
-const normalizeOrder = (order: GraphQLOrder): Order => ({
-  ...order,
-  id: String(order.id),
-  userId: String(order.userId),
-  products: order.products.map((product) => ({
-    ...product,
-    productId: String(product.productId),
-  })),
-})
 
 export class CartStore {
   private readonly root: RootStore
@@ -184,21 +165,7 @@ export class CartStore {
   }
 
   setRemoteCart(cart: Cart) {
-    this.cart = {
-      userId: String(cart.userId),
-      total: cart.total,
-      items: cart.items.map((item) => ({
-        quantity: item.quantity,
-        product: {
-          ...item.product,
-          id: String(item.product.id),
-          categoryId:
-            item.product.categoryId !== undefined && item.product.categoryId !== null
-              ? String(item.product.categoryId)
-              : null,
-        },
-      })),
-    }
+    this.cart = normalizeCart(cart)
   }
 
   async addItem(product: Product, quantity = 1) {
@@ -231,10 +198,7 @@ export class CartStore {
         quantity,
       })
       runInAction(() => {
-        this.cart = {
-          ...addToCart,
-          userId: String(addToCart.userId),
-        }
+        this.cart = normalizeCart(addToCart)
       })
       this.root.uiStore.addToast('Product added to cart.', 'success')
     } catch (err) {
@@ -314,10 +278,7 @@ export class CartStore {
         },
       )
       runInAction(() => {
-        this.cart = {
-          ...removeFromCart,
-          userId: String(removeFromCart.userId),
-        }
+        this.cart = normalizeCart(removeFromCart)
       })
     } catch (err) {
       console.error('Failed to remove from cart', err)

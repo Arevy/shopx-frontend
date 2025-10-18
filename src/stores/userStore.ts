@@ -8,9 +8,11 @@ import { LOGOUT } from '@graphql/user/Logout'
 import { REGISTER } from '@graphql/user/Register'
 import { REDEEM_IMPERSONATION } from '@graphql/user/RedeemImpersonation'
 import type { Address } from '@/types/address'
+import type { Cart } from '@/types/cart'
 import type { AuthPayload, User } from '@/types/user'
 import type { UserContext } from '@/types/userContext'
 import { isSessionExpiredError } from '@lib/authEvents'
+import { normalizeAddress, normalizeAddresses, normalizeUserContext } from '@graphql/user/normalizers'
 import type { RootStore } from './rootStore'
 
 const STORAGE_KEY = 'shopx:auth'
@@ -19,23 +21,12 @@ interface StoredAuth {
   user: User
 }
 
-type GraphQLAddress = Omit<Address, 'id' | 'userId'> & {
-  id: string | number
-  userId?: string | number
-}
-
 type AddressInput = {
   street: string
   city: string
   postalCode: string
   country: string
 }
-
-const normalizeAddress = (address: GraphQLAddress): Address => ({
-  ...address,
-  id: String(address.id),
-  userId: address.userId ? String(address.userId) : undefined,
-})
 
 export class UserStore {
   private readonly root: RootStore
@@ -114,10 +105,10 @@ export class UserStore {
 
     try {
       const { getAddresses } = await this.root.apiService.execute<{
-        getAddresses: GraphQLAddress[]
+        getAddresses: Array<Partial<Address>>
       }>(GET_ADDRESSES, { userId })
 
-      const normalized = getAddresses.map(normalizeAddress)
+      const normalized = normalizeAddresses(getAddresses)
       runInAction(() => {
         this.addresses = normalized
       })
@@ -149,7 +140,7 @@ export class UserStore {
 
     try {
       const { addAddress } = await this.root.apiService.execute<{
-        addAddress: GraphQLAddress
+        addAddress: Partial<Address>
       }>(ADD_ADDRESS, {
         userId,
         ...input,
@@ -317,26 +308,33 @@ export class UserStore {
     }
 
     try {
-      const { getUserContext } = await this.root.apiService.execute<{ getUserContext: UserContext }>(
+      const { getUserContext } = await this.root.apiService.execute<{
+        getUserContext: Partial<UserContext> | null
+      }>(
         GET_USER_CONTEXT,
         { userId: numericId },
       )
 
-      if (getUserContext.user) {
-        this.adoptUserSession(getUserContext.user)
+      const normalizedContext = normalizeUserContext(getUserContext)
+
+      if (normalizedContext?.user) {
+        this.adoptUserSession(normalizedContext.user)
       } else {
         this.user = null
         this.persist()
       }
 
-      this.root.cartStore.setRemoteCart(getUserContext.cart)
-      this.root.wishlistStore.setRemoteProducts(getUserContext.wishlist.products)
-      this.addresses = (getUserContext.addresses ?? []).map((address) =>
-        normalizeAddress(address as GraphQLAddress),
-      )
+      if (normalizedContext?.cart) {
+        this.root.cartStore.setRemoteCart(normalizedContext.cart as Cart)
+      } else {
+        this.root.cartStore.reset()
+      }
+
+      this.root.wishlistStore.setRemoteProducts(normalizedContext?.wishlist.products ?? [])
+      this.addresses = normalizeAddresses(normalizedContext?.addresses)
       this.addressesError = null
 
-      return getUserContext
+      return normalizedContext
     } catch (err) {
       if (isSessionExpiredError(err)) {
         return null

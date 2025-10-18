@@ -2,6 +2,7 @@ import { makeAutoObservable, runInAction } from 'mobx'
 import { GET_WISHLIST } from '@graphql/wishlist/GetWishlist'
 import { ADD_TO_WISHLIST } from '@graphql/wishlist/AddToWishlist'
 import { REMOVE_FROM_WISHLIST } from '@graphql/wishlist/RemoveFromWishlist'
+import { normalizeWishlistProducts } from '@graphql/wishlist/normalizers'
 import type { Product } from '@/types/product'
 import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
@@ -205,14 +206,7 @@ export class WishlistStore {
   }
 
   setRemoteProducts(products: Product[]) {
-    this.products = products.map((product) => ({
-      ...product,
-      id: String(product.id),
-      categoryId:
-        product.categoryId !== undefined && product.categoryId !== null
-          ? String(product.categoryId)
-          : null,
-    }))
+    this.products = normalizeWishlistProducts(products)
   }
 
   reset() {
