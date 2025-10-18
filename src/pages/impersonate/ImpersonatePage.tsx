@@ -3,11 +3,8 @@
 import classNames from 'classnames'
 import { Suspense, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
-import { requestGraphQL } from '@lib/graphqlClient'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
-import { REDEEM_IMPERSONATION } from '@graphql/operations'
 import { useStores } from '@stores/StoreProvider'
-import type { User } from '@/types/user'
 import { Button, Surface } from '@components/ui'
 import styles from './ImpersonatePage.module.scss'
 
@@ -37,17 +34,11 @@ const ImpersonateContent = () => {
     const impersonate = async () => {
       try {
         setStatus('Verifying token…')
-        const { redeemImpersonation } = await requestGraphQL<{
-          redeemImpersonation: User
-        }>(REDEEM_IMPERSONATION, { token })
+        await userStore.redeemImpersonation(token)
 
         if (cancelled) {
           return
         }
-
-        userStore.adoptUserSession(redeemImpersonation)
-        cartStore.reset()
-        wishlistStore.reset()
 
         setStatus('Syncing customer context…')
         await Promise.all([

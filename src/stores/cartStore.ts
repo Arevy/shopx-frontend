@@ -1,18 +1,45 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import {
-  ADD_TO_CART,
-  CLEAR_CART,
-  GET_CART,
-  REMOVE_FROM_CART,
-} from '@graphql/operations'
-import { requestGraphQL } from '@lib/graphqlClient'
+import { GET_CART } from '@graphql/cart/GetCart'
+import { ADD_TO_CART } from '@graphql/cart/AddToCart'
+import { REMOVE_FROM_CART } from '@graphql/cart/RemoveFromCart'
+import { CLEAR_CART } from '@graphql/cart/ClearCart'
+import { CREATE_ORDER } from '@graphql/checkout/CreateOrder'
+import { CREATE_PAYMENT } from '@graphql/checkout/CreatePayment'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import type { Cart, CartItem } from '@/types/cart'
+import type { Order, OrderProductSummary } from '@/types/order'
 import type { Product } from '@/types/product'
 import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
 
 const LOCAL_CART_KEY = 'shopx:cart'
+
+type GraphQLOrderProduct = Omit<OrderProductSummary, 'productId'> & {
+  productId: string | number
+}
+
+type GraphQLOrder = Omit<Order, 'id' | 'userId' | 'products'> & {
+  id: string | number
+  userId: string | number
+  products: GraphQLOrderProduct[]
+}
+
+interface PlaceOrderParams {
+  cartItems: CartItem[]
+  total: number
+  paymentMethod: string
+  missingProductMessage?: string
+}
+
+const normalizeOrder = (order: GraphQLOrder): Order => ({
+  ...order,
+  id: String(order.id),
+  userId: String(order.userId),
+  products: order.products.map((product) => ({
+    ...product,
+    productId: String(product.productId),
+  })),
+})
 
 export class CartStore {
   private readonly root: RootStore
@@ -20,6 +47,7 @@ export class CartStore {
   localItems: CartItem[] = []
   loading = false
   error: string | null = null
+  checkoutSubmitting = false
 
   constructor(root: RootStore) {
     this.root = root
@@ -102,7 +130,7 @@ export class CartStore {
           continue
         }
 
-        await requestGraphQL<{ addToCart: Cart }>(ADD_TO_CART, {
+        await this.root.apiService.execute<{ addToCart: Cart }>(ADD_TO_CART, {
           userId,
           productId: productIdValue,
           quantity: item.quantity,
@@ -132,7 +160,7 @@ export class CartStore {
       return
     }
     try {
-      const { getCart } = await requestGraphQL<{ getCart: Cart }>(GET_CART, {
+      const { getCart } = await this.root.apiService.execute<{ getCart: Cart }>(GET_CART, {
         userId,
       })
       runInAction(() => {
@@ -197,7 +225,7 @@ export class CartStore {
         console.error('Invalid product id for cart add', { id: product.id })
         return
       }
-      const { addToCart } = await requestGraphQL<{ addToCart: Cart }>(ADD_TO_CART, {
+      const { addToCart } = await this.root.apiService.execute<{ addToCart: Cart }>(ADD_TO_CART, {
         userId,
         productId: productIdValue,
         quantity,
@@ -276,7 +304,7 @@ export class CartStore {
         console.error('Invalid product id for cart removal', { productId })
         return
       }
-      const { removeFromCart } = await requestGraphQL<{
+      const { removeFromCart } = await this.root.apiService.execute<{
         removeFromCart: Cart
       }>(
         REMOVE_FROM_CART,
@@ -311,7 +339,7 @@ export class CartStore {
     if (!userId) return
 
     try {
-      await requestGraphQL<{ clearCart: boolean }>(CLEAR_CART, { userId })
+      await this.root.apiService.execute<{ clearCart: boolean }>(CLEAR_CART, { userId })
       this.cart = { userId: String(userId), items: [], total: 0 }
     } catch (err) {
       console.error('Failed to clear cart', err)
@@ -319,6 +347,66 @@ export class CartStore {
         'We couldn’t clear the cart. Please try again.',
         'error',
       )
+    }
+  }
+
+  async placeOrder(params: PlaceOrderParams): Promise<Order> {
+    if (!this.root.userStore.isAuthenticated) {
+      throw new Error('Authentication required.')
+    }
+
+    const userId = this.requireUserId()
+    if (!userId) {
+      throw new Error('Authentication required.')
+    }
+
+    const { cartItems, total, paymentMethod, missingProductMessage } = params
+    if (!cartItems.length) {
+      throw new Error('Cart is empty.')
+    }
+
+    this.checkoutSubmitting = true
+    this.error = null
+
+    try {
+      const orderProducts = cartItems.map((item) => ({
+        productId: item.product.id,
+        quantity: item.quantity,
+        price: item.product.price,
+      }))
+
+      if (orderProducts.some((product) => !product.productId)) {
+        throw new Error(missingProductMessage ?? 'One of the selected products is invalid.')
+      }
+
+      const { createOrder } = await this.root.apiService.execute<{ createOrder: GraphQLOrder }>(
+        CREATE_ORDER,
+        {
+          userId,
+          products: orderProducts,
+        },
+      )
+
+      await this.root.apiService.execute(CREATE_PAYMENT, {
+        orderId: createOrder.id,
+        amount: total,
+        method: paymentMethod,
+      })
+
+      const normalizedOrder = normalizeOrder(createOrder)
+
+      await this.clearCart()
+
+      return normalizedOrder
+    } catch (error) {
+      const message = getUserFriendlyMessage(
+        error,
+        'We could not complete your checkout. Please try again.',
+      )
+      this.error = message
+      throw new Error(message)
+    } finally {
+      this.checkoutSubmitting = false
     }
   }
 

@@ -1,3 +1,4 @@
+import ApiService from '@lib/apiService'
 import { CartStore } from './cartStore'
 import { CmsStore } from './cmsStore'
 import { ProductStore } from './productStore'
@@ -6,6 +7,7 @@ import { UserStore } from './userStore'
 import { WishlistStore } from './wishlistStore'
 
 export class RootStore {
+  readonly apiService: ApiService
   readonly uiStore: UiStore
   readonly userStore: UserStore
   readonly productStore: ProductStore
@@ -14,6 +16,7 @@ export class RootStore {
   readonly cmsStore: CmsStore
 
   constructor() {
+    this.apiService = new ApiService()
     this.uiStore = new UiStore()
     this.productStore = new ProductStore(this)
     this.cartStore = new CartStore(this)

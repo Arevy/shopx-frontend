@@ -1,10 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import {
-  ADD_TO_WISHLIST,
-  GET_WISHLIST,
-  REMOVE_FROM_WISHLIST,
-} from '@graphql/operations'
-import { requestGraphQL } from '@lib/graphqlClient'
+import { GET_WISHLIST } from '@graphql/wishlist/GetWishlist'
+import { ADD_TO_WISHLIST } from '@graphql/wishlist/AddToWishlist'
+import { REMOVE_FROM_WISHLIST } from '@graphql/wishlist/RemoveFromWishlist'
 import type { Product } from '@/types/product'
 import { isSessionExpiredError } from '@lib/authEvents'
 import type { RootStore } from './rootStore'
@@ -64,7 +61,7 @@ export class WishlistStore {
 
     this.loading = true
     try {
-      const { getWishlist } = await requestGraphQL<{
+      const { getWishlist } = await this.root.apiService.execute<{
         getWishlist: { products: Product[] }
       }>(GET_WISHLIST, { userId })
       runInAction(() => {
@@ -106,7 +103,7 @@ export class WishlistStore {
           continue
         }
 
-        await requestGraphQL<{ addToWishlist: { products: Product[] } }>(
+        await this.root.apiService.execute<{ addToWishlist: { products: Product[] } }>(
           ADD_TO_WISHLIST,
           {
             userId,
@@ -134,7 +131,7 @@ export class WishlistStore {
       return
     }
 
-    const { addToWishlist } = await requestGraphQL<{
+    const { addToWishlist } = await this.root.apiService.execute<{
       addToWishlist: { products: Product[] }
     }>(ADD_TO_WISHLIST, { userId, productId: productIdValue })
     this.setRemoteProducts(addToWishlist.products)
@@ -149,7 +146,7 @@ export class WishlistStore {
       return
     }
 
-    const { removeFromWishlist } = await requestGraphQL<{
+    const { removeFromWishlist } = await this.root.apiService.execute<{
       removeFromWishlist: { products: Product[] }
     }>(REMOVE_FROM_WISHLIST, { userId, productId: productIdValue })
     this.setRemoteProducts(removeFromWishlist.products)

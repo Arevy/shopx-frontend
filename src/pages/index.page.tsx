@@ -1,19 +1,10 @@
 import type { GetStaticProps } from 'next'
-import { GET_CMS_PAGE, GET_PRODUCTS } from '@graphql/operations'
-import { requestGraphQL } from '@lib/graphqlClient'
+import { createRootStore } from '@stores/rootStore'
 import type { CmsPage } from '@/types/cms'
 import type { Product } from '@/types/product'
 import HomePage from './home/HomePage'
 
 const HOME_CMS_SLUG = 'homepage'
-
-type ProductsResponse = {
-  getProducts: Product[]
-}
-
-type CmsResponse = {
-  getCmsPage: CmsPage | null
-}
 
 type HomeProps = {
   heroProduct: Product | null
@@ -34,20 +25,16 @@ const IndexPage = ({ heroProduct, featuredProducts, newArrivals, cmsPage }: Home
 }
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
-  const [productsResult, cmsResult] = await Promise.allSettled([
-    requestGraphQL<ProductsResponse>(GET_PRODUCTS, { limit: 24 }),
-    requestGraphQL<CmsResponse>(GET_CMS_PAGE, { slug: HOME_CMS_SLUG }),
-  ])
+  const store = createRootStore()
 
-  const products =
-    productsResult.status === 'fulfilled' ? productsResult.value.getProducts : []
+  await store.productStore.fetchProducts()
+  const products = store.productStore.products.slice(0, 24)
 
   const heroProduct = products[0] ?? null
   const featuredProducts = products.slice(0, 4)
   const newArrivals = products.slice(-6).reverse()
 
-  const cmsPage =
-    cmsResult.status === 'fulfilled' ? cmsResult.value.getCmsPage : null
+  const cmsPage = await store.cmsStore.getPage(HOME_CMS_SLUG)
 
   return {
     props: {

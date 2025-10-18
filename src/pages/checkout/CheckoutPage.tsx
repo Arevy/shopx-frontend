@@ -5,15 +5,7 @@ import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { Button, FormField, Input, SectionHeader, Select, Surface } from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
-import { requestGraphQL } from '@lib/graphqlClient'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
-import {
-  ADD_ADDRESS,
-  CREATE_ORDER,
-  CREATE_PAYMENT,
-  GET_ADDRESSES,
-} from '@graphql/operations'
-import type { Address } from '@/types/address'
 import type { Order } from '@/types/order'
 import { useRTL, useTranslation } from '@/i18n'
 import styles from './CheckoutPage.module.scss'
@@ -40,10 +32,8 @@ const CheckoutPage = observer(() => {
     postalCode: '',
     country: defaultCountryRef.current,
   }))
-  const [addresses, setAddresses] = useState<Address[]>([])
   const [selectedAddressId, setSelectedAddressId] = useState<string>('new')
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethodId>('card')
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [orderCompleted, setOrderCompleted] = useState<Order | null>(null)
 
@@ -76,16 +66,20 @@ const CheckoutPage = observer(() => {
   const userId = Number(userIdRaw)
 
   useEffect(() => {
-    if (!isLoggedIn || !Number.isFinite(userId)) return
+    if (!isLoggedIn || !Number.isFinite(userId)) {
+      userStore.resetAddresses()
+      setSelectedAddressId('new')
+      return
+    }
 
-    let isMounted = true
+    let cancelled = false
 
-    requestGraphQL<{ getAddresses: Address[] }>(GET_ADDRESSES, { userId })
-      .then(({ getAddresses }) => {
-        if (!isMounted) return
-        setAddresses(getAddresses)
-        if (getAddresses.length) {
-          setSelectedAddressId(String(getAddresses[0].id))
+    userStore
+      .loadAddresses()
+      .then((list) => {
+        if (cancelled) return
+        if (list.length) {
+          setSelectedAddressId((current) => (current === 'new' ? String(list[0].id) : current))
         }
       })
       .catch((err) => {
@@ -93,9 +87,25 @@ const CheckoutPage = observer(() => {
       })
 
     return () => {
-      isMounted = false
+      cancelled = true
     }
-  }, [isLoggedIn, userId])
+  }, [userStore, isLoggedIn, userId])
+
+  const addresses = userStore.addresses
+
+  useEffect(() => {
+    if (!addresses.length) {
+      setSelectedAddressId('new')
+      return
+    }
+
+    if (
+      selectedAddressId !== 'new' &&
+      !addresses.some((address) => address.id === selectedAddressId)
+    ) {
+      setSelectedAddressId(String(addresses[0].id))
+    }
+  }, [addresses, selectedAddressId])
 
   const selectedAddress = useMemo(() => {
     if (selectedAddressId === 'new') return null
@@ -110,46 +120,22 @@ const CheckoutPage = observer(() => {
     event.preventDefault()
     if (!Number.isFinite(userId)) return
 
-    setLoading(true)
     setError(null)
 
     try {
-      let addressId = selectedAddressId !== 'new' ? selectedAddressId : undefined
-
-      if (!addressId) {
-        const { addAddress } = await requestGraphQL<{ addAddress: Address }>(ADD_ADDRESS, {
-          userId,
-          ...form,
-        })
-        addressId = String(addAddress.id)
-        setAddresses((prev) => [addAddress, ...prev])
-        setSelectedAddressId(String(addAddress.id))
+      if (selectedAddressId === 'new') {
+        const createdAddress = await userStore.createAddress(form)
+        setSelectedAddressId(createdAddress.id)
       }
 
-      const orderProducts = cartItems.map((item) => ({
-        productId: item.product.id,
-        quantity: item.quantity,
-        price: item.product.price,
-      }))
-
-      if (orderProducts.some((product) => !product.productId)) {
-        throw new Error(t('form.errors.missing_product'))
-      }
-
-      const { createOrder } = await requestGraphQL<{ createOrder: Order }>(CREATE_ORDER, {
-        userId,
-        products: orderProducts,
+      const order = await cartStore.placeOrder({
+        cartItems,
+        total,
+        paymentMethod,
+        missingProductMessage: t('form.errors.missing_product'),
       })
 
-      await requestGraphQL(CREATE_PAYMENT, {
-        orderId: createOrder.id,
-        amount: total,
-        method: paymentMethod,
-      })
-
-      await cartStore.clearCart()
-
-      setOrderCompleted(createOrder)
+      setOrderCompleted(order)
       uiStore.addToast(t('toast.success'), 'success')
     } catch (err) {
       console.error('Checkout failed', err)
@@ -159,8 +145,6 @@ const CheckoutPage = observer(() => {
       )
       setError(message)
       uiStore.addToast(message, 'error')
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -212,12 +196,17 @@ const CheckoutPage = observer(() => {
         <Surface as="section" className={styles.section}>
           <h2 className={styles.sectionHeading}>{t('form.address.title')}</h2>
 
+          {userStore.addressesError ? (
+            <div className={styles.error}>{userStore.addressesError}</div>
+          ) : null}
+
           {addresses.length > 0 && (
             <FormField label={t('form.address.saved_label')} htmlFor="saved-address">
               <Select
                 id="saved-address"
                 value={selectedAddressId}
                 onChange={(event) => setSelectedAddressId(event.target.value)}
+                disabled={userStore.addressesLoading || userStore.savingAddress}
               >
                 {addresses.map((address) => (
                   <option key={address.id} value={address.id}>
@@ -238,6 +227,7 @@ const CheckoutPage = observer(() => {
                   onChange={(event) => handleChange('street', event.target.value)}
                   required
                   autoComplete="address-line1"
+                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
                 />
               </FormField>
               <FormField label={t('form.address.fields.city')} htmlFor="shipping-city">
@@ -247,6 +237,7 @@ const CheckoutPage = observer(() => {
                   onChange={(event) => handleChange('city', event.target.value)}
                   required
                   autoComplete="address-level2"
+                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
                 />
               </FormField>
               <FormField
@@ -259,6 +250,7 @@ const CheckoutPage = observer(() => {
                   onChange={(event) => handleChange('postalCode', event.target.value)}
                   required
                   autoComplete="postal-code"
+                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
                 />
               </FormField>
               <FormField label={t('form.address.fields.country')} htmlFor="shipping-country">
@@ -268,6 +260,7 @@ const CheckoutPage = observer(() => {
                   onChange={(event) => handleChange('country', event.target.value)}
                   required
                   autoComplete="country-name"
+                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
                 />
               </FormField>
             </div>
@@ -335,8 +328,12 @@ const CheckoutPage = observer(() => {
             </div>
           </div>
           {error && <div className={styles.error}>{error}</div>}
-          <Button type="submit" block loading={loading}>
-            {loading
+          <Button
+            type="submit"
+            block
+            loading={cartStore.checkoutSubmitting || userStore.savingAddress}
+          >
+            {cartStore.checkoutSubmitting || userStore.savingAddress
               ? t('form.payment.actions.processing')
               : t('form.payment.actions.submit')}
           </Button>

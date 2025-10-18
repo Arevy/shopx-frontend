@@ -1,12 +1,13 @@
-import { makeAutoObservable } from 'mobx'
-import { requestGraphQL } from '@lib/graphqlClient'
+import { makeAutoObservable, runInAction } from 'mobx'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
-import {
-  GET_USER_CONTEXT,
-  LOGIN,
-  LOGOUT,
-  REGISTER,
-} from '@graphql/operations'
+import { GET_ADDRESSES } from '@graphql/checkout/GetAddresses'
+import { ADD_ADDRESS } from '@graphql/checkout/AddAddress'
+import { GET_USER_CONTEXT } from '@graphql/user/GetUserContext'
+import { LOGIN } from '@graphql/user/Login'
+import { LOGOUT } from '@graphql/user/Logout'
+import { REGISTER } from '@graphql/user/Register'
+import { REDEEM_IMPERSONATION } from '@graphql/user/RedeemImpersonation'
+import type { Address } from '@/types/address'
 import type { AuthPayload, User } from '@/types/user'
 import type { UserContext } from '@/types/userContext'
 import { isSessionExpiredError } from '@lib/authEvents'
@@ -18,15 +19,46 @@ interface StoredAuth {
   user: User
 }
 
+type GraphQLAddress = Omit<Address, 'id' | 'userId'> & {
+  id: string | number
+  userId?: string | number
+}
+
+type AddressInput = {
+  street: string
+  city: string
+  postalCode: string
+  country: string
+}
+
+const normalizeAddress = (address: GraphQLAddress): Address => ({
+  ...address,
+  id: String(address.id),
+  userId: address.userId ? String(address.userId) : undefined,
+})
+
 export class UserStore {
   private readonly root: RootStore
   user: User | null = null
   loading = false
   error: string | null = null
+  addresses: Address[] = []
+  addressesLoading = false
+  addressesError: string | null = null
+  savingAddress = false
 
   constructor(root: RootStore) {
     this.root = root
     makeAutoObservable<UserStore, 'root'>(this, { root: false }, { autoBind: true })
+  }
+
+  private get numericUserId(): number | null {
+    if (!this.user) {
+      return null
+    }
+
+    const parsed = Number(this.user.id)
+    return Number.isFinite(parsed) ? parsed : null
   }
 
   get isAuthenticated() {
@@ -63,6 +95,87 @@ export class UserStore {
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload))
   }
 
+  resetAddresses() {
+    this.addresses = []
+    this.addressesLoading = false
+    this.addressesError = null
+    this.savingAddress = false
+  }
+
+  async loadAddresses(): Promise<Address[]> {
+    const userId = this.numericUserId
+    if (!userId) {
+      this.resetAddresses()
+      return []
+    }
+
+    this.addressesLoading = true
+    this.addressesError = null
+
+    try {
+      const { getAddresses } = await this.root.apiService.execute<{
+        getAddresses: GraphQLAddress[]
+      }>(GET_ADDRESSES, { userId })
+
+      const normalized = getAddresses.map(normalizeAddress)
+      runInAction(() => {
+        this.addresses = normalized
+      })
+      return normalized
+    } catch (error) {
+      const message = getUserFriendlyMessage(
+        error,
+        'Failed to load saved addresses. Please try again later.',
+      )
+      runInAction(() => {
+        this.addressesError = message
+      })
+      throw new Error(message)
+    } finally {
+      runInAction(() => {
+        this.addressesLoading = false
+      })
+    }
+  }
+
+  async createAddress(input: AddressInput): Promise<Address> {
+    const userId = this.numericUserId
+    if (!userId) {
+      throw new Error('Authentication required')
+    }
+
+    this.savingAddress = true
+    this.addressesError = null
+
+    try {
+      const { addAddress } = await this.root.apiService.execute<{
+        addAddress: GraphQLAddress
+      }>(ADD_ADDRESS, {
+        userId,
+        ...input,
+      })
+
+      const normalized = normalizeAddress(addAddress)
+      runInAction(() => {
+        this.addresses = [normalized, ...this.addresses]
+      })
+      return normalized
+    } catch (error) {
+      const message = getUserFriendlyMessage(
+        error,
+        'Failed to save the address. Please verify the details and try again.',
+      )
+      runInAction(() => {
+        this.addressesError = message
+      })
+      throw new Error(message)
+    } finally {
+      runInAction(() => {
+        this.savingAddress = false
+      })
+    }
+  }
+
   adoptUserSession(user: User) {
     this.user = {
       ...user,
@@ -71,11 +184,25 @@ export class UserStore {
     this.persist()
   }
 
+  async redeemImpersonation(token: string): Promise<User> {
+    const { redeemImpersonation } = await this.root.apiService.execute<{ redeemImpersonation: User }>(
+      REDEEM_IMPERSONATION,
+      { token },
+    )
+
+    this.adoptUserSession(redeemImpersonation)
+    this.root.cartStore.reset()
+    this.root.wishlistStore.reset()
+    this.resetAddresses()
+
+    return this.user as User
+  }
+
   async login(email: string, password: string) {
     this.loading = true
     this.error = null
     try {
-      const { login } = await requestGraphQL<{ login: AuthPayload }>(
+      const { login } = await this.root.apiService.execute<{ login: AuthPayload }>(
         LOGIN,
         { email, password },
       )
@@ -113,7 +240,7 @@ export class UserStore {
     this.error = null
 
     try {
-      await requestGraphQL<{ register: User }>(REGISTER, {
+      await this.root.apiService.execute<{ register: User }>(REGISTER, {
         email,
         password,
         name,
@@ -148,7 +275,7 @@ export class UserStore {
 
   async logout() {
     try {
-      await requestGraphQL<{ logout: boolean }>(LOGOUT)
+      await this.root.apiService.execute<{ logout: boolean }>(LOGOUT)
     } catch (err) {
       console.error('Logout mutation failed', err)
     }
@@ -157,6 +284,7 @@ export class UserStore {
     this.persist()
     this.root.cartStore.reset()
     this.root.wishlistStore.reset()
+    this.resetAddresses()
     this.root.uiStore.addToast('You have been signed out. See you soon!', 'info')
   }
 
@@ -170,11 +298,13 @@ export class UserStore {
     this.error = null
     this.root.cartStore.reset()
     this.root.wishlistStore.reset()
+    this.resetAddresses()
     this.root.uiStore.addToast('Your session expired. Please sign in again.', 'info')
   }
 
   async loadUserContext(): Promise<UserContext | null> {
     if (!this.user) {
+      this.resetAddresses()
       return null
     }
 
@@ -187,7 +317,7 @@ export class UserStore {
     }
 
     try {
-      const { getUserContext } = await requestGraphQL<{ getUserContext: UserContext }>(
+      const { getUserContext } = await this.root.apiService.execute<{ getUserContext: UserContext }>(
         GET_USER_CONTEXT,
         { userId: numericId },
       )
@@ -201,6 +331,10 @@ export class UserStore {
 
       this.root.cartStore.setRemoteCart(getUserContext.cart)
       this.root.wishlistStore.setRemoteProducts(getUserContext.wishlist.products)
+      this.addresses = (getUserContext.addresses ?? []).map((address) =>
+        normalizeAddress(address as GraphQLAddress),
+      )
+      this.addressesError = null
 
       return getUserContext
     } catch (err) {

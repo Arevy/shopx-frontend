@@ -1,6 +1,6 @@
 # ShopX Frontend
 
-The store front experience of the ShopX platform, implemented with **Next.js 14 (Pages Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
+The store front experience of the ShopX platform, implemented with **Next.js 14 (Pages Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) through a shared `ApiService`, and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
 
 ---
 
@@ -71,15 +71,15 @@ shopx-frontend/
 │   │   │   └── LanguageSelector/
 │   │   └── ui/                # Button, Surface, SectionHeader, ToastStack, etc.
 │   ├── config/                # Environment helpers
-│   ├── graphql/               # Operations & generated types
+│   ├── graphql/               # One file per query/mutation, plus barrel exports
 │   ├── hooks/                 # UI-level hooks (disclosure, debounced search)
 │   ├── i18n/                  # Translation provider & helpers
-│   ├── lib/                   # GraphQL client helper, utilities
+│   ├── lib/                   # ApiService, auth events, utilities
 │   ├── pages/
 │   │   ├── *.page.tsx         # Route entrypoints (e.g. index.page.tsx, cart/index.page.tsx)
 │   │   └── <route>/           # Page implementations + `Route.ts` metadata
 │   ├── routes/                # Centralised navigation metadata & helpers
-│   ├── stores/                # MobX stores (cart, wishlist, cms, user, etc.)
+│   ├── stores/                # MobX stores (cart + checkout, wishlist, cms, user/auth/addresses, products)
 │   ├── styles/                # Design tokens, mixins, globals (SCSS)
 │   └── types/                 # Shared TypeScript models & SCSS declarations
 └── README.md
@@ -91,7 +91,8 @@ Route files use the custom extension pattern configured in `next.config.mjs` (`p
 ## Development Notes
 - **Internationalisation**: The UI is currently English-only. Future translation work can leverage Next’s built-in routing or third-party libs; all copy now lives in English for easier globalization.
 - **CMS integration**: CMS pages are cached via Redis in the backend. On the frontend we memoize responses in the `CmsStore` to avoid redundant queries during a session.
-- **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, and profile data stay in sync with Redis-backed caches. If the backend revokes the session (e.g., via the admin portal), shared helpers detect the `Authentication required` error, clear local state, and prompt the shopper to sign back in.
+- **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, addresses, and profile data stay in sync with Redis-backed caches. If the backend revokes the session (e.g., via the admin portal), `ApiService` flags the session as expired, clears local state, and prompts the shopper to sign back in.
+- **Store responsibilities**: `CartStore` now owns checkout submission (order creation/payment) alongside cart synchronisation, while `UserStore` covers authentication, impersonation adoption, and address CRUD. Components rely on the exposed loading/error flags instead of duplicating mutation logic.
 - **Design tokens & SCSS**: Global palette, typography, and spacing live in `src/styles/globals.scss`. Sass imports use the alias `@styles/...`, configured via `next.config.mjs` so component styles no longer rely on deep relative paths.
 - **Custom App & Document**: The Pages Router entrypoints (`src/pages/_app.page.tsx` and `src/pages/_document.page.tsx`) host the providers and custom document markup directly—no intermediate exports required.
 - **Typed routes**: `next.config.mjs` disables `typedRoutes` due to the custom linking strategy. Re-enable once all dynamic routes are upgraded to `Route` types.

@@ -1,12 +1,7 @@
 import type { GetServerSideProps } from 'next'
-import { GET_CMS_PAGE } from '@graphql/operations'
-import { requestGraphQL } from '@lib/graphqlClient'
+import { createRootStore } from '@stores/rootStore'
 import type { CmsPage as CmsPageType } from '@/types/cms'
 import CmsPage from '../CmsPage'
-
-type CmsPageResponse = {
-  getCmsPage: CmsPageType | null
-}
 
 type CmsProps = {
   page: CmsPageType
@@ -50,7 +45,8 @@ export const getServerSideProps: GetServerSideProps<CmsProps> = async ({ params,
     return { notFound: true }
   }
 
-  const { getCmsPage } = await requestGraphQL<CmsPageResponse>(GET_CMS_PAGE, { slug })
+  const store = createRootStore()
+  const getCmsPage = await store.cmsStore.getPage(slug)
 
   const isPreview = Boolean(preview)
 

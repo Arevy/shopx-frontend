@@ -1,10 +1,7 @@
 import { makeAutoObservable, runInAction } from 'mobx'
-import {
-  GET_CATEGORIES,
-  GET_PRODUCT_DETAIL,
-  GET_PRODUCTS,
-} from '@graphql/operations'
-import { requestGraphQL } from '@lib/graphqlClient'
+import { GET_PRODUCTS } from '@graphql/products/GetProducts'
+import { GET_PRODUCT_DETAIL } from '@graphql/products/GetProductDetail'
+import { GET_CATEGORIES } from '@graphql/products/GetCategories'
 import type { Category, Product, Review } from '@/types/product'
 import type { RootStore } from './rootStore'
 
@@ -61,7 +58,7 @@ export class ProductStore {
     if (this.products.length) return
     this.loading = true
     try {
-      const { getProducts } = await requestGraphQL<{ getProducts: Product[] }>(
+      const { getProducts } = await this.root.apiService.execute<{ getProducts: Product[] }>(
         GET_PRODUCTS,
         {
           limit: 100,
@@ -91,7 +88,7 @@ export class ProductStore {
   async fetchCategories() {
     if (this.categories.length) return
     try {
-      const { getCategories } = await requestGraphQL<{
+      const { getCategories } = await this.root.apiService.execute<{
         getCategories: Category[]
       }>(GET_CATEGORIES)
       runInAction(() => {
@@ -109,7 +106,7 @@ export class ProductStore {
   async fetchProductDetail(id: string) {
     this.detailLoading = true
     try {
-      const { product, reviews } = await requestGraphQL<ProductDetailResponse>(
+      const { product, reviews } = await this.root.apiService.execute<ProductDetailResponse>(
         GET_PRODUCT_DETAIL,
         { id },
       )
