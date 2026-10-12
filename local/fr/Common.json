@@ -16,7 +16,8 @@
       "home": "Accueil",
       "catalog": "Catalogue",
       "wishlist": "Favoris",
-      "cart": "Panier"
+      "cart": "Panier",
+      "more": "Plus"
     },
     "actions": {
       "sign_in": "Connexion",
@@ -62,5 +63,13 @@
       "copyright": "© {{year}} ShopX. Tous droits réservés.",
       "credit": "Conçu avec soin grâce à Next.js et GraphQL."
     }
+  },
+  "product": {
+    "add": "Ajouter au panier",
+    "adding": "Ajout…",
+    "save": "Enregistrer le produit",
+    "unsave": "Retirer des favoris",
+    "vat": "TVA incluse",
+    "no_image": "Image indisponible"
   }
 }

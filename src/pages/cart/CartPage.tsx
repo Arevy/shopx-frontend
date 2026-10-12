@@ -5,10 +5,12 @@ import { observer } from 'mobx-react-lite'
 import { Button, SectionHeader, Surface } from '@components/ui'
 import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
+import { useTranslation } from '@/i18n'
 import styles from './CartPage.module.scss'
 
 const CartPage = observer(() => {
   const { cartStore, userStore } = useStores()
+  const { language, t } = useTranslation('Common')
 
   const items = cartStore.items
   const total = cartStore.totalAmount
@@ -39,21 +41,23 @@ const CartPage = observer(() => {
                     className={styles.productImage}
                     fallback={
                       <span className={styles.imageFallback}>
-                        No image
+                        {t('product.no_image')}
                       </span>
                     }
                   />
                 </div>
                 <div className={styles.details}>
-                  <span className={styles.productName}>{item.product.name}</span>
+                  <span className={styles.productName}>
+                    {item.product.name}
+                  </span>
                   <p className={styles.productDescription}>
-                    {item.product.description ?? 'Premium product backed by an extended warranty.'}
+                    {item.product.description ?? ''}
                   </p>
                   <div className={styles.priceRow}>
                     <span className={styles.price}>
-                      {item.product.price.toLocaleString('ro-RO', {
+                      {item.product.price.toLocaleString(language, {
                         style: 'currency',
-                        currency: 'RON',
+                        currency: 'EUR',
                       })}
                     </span>
                     <div className={styles.quantityControl}>
@@ -61,23 +65,39 @@ const CartPage = observer(() => {
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => cartStore.setQuantity(item.product.id, item.quantity - 1)}
+                        onClick={() =>
+                          cartStore.setQuantity(
+                            item.product.id,
+                            item.quantity - 1,
+                          )
+                        }
                       >
                         −
                       </Button>
-                      <span className={styles.quantityValue}>{item.quantity}</span>
+                      <span className={styles.quantityValue}>
+                        {item.quantity}
+                      </span>
                       <Button
                         type="button"
                         variant="outline"
                         size="sm"
-                        onClick={() => cartStore.setQuantity(item.product.id, item.quantity + 1)}
+                        onClick={() =>
+                          cartStore.setQuantity(
+                            item.product.id,
+                            item.quantity + 1,
+                          )
+                        }
                       >
                         +
                       </Button>
                     </div>
                   </div>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => cartStore.removeItem(item.product.id)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => cartStore.removeItem(item.product.id)}
+                >
                   Remove
                 </Button>
               </Surface>
@@ -97,22 +117,24 @@ const CartPage = observer(() => {
             <div className={styles.summaryRow}>
               <span>Subtotal</span>
               <span>
-                {total.toLocaleString('ro-RO', {
+                {total.toLocaleString(language, {
                   style: 'currency',
-                  currency: 'RON',
+                  currency: 'EUR',
                 })}
               </span>
             </div>
-            <div className={classNames(styles.summaryRow, styles.summaryRowMuted)}>
-              <span>Shipping</span>
-              <span>Calculated at checkout</span>
+            <div
+              className={classNames(styles.summaryRow, styles.summaryRowMuted)}
+            >
+              <span>Tax</span>
+              <span>{t('product.vat')}</span>
             </div>
             <div className={styles.summaryTotal}>
               <span>Estimated total</span>
               <span>
-                {total.toLocaleString('ro-RO', {
+                {total.toLocaleString(language, {
                   style: 'currency',
-                  currency: 'RON',
+                  currency: 'EUR',
                 })}
               </span>
             </div>

@@ -1,16 +1,17 @@
 {
   "hero": {
-    "badge": "Noutăți ShopX · Experiență premium",
-    "title": "Design contemporan, tehnologie inteligentă, livrare rapidă",
-    "description": "Descoperă colecții curatoriate de experți, produse sustenabile și oferte limitate. Cu ShopX, fiecare interacțiune este fluidă, personalizată și pregătită de conversie.",
+    "badge": "Tehnologie, casă și lifestyle",
+    "title": "Mai bine, zi de zi.",
+    "description": "Descoperă tehnologie utilă, obiecte pentru casă și lucrurile mici care fac fiecare zi mai bună.",
     "featured_badge": "Recomandarea editorului",
     "product_fallback": "Produs premium selectat de echipa noastră pentru performanță și estetică impecabile.",
     "actions": {
-      "view_catalog": "Vezi catalogul complet",
+      "view_catalog": "Descoperă colecția",
       "instant_checkout": "Checkout instant",
       "add_to_cart": "Adaugă în coș",
       "save_for_later": "Salvează pentru mai târziu"
-    }
+    },
+    "price_note": "EUR · TVA inclus"
   },
   "highlights": {
     "title": "Construit pentru conversie",
@@ -33,11 +34,11 @@
   "featured": {
     "eyebrow": "Colecția ShopX",
     "title": "Selecții curatoriate",
-    "description": "Cele mai populare produse din comunitatea ShopX, create pentru stiluri de viață moderne."
+    "description": "Descoperă tehnologie utilă, obiecte pentru casă și lucrurile mici care fac fiecare zi mai bună."
   },
   "new_arrivals": {
     "title": "Noutăți",
-    "description": "Lansări proaspete direct din studio. Stoc limitat, livrare rapidă, garanție extinsă.",
+    "description": "Descoperă tehnologie utilă, obiecte pentru casă și lucrurile mici care fac fiecare zi mai bună.",
     "actions": {
       "view_all": "Vezi tot"
     }

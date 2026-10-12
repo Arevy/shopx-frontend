@@ -54,7 +54,7 @@
   height: 1.65rem;
   border-radius: 999px;
   background: var(--color-primary);
-  color: #fff;
+  color: #101112;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -163,4 +163,97 @@
 
 .dark .header {
   background: rgba(15, 23, 42, 0.9);
+}
+
+.inner {
+  gap: 24px;
+  min-width: 0;
+}
+.brand {
+  font-size: 1.65rem;
+  flex-shrink: 0;
+  letter-spacing: -0.06em;
+}
+.brand::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: var(--color-primary);
+}
+.nav {
+  gap: 20px;
+  font-size: 0.85rem;
+}
+.navLink {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  white-space: nowrap;
+}
+.userButton {
+  max-width: 160px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: block;
+}
+.more {
+  position: relative;
+  color: var(--color-text-muted);
+}
+.more summary {
+  cursor: pointer;
+  padding: 12px 4px;
+}
+.moreLinks {
+  position: absolute;
+  top: 100%;
+  inset-inline-end: 0;
+  display: grid;
+  gap: 4px;
+  width: 260px;
+  max-height: 65dvh;
+  overflow-y: auto;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  background: var(--color-surface);
+  box-shadow: 0 20px 40px #0005;
+}
+.moreLinks a {
+  padding: 12px;
+  border-radius: 8px;
+}
+.moreLinks a:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+@media (max-width: 1000px) {
+  .inner {
+    width: calc(100% - 32px);
+  }
+  .menuToggle {
+    color: var(--color-text);
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .mobileNav {
+    padding: 16px;
+    max-height: 75dvh;
+    overflow-y: auto;
+    background: var(--color-surface);
+  }
+  .mobileLink {
+    padding: 8px 12px;
+    min-height: 44px;
+  }
+}
+@media (max-width: 480px) {
+  .actions {
+    gap: 6px;
+  }
+  .userButton {
+    max-width: 90px;
+  }
 }

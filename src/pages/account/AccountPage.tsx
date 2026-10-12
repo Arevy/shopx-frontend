@@ -29,12 +29,11 @@ const formatDate = (value?: string | null): string => {
   }
 }
 
-const formatCurrency = (value: number): string =>
-  value.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })
-
 const AccountPage = observer(() => {
   const { userStore } = useStores()
-  const { t } = useTranslation('Page_Account')
+  const { t, language } = useTranslation('Page_Account')
+  const formatCurrency = (value: number) =>
+    value.toLocaleString(language, { style: 'currency', currency: 'EUR' })
   const isRtl = useRTL()
 
   const [selectedSection, setSelectedSection] = useState<SectionKey>('overview')
@@ -44,13 +43,17 @@ const AccountPage = observer(() => {
   }))
   const [allowProfileEdit, setAllowProfileEdit] = useState<boolean>(false)
   const [profilePassword, setProfilePassword] = useState<string>('')
-  const [profileClientError, setProfileClientError] = useState<string | null>(null)
+  const [profileClientError, setProfileClientError] = useState<string | null>(
+    null,
+  )
   const [passwordForm, setPasswordForm] = useState({
     current: '',
     next: '',
     confirm: '',
   })
-  const [passwordClientError, setPasswordClientError] = useState<string | null>(null)
+  const [passwordClientError, setPasswordClientError] = useState<string | null>(
+    null,
+  )
 
   useEffect(() => {
     setProfileForm({
@@ -95,9 +98,12 @@ const AccountPage = observer(() => {
     [t],
   )
 
-  const activeSection = sections.find((section) => section.key === selectedSection) ?? sections[0]
+  const activeSection =
+    sections.find((section) => section.key === selectedSection) ?? sections[0]
 
-  const handleProfileSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleProfileSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault()
     if (!userStore.user) {
       return
@@ -150,7 +156,9 @@ const AccountPage = observer(() => {
     }
   }
 
-  const handlePasswordSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePasswordSubmit = async (
+    event: React.FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault()
     setPasswordClientError(null)
 
@@ -159,7 +167,10 @@ const AccountPage = observer(() => {
       return
     }
 
-    const success = await userStore.changePassword(passwordForm.current, passwordForm.next)
+    const success = await userStore.changePassword(
+      passwordForm.current,
+      passwordForm.next,
+    )
     if (success) {
       setPasswordForm({ current: '', next: '', confirm: '' })
     }
@@ -191,7 +202,9 @@ const AccountPage = observer(() => {
         <FormField label={t('sections.overview.form.name_label')}>
           <Input
             value={profileForm.name}
-            onChange={(event) => setProfileForm((prev) => ({ ...prev, name: event.target.value }))}
+            onChange={(event) =>
+              setProfileForm((prev) => ({ ...prev, name: event.target.value }))
+            }
             placeholder={t('sections.overview.form.name_placeholder')}
             autoComplete="name"
             disabled={!allowProfileEdit}
@@ -201,7 +214,9 @@ const AccountPage = observer(() => {
           <Input
             type="email"
             value={profileForm.email}
-            onChange={(event) => setProfileForm((prev) => ({ ...prev, email: event.target.value }))}
+            onChange={(event) =>
+              setProfileForm((prev) => ({ ...prev, email: event.target.value }))
+            }
             placeholder={t('sections.overview.form.email_placeholder')}
             autoComplete="email"
             disabled={!allowProfileEdit}
@@ -209,7 +224,10 @@ const AccountPage = observer(() => {
         </FormField>
 
         <div
-          className={classNames(styles.editToggle, isRtl && styles.editToggleRtl)}
+          className={classNames(
+            styles.editToggle,
+            isRtl && styles.editToggleRtl,
+          )}
         >
           <label className={styles.editToggleLabel}>
             <input
@@ -268,7 +286,10 @@ const AccountPage = observer(() => {
             type="password"
             value={passwordForm.current}
             onChange={(event) =>
-              setPasswordForm((prev) => ({ ...prev, current: event.target.value }))
+              setPasswordForm((prev) => ({
+                ...prev,
+                current: event.target.value,
+              }))
             }
             autoComplete="current-password"
             placeholder={t('sections.security.form.current_placeholder')}
@@ -292,7 +313,10 @@ const AccountPage = observer(() => {
             value={passwordForm.confirm}
             onChange={(event) => {
               setPasswordClientError(null)
-              setPasswordForm((prev) => ({ ...prev, confirm: event.target.value }))
+              setPasswordForm((prev) => ({
+                ...prev,
+                confirm: event.target.value,
+              }))
             }}
             autoComplete="new-password"
             placeholder={t('sections.security.form.confirm_placeholder')}
@@ -338,20 +362,35 @@ const AccountPage = observer(() => {
                   {t('sections.orders.order_id', { id: order.id })}
                 </strong>
                 <span>
-                  {t('sections.orders.total', { value: formatCurrency(order.total) })}
+                  {t('sections.orders.total', {
+                    value: formatCurrency(order.total),
+                  })}
                 </span>
               </div>
               <div className={styles.orderMeta}>
-                <span>{t('sections.orders.placed', { value: formatDate(order.createdAt) })}</span>
-                <span>{t('sections.orders.status', { value: order.status })}</span>
+                <span>
+                  {t('sections.orders.placed', {
+                    value: formatDate(order.createdAt),
+                  })}
+                </span>
+                <span>
+                  {t('sections.orders.status', { value: order.status })}
+                </span>
                 <span>
                   {t('sections.orders.items', { count: order.products.length })}
                 </span>
               </div>
               <div className={styles.orderProducts}>
                 {order.products.map((product, index) => (
-                  <div key={`${order.id}-${product.productId}-${index}`} className={styles.orderProduct}>
-                    <span>{t('sections.orders.product_line', { id: product.productId })}</span>
+                  <div
+                    key={`${order.id}-${product.productId}-${index}`}
+                    className={styles.orderProduct}
+                  >
+                    <span>
+                      {t('sections.orders.product_line', {
+                        id: product.productId,
+                      })}
+                    </span>
                     <span>
                       {product.quantity} × {formatCurrency(product.price)}
                     </span>
@@ -371,7 +410,9 @@ const AccountPage = observer(() => {
         <h1 className="section-title">{t('guard.title')}</h1>
         <p className="section-subtitle">{t('guard.subtitle')}</p>
         <div className={styles.guardActions}>
-          <Button href={{ pathname: '/auth/login' }}>{t('guard.actions.sign_in')}</Button>
+          <Button href={{ pathname: '/auth/login' }}>
+            {t('guard.actions.sign_in')}
+          </Button>
           <Button href={{ pathname: '/auth/register' }} variant="outline">
             {t('guard.actions.register')}
           </Button>
@@ -388,7 +429,9 @@ const AccountPage = observer(() => {
       </header>
 
       <div className={classNames(styles.layout, isRtl && styles.layoutRtl)}>
-        <aside className={classNames(styles.sidebar, isRtl && styles.sidebarRtl)}>
+        <aside
+          className={classNames(styles.sidebar, isRtl && styles.sidebarRtl)}
+        >
           <div className={styles.sidebarButtons}>
             {sections.map((section) => (
               <button

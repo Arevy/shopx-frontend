@@ -6,11 +6,10 @@
 }
 
 @mixin card {
-  background: $color-surface-translucent;
+  background: var(--color-surface);
   border-radius: $radius-lg;
-  border: 1px solid rgba($color-primary, 0.12);
+  border: 1px solid var(--color-border);
   box-shadow: $shadow-sm;
-  backdrop-filter: blur(26px);
 }
 
 @mixin tag {
@@ -34,7 +33,7 @@
   padding: 0;
 }
 
-@mixin button-base($bg, $color: #fff) {
+@mixin button-base($bg, $color: #101112) {
   @include button-reset;
   display: inline-flex;
   align-items: center;
@@ -50,6 +49,6 @@
 }
 
 @mixin responsive-width {
-  width: min(1200px, 92vw);
+  width: min(1320px, calc(100% - 48px));
   margin: 0 auto;
 }

@@ -16,7 +16,8 @@
       "home": "Startseite",
       "catalog": "Katalog",
       "wishlist": "Merkzettel",
-      "cart": "Warenkorb"
+      "cart": "Warenkorb",
+      "more": "Mehr"
     },
     "actions": {
       "sign_in": "Anmelden",
@@ -62,5 +63,13 @@
       "copyright": "© {{year}} ShopX. Alle Rechte vorbehalten.",
       "credit": "Mit Liebe entwickelt mit Next.js und GraphQL."
     }
+  },
+  "product": {
+    "add": "In den Warenkorb",
+    "adding": "Wird hinzugefügt…",
+    "save": "Produkt merken",
+    "unsave": "Von der Merkliste entfernen",
+    "vat": "Inkl. MwSt.",
+    "no_image": "Bild nicht verfügbar"
   }
 }

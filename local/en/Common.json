@@ -16,7 +16,8 @@
       "home": "Home",
       "catalog": "Catalog",
       "wishlist": "Wishlist",
-      "cart": "Cart"
+      "cart": "Cart",
+      "more": "More"
     },
     "actions": {
       "sign_in": "Sign in",
@@ -62,5 +63,13 @@
       "copyright": "© {{year}} ShopX. All rights reserved.",
       "credit": "Crafted with care using Next.js & GraphQL."
     }
+  },
+  "product": {
+    "add": "Add to cart",
+    "adding": "Adding…",
+    "save": "Save product",
+    "unsave": "Remove from wishlist",
+    "vat": "VAT included",
+    "no_image": "Image unavailable"
   }
 }

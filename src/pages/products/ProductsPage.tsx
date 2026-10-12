@@ -22,7 +22,7 @@ const ProductsPage = () => {
     <div>
       <SectionHeader
         title="ShopX catalog"
-        description="Explore carefully curated products, filter by interests, and discover limited editions before they launch."
+        description="Explore tech, home and lifestyle. Filter by category or find a specific model."
       />
       <ProductFilters />
       <ProductGrid />
