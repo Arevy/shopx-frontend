@@ -1,16 +1,17 @@
 {
   "hero": {
-    "badge": "Neu bei ShopX · Premium-Erlebnis",
-    "title": "Zeitgemäßes Design, intelligente Technologie, schnelle Lieferung",
-    "description": "Entdecke kuratierte Kollektionen, nachhaltige Produkte und limitierte Angebote. Mit ShopX ist jede Interaktion nahtlos, persönlich und auf Conversion ausgerichtet.",
+    "badge": "Technik, Wohnen und Lifestyle",
+    "title": "Jeden Tag besser.",
+    "description": "Entdecke nützliche Technik, durchdachte Wohnaccessoires und die kleinen Dinge, die jeden Tag besser machen.",
     "featured_badge": "Empfehlung der Redaktion",
     "product_fallback": "Premium-Produkt, ausgewählt von unserem Team für hervorragende Leistung und Ästhetik.",
     "actions": {
-      "view_catalog": "Gesamten Katalog ansehen",
+      "view_catalog": "Kollektion entdecken",
       "instant_checkout": "Sofort zur Kasse",
       "add_to_cart": "In den Warenkorb",
       "save_for_later": "Für später speichern"
-    }
+    },
+    "price_note": "EUR · inkl. MwSt."
   },
   "highlights": {
     "title": "Für Conversion gebaut",
@@ -33,11 +34,11 @@
   "featured": {
     "eyebrow": "ShopX Kollektion",
     "title": "Kuratierte Auswahl",
-    "description": "Bestseller aus der ShopX-Community, konzipiert für moderne Lebensstile und dynamische Bedürfnisse."
+    "description": "Entdecke nützliche Technik, durchdachte Wohnaccessoires und die kleinen Dinge, die jeden Tag besser machen."
   },
   "new_arrivals": {
     "title": "Neu eingetroffen",
-    "description": "Frische Releases direkt aus dem Studio. Limitierter Bestand, schnelle Lieferung, verlängerte Garantie.",
+    "description": "Entdecke nützliche Technik, durchdachte Wohnaccessoires und die kleinen Dinge, die jeden Tag besser machen.",
     "actions": {
       "view_all": "Alle anzeigen"
     }

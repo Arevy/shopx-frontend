@@ -38,7 +38,9 @@
 .link {
   color: var(--color-text-muted);
   margin-bottom: 0.6rem;
-  display: inline-flex;
+  display: flex;
+  min-height: 36px;
+  align-items: center;
   transition: color 0.2s ease;
 
   &:hover {
@@ -77,5 +79,22 @@
     flex-direction: column;
     gap: 0.5rem;
     text-align: center;
+  }
+}
+
+.contentLinks {
+  grid-column: span 2;
+}
+.pages {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 2rem;
+}
+@media (max-width: 600px) {
+  .contentLinks {
+    grid-column: 1;
+  }
+  .pages {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

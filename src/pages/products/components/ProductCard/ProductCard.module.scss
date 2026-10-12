@@ -1,102 +1,156 @@
-@use '@styles/tokens' as *;
-@use '@styles/mixins' as m;
-
 .card {
-  @include m.card;
-  padding: 1.4rem;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 18px;
+  background: var(--color-surface);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  transition: transform 0.3s $transition-base, box-shadow 0.3s $transition-base;
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: $shadow-md;
-  }
+  transition: border-color 160ms ease;
 }
-
-.imageWrapper {
-  border-radius: $radius-md;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.card:hover,
+.card:focus-within {
+  border-color: var(--color-primary);
+}
+.media {
   position: relative;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(34, 211, 238, 0.18));
+  background: #fff;
 }
-
+.imageWrapper {
+  display: block;
+  position: relative;
+  aspect-ratio: 5 / 4;
+  overflow: hidden;
+}
 .productImage {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  padding: 24px;
+  transition: transform 200ms ease;
 }
-
+.card:hover .productImage {
+  transform: scale(1.03);
+}
+.save {
+  position: absolute;
+  inset-block-start: 10px;
+  inset-inline-end: 10px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #dce0dc;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  color: #161a16;
+  cursor: pointer;
+}
+.save[aria-pressed='true'] {
+  background: #c8ff5f;
+  border-color: #c8ff5f;
+}
 .imagePlaceholder {
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #52595d;
+}
+.body {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 0.65);
-  font-size: 0.9rem;
-  letter-spacing: 0.02em;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+  padding: 20px;
 }
-
+.category {
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.68rem;
+  font-weight: 650;
+}
 .title {
-  font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 1.04rem;
+  line-height: 1.45;
+  font-weight: 650;
+  min-height: 3em;
 }
-
 .description {
   color: var(--color-text-muted);
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0 0 8px;
 }
-
 .priceRow {
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   justify-content: space-between;
-  width: 100%;
+  align-items: center;
+  margin-top: auto;
 }
-
 .price {
   font-weight: 700;
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
 }
-
-.actions {
-  display: flex;
-  gap: 0.75rem;
+.tax {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.7rem;
+  margin-top: 3px;
 }
-
-.secondaryButton {
-  flex: 1;
-  border-radius: 999px;
-  border: 1px solid rgba($color-primary, 0.22);
-  padding: 0.6rem 0.8rem;
-  font-weight: 500;
+.primaryButton {
+  min-height: 44px;
+  padding: 10px 14px;
+  background: var(--color-primary);
+  color: #101112;
+  border: 0;
+  border-radius: 10px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: border 0.2s ease;
-  background: transparent;
-
-  &:hover {
-    border-color: rgba($color-primary, 0.55);
+}
+.primaryButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+@media (prefers-reduced-motion: reduce) {
+  .productImage {
+    transition: none;
+  }
+  .card:hover .productImage {
+    transform: none;
   }
 }
 
-.primaryButton {
-  flex: 1;
-  border-radius: 999px;
-  background: linear-gradient(135deg, $color-primary, $color-accent);
-  color: #fff;
-  border: none;
-  padding: 0.6rem 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 18px 35px -22px rgba(99, 102, 241, 0.6);
-
-  &:hover {
-    transform: translateY(-2px);
+@media (max-width: 600px) {
+  .body {
+    padding: 14px;
+  }
+  .productImage {
+    padding: 14px;
+  }
+  .title {
+    font-size: 0.95rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .primaryButton {
+    width: 100%;
+  }
+  .priceRow {
+    gap: 14px;
+  }
+  .save {
+    inset-block-start: 4px;
+    inset-inline-end: 4px;
   }
 }

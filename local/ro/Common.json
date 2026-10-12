@@ -16,7 +16,8 @@
       "home": "Acasă",
       "catalog": "Catalog",
       "wishlist": "Listă de dorințe",
-      "cart": "Coș"
+      "cart": "Coș",
+      "more": "Mai multe"
     },
     "actions": {
       "sign_in": "Autentificare",
@@ -62,5 +63,13 @@
       "copyright": "© {{year}} ShopX. Toate drepturile rezervate.",
       "credit": "Creat cu grijă folosind Next.js și GraphQL."
     }
+  },
+  "product": {
+    "add": "Adaugă în coș",
+    "adding": "Se adaugă…",
+    "save": "Salvează produsul",
+    "unsave": "Elimină din favorite",
+    "vat": "TVA inclus",
+    "no_image": "Imagine indisponibilă"
   }
 }

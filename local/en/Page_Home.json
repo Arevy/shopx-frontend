@@ -1,16 +1,17 @@
 {
   "hero": {
-    "badge": "New on ShopX · Premium experience",
-    "title": "Contemporary design, smart technology, rapid delivery",
-    "description": "Explore expert-curated collections, sustainable products, and limited offers. With ShopX, every interaction is seamless, personal, and conversion-ready.",
+    "badge": "Tech, home & lifestyle",
+    "title": "Everyday, upgraded.",
+    "description": "Discover useful technology, considered home essentials and the little things that make every day better.",
     "featured_badge": "Featured · Editor's pick",
     "product_fallback": "Premium product selected by our team for impeccable performance and aesthetics.",
     "actions": {
-      "view_catalog": "View full catalog",
+      "view_catalog": "Explore the collection",
       "instant_checkout": "Instant checkout",
       "add_to_cart": "Add to cart",
       "save_for_later": "Save for later"
-    }
+    },
+    "price_note": "EUR · VAT included"
   },
   "highlights": {
     "title": "Built for conversion",
@@ -33,11 +34,11 @@
   "featured": {
     "eyebrow": "ShopX collection",
     "title": "Curated selections",
-    "description": "ShopX community bestsellers designed for contemporary lifestyles and dynamic needs."
+    "description": "Discover useful technology, considered home essentials and the little things that make every day better."
   },
   "new_arrivals": {
     "title": "New Arrivals",
-    "description": "Fresh drops straight from the studio. Limited stock, fast delivery, extended warranty.",
+    "description": "Discover useful technology, considered home essentials and the little things that make every day better.",
     "actions": {
       "view_all": "View all"
     }

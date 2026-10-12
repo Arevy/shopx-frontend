@@ -1,16 +1,17 @@
 {
   "hero": {
-    "badge": "Nouveau sur ShopX · Expérience premium",
-    "title": "Design contemporain, technologie intelligente, livraison rapide",
-    "description": "Découvrez des collections sélectionnées par des experts, des produits durables et des offres limitées. Avec ShopX, chaque interaction est fluide, personnalisée et prête à convertir.",
+    "badge": "Tech, maison et lifestyle",
+    "title": "Le quotidien, repensé.",
+    "description": "Découvrez des technologies utiles, des essentiels pour la maison et les petits détails qui améliorent le quotidien.",
     "featured_badge": "Coup de cœur de l’éditeur",
     "product_fallback": "Produit premium sélectionné par notre équipe pour ses performances et son esthétique irréprochables.",
     "actions": {
-      "view_catalog": "Voir tout le catalogue",
+      "view_catalog": "Découvrir la collection",
       "instant_checkout": "Paiement instantané",
       "add_to_cart": "Ajouter au panier",
       "save_for_later": "Enregistrer pour plus tard"
-    }
+    },
+    "price_note": "EUR · TVA incluse"
   },
   "highlights": {
     "title": "Conçu pour convertir",
@@ -33,11 +34,11 @@
   "featured": {
     "eyebrow": "Collection ShopX",
     "title": "Sélections curatoriales",
-    "description": "Les best-sellers de la communauté ShopX, pensés pour des modes de vie contemporains."
+    "description": "Découvrez des technologies utiles, des essentiels pour la maison et les petits détails qui améliorent le quotidien."
   },
   "new_arrivals": {
     "title": "Nouveautés",
-    "description": "Nouvelles sorties directement du studio. Stock limité, livraison rapide, garantie étendue.",
+    "description": "Découvrez des technologies utiles, des essentiels pour la maison et les petits détails qui améliorent le quotidien.",
     "actions": {
       "view_all": "Tout voir"
     }

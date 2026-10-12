@@ -3,7 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import { Button, FormField, Input, SectionHeader, Select, Surface } from '@components/ui'
+import {
+  Button,
+  FormField,
+  Input,
+  SectionHeader,
+  Select,
+  Surface,
+} from '@components/ui'
 import { useStores } from '@stores/StoreProvider'
 import { getUserFriendlyMessage } from '@lib/getUserFriendlyMessage'
 import type { Order } from '@/types/order'
@@ -21,7 +28,7 @@ interface CheckoutFormState {
 
 const CheckoutPage = observer(() => {
   const { cartStore, userStore, uiStore } = useStores()
-  const { t } = useTranslation('Page_Checkout')
+  const { t, language } = useTranslation('Page_Checkout')
   const isRtl = useRTL()
 
   const defaultCountryRef = useRef<string>(t('form.default_country'))
@@ -40,7 +47,10 @@ const CheckoutPage = observer(() => {
   const paymentMethods = useMemo(
     () => [
       { id: 'card' as PaymentMethodId, label: t('form.payment.methods.card') },
-      { id: 'transfer' as PaymentMethodId, label: t('form.payment.methods.transfer') },
+      {
+        id: 'transfer' as PaymentMethodId,
+        label: t('form.payment.methods.transfer'),
+      },
       { id: 'cash' as PaymentMethodId, label: t('form.payment.methods.cash') },
     ],
     [t],
@@ -79,7 +89,9 @@ const CheckoutPage = observer(() => {
       .then((list) => {
         if (cancelled) return
         if (list.length) {
-          setSelectedAddressId((current) => (current === 'new' ? String(list[0].id) : current))
+          setSelectedAddressId((current) =>
+            current === 'new' ? String(list[0].id) : current,
+          )
         }
       })
       .catch((err) => {
@@ -139,10 +151,7 @@ const CheckoutPage = observer(() => {
       uiStore.addToast(t('toast.success'), 'success')
     } catch (err) {
       console.error('Checkout failed', err)
-      const message = getUserFriendlyMessage(
-        err,
-        t('form.errors.generic'),
-      )
+      const message = getUserFriendlyMessage(err, t('form.errors.generic'))
       setError(message)
       uiStore.addToast(message, 'error')
     }
@@ -176,7 +185,9 @@ const CheckoutPage = observer(() => {
     return (
       <Surface as="section" className={styles.successState}>
         <h1 className="section-title">{t('success.title')}</h1>
-        <p className="section-subtitle">{t('success.subtitle', { orderId: orderCompleted.id })}</p>
+        <p className="section-subtitle">
+          {t('success.subtitle', { orderId: orderCompleted.id })}
+        </p>
         <Button href="/products">{t('success.cta')}</Button>
       </Surface>
     )
@@ -185,7 +196,9 @@ const CheckoutPage = observer(() => {
   return (
     <form
       onSubmit={handleSubmit}
-      className={classNames(styles.checkoutForm, { [styles.checkoutFormRtl]: isRtl })}
+      className={classNames(styles.checkoutForm, {
+        [styles.checkoutFormRtl]: isRtl,
+      })}
     >
       <SectionHeader
         title={t('intro.title')}
@@ -201,7 +214,10 @@ const CheckoutPage = observer(() => {
           ) : null}
 
           {addresses.length > 0 && (
-            <FormField label={t('form.address.saved_label')} htmlFor="saved-address">
+            <FormField
+              label={t('form.address.saved_label')}
+              htmlFor="saved-address"
+            >
               <Select
                 id="saved-address"
                 value={selectedAddressId}
@@ -220,24 +236,36 @@ const CheckoutPage = observer(() => {
 
           {(selectedAddressId === 'new' || !addresses.length) && (
             <div className={styles.addressForm}>
-              <FormField label={t('form.address.fields.street')} htmlFor="shipping-street">
+              <FormField
+                label={t('form.address.fields.street')}
+                htmlFor="shipping-street"
+              >
                 <Input
                   id="shipping-street"
                   value={form.street}
-                  onChange={(event) => handleChange('street', event.target.value)}
+                  onChange={(event) =>
+                    handleChange('street', event.target.value)
+                  }
                   required
                   autoComplete="address-line1"
-                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
+                  disabled={
+                    userStore.savingAddress || cartStore.checkoutSubmitting
+                  }
                 />
               </FormField>
-              <FormField label={t('form.address.fields.city')} htmlFor="shipping-city">
+              <FormField
+                label={t('form.address.fields.city')}
+                htmlFor="shipping-city"
+              >
                 <Input
                   id="shipping-city"
                   value={form.city}
                   onChange={(event) => handleChange('city', event.target.value)}
                   required
                   autoComplete="address-level2"
-                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
+                  disabled={
+                    userStore.savingAddress || cartStore.checkoutSubmitting
+                  }
                 />
               </FormField>
               <FormField
@@ -247,30 +275,38 @@ const CheckoutPage = observer(() => {
                 <Input
                   id="shipping-postal"
                   value={form.postalCode}
-                  onChange={(event) => handleChange('postalCode', event.target.value)}
+                  onChange={(event) =>
+                    handleChange('postalCode', event.target.value)
+                  }
                   required
                   autoComplete="postal-code"
-                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
+                  disabled={
+                    userStore.savingAddress || cartStore.checkoutSubmitting
+                  }
                 />
               </FormField>
-              <FormField label={t('form.address.fields.country')} htmlFor="shipping-country">
+              <FormField
+                label={t('form.address.fields.country')}
+                htmlFor="shipping-country"
+              >
                 <Input
                   id="shipping-country"
                   value={form.country}
-                  onChange={(event) => handleChange('country', event.target.value)}
+                  onChange={(event) =>
+                    handleChange('country', event.target.value)
+                  }
                   required
                   autoComplete="country-name"
-                  disabled={userStore.savingAddress || cartStore.checkoutSubmitting}
+                  disabled={
+                    userStore.savingAddress || cartStore.checkoutSubmitting
+                  }
                 />
               </FormField>
             </div>
           )}
 
           {selectedAddress && (
-            <Surface
-              padding="compact"
-              className={styles.selectedAddress}
-            >
+            <Surface padding="compact" className={styles.selectedAddress}>
               <strong>{t('form.address.selected_heading')}:</strong>
               <p>{selectedAddress.street}</p>
               <p>
@@ -297,7 +333,9 @@ const CheckoutPage = observer(() => {
                   name="payment"
                   value={method.id}
                   checked={paymentMethod === method.id}
-                  onChange={(event) => setPaymentMethod(event.target.value as PaymentMethodId)}
+                  onChange={(event) =>
+                    setPaymentMethod(event.target.value as PaymentMethodId)
+                  }
                 />
                 {method.label}
               </label>
@@ -307,22 +345,24 @@ const CheckoutPage = observer(() => {
             <div className={styles.summaryRow}>
               <span>{t('form.payment.summary.subtotal')}</span>
               <span>
-                {total.toLocaleString('ro-RO', {
+                {total.toLocaleString(language, {
                   style: 'currency',
-                  currency: 'RON',
+                  currency: 'EUR',
                 })}
               </span>
             </div>
-            <div className={classNames(styles.summaryRow, styles.summaryRowMuted)}>
+            <div
+              className={classNames(styles.summaryRow, styles.summaryRowMuted)}
+            >
               <span>{t('form.payment.summary.shipping')}</span>
               <span>{t('form.payment.summary.shipping_free')}</span>
             </div>
             <div className={classNames(styles.summaryRow, styles.summaryTotal)}>
               <span>{t('form.payment.summary.total')}</span>
               <span>
-                {total.toLocaleString('ro-RO', {
+                {total.toLocaleString(language, {
                   style: 'currency',
-                  currency: 'RON',
+                  currency: 'EUR',
                 })}
               </span>
             </div>

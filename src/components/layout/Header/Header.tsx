@@ -56,11 +56,16 @@ export const Header = observer(() => {
   const navLinks = [...staticLinks, ...cmsLinks]
   const { isOpen: mobileOpen, onToggle, onClose } = useDisclosure()
 
-  const cartCount = cartStore.items.reduce((sum, item) => sum + item.quantity, 0)
+  const cartCount = cartStore.items.reduce(
+    (sum, item) => sum + item.quantity,
+    0,
+  )
   const wishlistCount = wishlistStore.items.length
 
   return (
-    <header className={classNames(styles.header, { [styles.headerRtl]: isRtl })}>
+    <header
+      className={classNames(styles.header, { [styles.headerRtl]: isRtl })}
+    >
       <div className={classNames(styles.inner, { [styles.innerRtl]: isRtl })}>
         <Link href="/" className={styles.brand}>
           <motion.span
@@ -73,38 +78,69 @@ export const Header = observer(() => {
         </Link>
 
         <nav className={classNames(styles.nav, { [styles.navRtl]: isRtl })}>
-          {navLinks.map((link) => (
+          {staticLinks.map((link) => (
             <Link
               key={link.key}
               href={link.href}
               className={classNames(styles.navLink, {
-                [styles.navLinkActive]:
-                  link.type === 'static' ? isActive(link.href) : pathname === link.matchPath,
+                [styles.navLinkActive]: isActive(link.href),
               })}
             >
               {link.label}
-              {link.type === 'static' && link.key === 'cart' && cartCount > 0 && (
-                <span className={styles.badge}>{cartCount}</span>
-              )}
-              {link.type === 'static' && link.key === 'wishlist' && wishlistCount > 0 && (
-                <span className={styles.badge}>{wishlistCount}</span>
-              )}
+              {link.type === 'static' &&
+                link.key === 'cart' &&
+                cartCount > 0 && (
+                  <span className={styles.badge}>{cartCount}</span>
+                )}
+              {link.type === 'static' &&
+                link.key === 'wishlist' &&
+                wishlistCount > 0 && (
+                  <span className={styles.badge}>{wishlistCount}</span>
+                )}
             </Link>
           ))}
+          {cmsLinks.length > 0 && (
+            <details className={styles.more}>
+              <summary>{t('header.nav.more')}</summary>
+              <div className={styles.moreLinks}>
+                {cmsLinks.map((link) => (
+                  <Link
+                    key={link.key}
+                    href={link.href}
+                    onClick={(event) =>
+                      event.currentTarget
+                        .closest('details')
+                        ?.removeAttribute('open')
+                    }
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            </details>
+          )}
         </nav>
 
-        <div className={classNames(styles.actions, { [styles.actionsRtl]: isRtl })}>
+        <div
+          className={classNames(styles.actions, { [styles.actionsRtl]: isRtl })}
+        >
           {userStore.isAuthenticated ? (
             <>
               <Link href="/account" className={styles.userButton}>
-                {userStore.user?.name ?? userStore.user?.email ?? t('header.actions.profile')}
+                {userStore.user?.name ??
+                  userStore.user?.email ??
+                  t('header.actions.profile')}
               </Link>
               <Button variant="outline" size="sm" onClick={userStore.logout}>
                 {t('header.actions.sign_out')}
               </Button>
             </>
           ) : (
-            <Button href={{ pathname: '/auth/login' }} variant="outline" size="sm">
+            <Button
+              href={{ pathname: '/auth/login' }}
+              variant="outline"
+              size="sm"
+            >
               {t('header.actions.sign_in')}
             </Button>
           )}
@@ -113,8 +149,26 @@ export const Header = observer(() => {
             className={styles.menuToggle}
             onClick={onToggle}
             aria-label={t('header.actions.toggle_navigation')}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-navigation"
           >
-            ☰
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              aria-hidden="true"
+            >
+              <path
+                d={
+                  mobileOpen
+                    ? 'm6 6 12 12M6 18 18 6'
+                    : 'M4 7h16M4 12h16M4 17h16'
+                }
+              />
+            </svg>
           </button>
         </div>
       </div>
@@ -126,7 +180,10 @@ export const Header = observer(() => {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className={classNames(styles.mobileNav, { [styles.mobileNavRtl]: isRtl })}
+            id="mobile-navigation"
+            className={classNames(styles.mobileNav, {
+              [styles.mobileNavRtl]: isRtl,
+            })}
           >
             {navLinks.map((link) => (
               <Link
@@ -135,22 +192,34 @@ export const Header = observer(() => {
                 onClick={onClose}
                 className={classNames(styles.mobileLink, {
                   [styles.mobileLinkActive]:
-                    link.type === 'static' ? isActive(link.href) : pathname === link.matchPath,
+                    link.type === 'static'
+                      ? isActive(link.href)
+                      : pathname === link.matchPath,
                 })}
               >
                 {link.label}
-                {link.type === 'static' && link.key === 'cart' && cartCount > 0 && (
-                  <span className={styles.badge}>{cartCount}</span>
-                )}
-                {link.type === 'static' && link.key === 'wishlist' && wishlistCount > 0 && (
-                  <span className={styles.badge}>{wishlistCount}</span>
-                )}
+                {link.type === 'static' &&
+                  link.key === 'cart' &&
+                  cartCount > 0 && (
+                    <span className={styles.badge}>{cartCount}</span>
+                  )}
+                {link.type === 'static' &&
+                  link.key === 'wishlist' &&
+                  wishlistCount > 0 && (
+                    <span className={styles.badge}>{wishlistCount}</span>
+                  )}
               </Link>
             ))}
             {userStore.isAuthenticated ? (
               <>
-                <Link href="/account" className={styles.mobileUserLink} onClick={onClose}>
-                  {userStore.user?.name ?? userStore.user?.email ?? t('header.actions.profile')}
+                <Link
+                  href="/account"
+                  className={styles.mobileUserLink}
+                  onClick={onClose}
+                >
+                  {userStore.user?.name ??
+                    userStore.user?.email ??
+                    t('header.actions.profile')}
                 </Link>
                 <Button
                   variant="outline"

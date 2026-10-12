@@ -7,12 +7,15 @@
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 999px;
+  border-radius: 12px;
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.25;
+  min-height: 44px;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform 0.25s $transition-base, box-shadow 0.25s $transition-base;
+  transition:
+    transform 0.25s $transition-base,
+    box-shadow 0.25s $transition-base;
 
   &.isBlock {
     width: 100%;
@@ -30,13 +33,13 @@
 
 .primary {
   padding: 0.85rem 1.6rem;
-  background: linear-gradient(135deg, $color-primary, $color-accent);
-  color: #fff;
-  box-shadow: 0 22px 35px -18px rgba(99, 102, 241, 0.5);
+  background: $color-primary;
+  color: #101112;
+  box-shadow: none;
 
   &:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 28px 40px -22px rgba(99, 102, 241, 0.6);
+    box-shadow: 0 4px 18px rgba(200, 255, 95, 0.15);
   }
 }
 

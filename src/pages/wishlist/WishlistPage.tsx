@@ -5,10 +5,12 @@ import { observer } from 'mobx-react-lite'
 import { Button, SectionHeader, Surface } from '@components/ui'
 import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
+import { useTranslation } from '@/i18n'
 import styles from './WishlistPage.module.scss'
 
 const WishlistPage = observer(() => {
   const { wishlistStore, cartStore, userStore } = useStores()
+  const { language, t } = useTranslation('Common')
   const items = wishlistStore.items
 
   return (
@@ -20,8 +22,12 @@ const WishlistPage = observer(() => {
 
       {items.length === 0 ? (
         <Surface className={styles.emptyState}>
-          <p className={styles.emptyMessage}>{"You haven't saved any products yet."}</p>
-          <Button href={{ pathname: '/products' }}>Browse the collections</Button>
+          <p className={styles.emptyMessage}>
+            {"You haven't saved any products yet."}
+          </p>
+          <Button href={{ pathname: '/products' }}>
+            Browse the collections
+          </Button>
         </Surface>
       ) : (
         <div className={classNames('grid', styles.grid)}>
@@ -34,7 +40,11 @@ const WishlistPage = observer(() => {
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className={styles.productImage}
-                  fallback={<span className={styles.imageFallback}>No image</span>}
+                  fallback={
+                    <span className={styles.imageFallback}>
+                      {t('product.no_image')}
+                    </span>
+                  }
                 />
               </div>
               <Button
@@ -45,13 +55,11 @@ const WishlistPage = observer(() => {
               >
                 {product.name}
               </Button>
-              <p className={styles.description}>
-                {product.description ?? 'Curated pick recommended by the ShopX team.'}
-              </p>
+              <p className={styles.description}>{product.description ?? ''}</p>
               <span className={styles.price}>
-                {product.price.toLocaleString('ro-RO', {
+                {product.price.toLocaleString(language, {
                   style: 'currency',
-                  currency: 'RON',
+                  currency: 'EUR',
                 })}
               </span>
               <div className={styles.actions}>
@@ -81,7 +89,8 @@ const WishlistPage = observer(() => {
 
       {!userStore.isAuthenticated && items.length > 0 && (
         <Surface className={styles.proTip}>
-          <strong>Pro tip:</strong> Create an account to keep your wishlist synced across every device.
+          <strong>Pro tip:</strong> Create an account to keep your wishlist
+          synced across every device.
         </Surface>
       )}
     </div>

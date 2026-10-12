@@ -8,6 +8,7 @@ import { Button, SectionHeader, Surface } from '@components/ui'
 import { ModularImage } from '@components/ui/ModularImage'
 import { useStores } from '@stores/StoreProvider'
 import { ProductCard } from '@pages/products/components/ProductCard/ProductCard'
+import { useTranslation } from '@/i18n'
 import styles from './ProductDetailPage.module.scss'
 
 interface ProductDetailPageProps {
@@ -16,6 +17,7 @@ interface ProductDetailPageProps {
 
 const ProductDetailPage = observer(({ productId }: ProductDetailPageProps) => {
   const { productStore, cartStore, wishlistStore } = useStores()
+  const { language, t } = useTranslation('Common')
 
   useEffect(() => {
     productStore.fetchProductDetail(productId)
@@ -41,14 +43,14 @@ const ProductDetailPage = observer(({ productId }: ProductDetailPageProps) => {
     return (
       <div className={styles.notFound}>
         <span>The product was not found.</span>
-        <Button href={{ pathname: '/products' }}>
-          Back to catalog
-        </Button>
+        <Button href={{ pathname: '/products' }}>Back to catalog</Button>
       </div>
     )
   }
 
-  const isInWishlist = wishlistStore.items.some((item) => item.id === product.id)
+  const isInWishlist = wishlistStore.items.some(
+    (item) => item.id === product.id,
+  )
 
   return (
     <div className={styles.page}>
@@ -65,11 +67,13 @@ const ProductDetailPage = observer(({ productId }: ProductDetailPageProps) => {
           >
             <ModularImage
               src={product.image?.url ?? null}
-              alt={product.image?.filename ?? product.name}
+              alt={product.name}
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
               className={styles.productImage}
-              fallback={<span className={styles.imageFallback}>No image available</span>}
+              fallback={
+                <span className={styles.imageFallback}>No image available</span>
+              }
             />
           </motion.div>
           <motion.div
@@ -78,44 +82,48 @@ const ProductDetailPage = observer(({ productId }: ProductDetailPageProps) => {
             transition={{ duration: 0.4, delay: 0.1 }}
             className={styles.details}
           >
-            <span className="tag">ShopX Collection · Available now</span>
-            <h1 className={classNames('section-title', styles.title)}>{product.name}</h1>
-            <p className={styles.description}>
-              {product.description ?? 'An innovative product designed to give you a real advantage every day. Durable materials, extended warranty, premium support.'}
-            </p>
+            <span className="tag">ShopX Collection</span>
+            <h1 className={classNames('section-title', styles.title)}>
+              {product.name}
+            </h1>
+            <p className={styles.description}>{product.description}</p>
             <div className={styles.infoRow}>
               <span className={styles.price}>
-                {product.price.toLocaleString('ro-RO', { style: 'currency', currency: 'RON' })}
+                {product.price.toLocaleString(language, {
+                  style: 'currency',
+                  currency: 'EUR',
+                })}
               </span>
               <div className={styles.actions}>
                 <Button onClick={() => cartStore.addItem(product)}>
                   Add to cart
                 </Button>
-                <Button variant="outline" onClick={() => wishlistStore.toggle(product)}>
+                <Button
+                  variant="outline"
+                  onClick={() => wishlistStore.toggle(product)}
+                >
                   {isInWishlist ? 'In wishlist' : 'Save'}
                 </Button>
               </div>
             </div>
-            <ul className={styles.featureList}>
-              <li>Scheduled delivery in 24-48h with confirmation SMS.</li>
-              <li>Dedicated support 6 days a week, live chat, and 30-day returns.</li>
-              <li>Integration with the ShopX mobile app for real-time tracking.</li>
-            </ul>
+            <p className={styles.featureList}>EUR · {t('product.vat')}</p>
           </motion.div>
         </div>
       </section>
 
       <section className="section">
         <SectionHeader
-          title="Authentic reviews"
-          description="Real feedback from the ShopX community. Tell us how it improved your life."
+          title="Customer reviews"
+          description="Feedback submitted on ShopX."
         />
         {reviews.length ? (
           <div className={classNames('grid', styles.reviewsGrid)}>
             {reviews.map((review) => (
               <Surface key={review.id} className={styles.reviewCard}>
-                <span className={styles.reviewHeading}>Rating: {review.rating}/5</span>
-                <p className={styles.reviewBody}>{review.reviewText ?? 'Excellent experience, highly recommend!'}</p>
+                <span className={styles.reviewHeading}>
+                  Rating: {review.rating}/5
+                </span>
+                <p className={styles.reviewBody}>{review.reviewText}</p>
                 <span className={styles.reviewMeta}>
                   {new Date(review.createdAt).toLocaleDateString('ro-RO')}
                 </span>

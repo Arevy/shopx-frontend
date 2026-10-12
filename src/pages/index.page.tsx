@@ -13,7 +13,12 @@ type HomeProps = {
   cmsPage: CmsPage | null
 }
 
-const IndexPage = ({ heroProduct, featuredProducts, newArrivals, cmsPage }: HomeProps) => {
+const IndexPage = ({
+  heroProduct,
+  featuredProducts,
+  newArrivals,
+  cmsPage,
+}: HomeProps) => {
   return (
     <HomePage
       heroProduct={heroProduct}
@@ -28,11 +33,11 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
   const store = createRootStore()
 
   await store.productStore.fetchProducts()
-  const products = store.productStore.products.slice(0, 24)
+  const products = store.productStore.products
 
   const heroProduct = products[0] ?? null
   const featuredProducts = products.slice(0, 4)
-  const newArrivals = products.slice(-6).reverse()
+  const newArrivals = products.slice(-4).reverse()
 
   const cmsPage = await store.cmsStore.getPage(HOME_CMS_SLUG)
 

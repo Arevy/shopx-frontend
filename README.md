@@ -40,7 +40,15 @@ node scripts/compose.mjs up
 
 Open **http://localhost:3100** or **http://shopx.localhost**. The [workspace README](../README.md) covers Oracle, Redis, and the other applications. Admin uses 3000, GraphQL 4000, and RN web 8083. Parent scripts are not included in a standalone clone.
 
-Compose mounts `src/` and `public/` for live recompilation. To run `npm run dev` on the Mac, first stop Compose's `frontend` service to free port 3100, and keep the backend available. In a fresh checkout, copy `.env.example` to `.env.local` only if that file does not already exist, then adjust its values. The legacy workspace setup updates existing configuration rather than requiring it to be discarded.
+Compose mounts `src/`, `public/`, and `local/` for live recompilation. To run `npm run dev` on the Mac, first stop Compose's `frontend` service to free port 3100, and keep the backend available. In a fresh checkout, copy `.env.example` to `.env.local` only if that file does not already exist, then adjust its values. The legacy workspace setup updates existing configuration rather than requiring it to be discarded.
+
+## Catalog and visual identity
+
+The storefront uses graphite surfaces and lime actions, with the shared visual values in [SCSS tokens](src/styles/_tokens.scss). Product photos use a white stage and `contain` sizing so the complete item stays visible. Product cards, homepage collections, navigation, cart and detail layouts adapt to narrow screens. The footer links to actual routes and published CMS content.
+
+Current product prices are displayed in **EUR**, using the selected interface language. VAT labels and catalog actions are translated in all six locale packs. The backend owns the real-model catalog, photos and dated retail reference prices; this app does not fetch supplier pages or substitute mock products. See the backend catalog maintenance guide when working in the full workspace. Historical order amounts are not converted by a display-format change.
+
+New clients share the graphite/lime identity with admin and RN; each repository owns its tokens and can be deployed independently. Configure a platform's branding in its own theme rather than importing another checkout at runtime.
 
 ## Configuration
 
@@ -60,7 +68,7 @@ REDIS_CACHE_TTL=300
 
 - `.env.example` sets `NEXT_PUBLIC_USE_SERVER_SERVICES=false`; the current workspace enables it. With `true`, browsers use the Next.js proxy; with `false`, they use the GraphQL endpoint directly.
 - `GRAPHQL_UPSTREAM_ENDPOINT` is the backend destination for Next.js. Pointing it back to the Next.js proxy would create a loop.
-- `REDIS_URL` is `redis://redis:6379/1` in Compose. Only the legacy host setup detects `clever_wilson`'s published port; that is a separate Redis instance.
+- `REDIS_URL` is `redis://redis:6379/1` in Compose. The legacy host setup requires a separately configured Redis endpoint if Compose Redis is not exposed to it.
 - `SERVER_SERVICES_TOKEN` protects cache tools and stays on the server. A development fallback exists; use a private value in a deployed environment.
 - `NEXT_PUBLIC_*` values are exposed to browsers and embedded during the Next.js build. Changing them for production requires a rebuild. Never put credentials in these variables.
 

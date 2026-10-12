@@ -115,3 +115,34 @@
 .recommendationsGrid {
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
 }
+
+.imageWrapper,
+.imageHasMedia {
+  background: #fff;
+  aspect-ratio: 1;
+  min-height: 280px;
+}
+.productImage {
+  object-fit: contain;
+  padding: 32px;
+}
+.details {
+  align-content: center;
+}
+.title {
+  font-size: clamp(1.8rem, 1.3rem + 2vw, 3rem);
+  line-height: 1.15;
+}
+.infoRow {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 24px;
+}
+.heroGrid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (max-width: 760px) {
+  .heroGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
