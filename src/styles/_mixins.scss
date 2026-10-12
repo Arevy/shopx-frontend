@@ -1,54 +1,59 @@
-@use 'sass:color';
-@use 'tokens' as *;
+@use "sass:color";
+@use "tokens" as *;
 
 @mixin transition-base($props: all, $duration: 0.25s) {
-  transition: $props $duration $transition-base;
+	transition: $props $duration $transition-base;
 }
 
 @mixin card {
-  background: var(--color-surface);
-  border-radius: $radius-lg;
-  border: 1px solid var(--color-border);
-  box-shadow: $shadow-sm;
+	background: var(--color-surface);
+	border-radius: $radius-lg;
+	border: 1px solid var(--color-border);
+	box-shadow: $shadow-sm;
 }
 
 @mixin tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.35rem 0.8rem;
-  border-radius: 999px;
-  border: 1px solid rgba($color-primary, 0.25);
-  background: rgba($color-primary, 0.08);
-  color: $color-primary;
-  font-weight: 500;
-  font-size: 0.85rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	padding: 0.35rem 0.8rem;
+	border-radius: 999px;
+	border: 1px solid
+		color-mix(in srgb, var(--platform-accent, #c8ff5f) 25%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--platform-accent, #c8ff5f) 8%,
+		transparent
+	);
+	color: $color-primary;
+	font-weight: 500;
+	font-size: 0.85rem;
 }
 
 @mixin button-reset {
-  border: none;
-  background: none;
-  cursor: pointer;
-  font: inherit;
-  padding: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+	font: inherit;
+	padding: 0;
 }
 
 @mixin button-base($bg, $color: #101112) {
-  @include button-reset;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 0.85rem 1.6rem;
-  border-radius: 999px;
-  font-weight: 600;
-  background: $bg;
-  color: $color;
-  @include transition-base(transform, 0.25s);
-  box-shadow: 0 22px 35px -20px rgba(99, 102, 241, 0.45);
+	@include button-reset;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	padding: 0.85rem 1.6rem;
+	border-radius: 999px;
+	font-weight: 600;
+	background: $bg;
+	color: $color;
+	@include transition-base(transform, 0.25s);
+	box-shadow: 0 22px 35px -20px rgba(99, 102, 241, 0.45);
 }
 
 @mixin responsive-width {
-  width: min(1320px, calc(100% - 48px));
-  margin: 0 auto;
+	width: min(1320px, calc(100% - 48px));
+	margin: 0 auto;
 }

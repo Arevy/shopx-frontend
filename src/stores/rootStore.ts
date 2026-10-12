@@ -1,29 +1,31 @@
-import ApiService from '@lib/apiService'
-import { CartStore } from './cartStore'
-import { CmsStore } from './cmsStore'
-import { ProductStore } from './productStore'
-import { UiStore } from './uiStore'
-import { UserStore } from './userStore'
-import { WishlistStore } from './wishlistStore'
+import ApiService from "@lib/apiService";
+import { CartStore } from "./cartStore";
+import { CmsStore } from "./cmsStore";
+import { ProductStore } from "./productStore";
+import { UiStore } from "./uiStore";
+import { UserStore } from "./userStore";
+import { WishlistStore } from "./wishlistStore";
+import { PlatformStore } from "./platformStore";
 
 export class RootStore {
-  readonly apiService: ApiService
-  readonly uiStore: UiStore
-  readonly userStore: UserStore
-  readonly productStore: ProductStore
-  readonly cartStore: CartStore
-  readonly wishlistStore: WishlistStore
-  readonly cmsStore: CmsStore
+	readonly platformStore = new PlatformStore();
+	readonly apiService: ApiService;
+	readonly uiStore: UiStore;
+	readonly userStore: UserStore;
+	readonly productStore: ProductStore;
+	readonly cartStore: CartStore;
+	readonly wishlistStore: WishlistStore;
+	readonly cmsStore: CmsStore;
 
-  constructor() {
-    this.apiService = new ApiService()
-    this.uiStore = new UiStore()
-    this.productStore = new ProductStore(this)
-    this.cartStore = new CartStore(this)
-    this.wishlistStore = new WishlistStore(this)
-    this.userStore = new UserStore(this)
-    this.cmsStore = new CmsStore(this)
-  }
+	constructor() {
+		this.apiService = new ApiService();
+		this.uiStore = new UiStore();
+		this.productStore = new ProductStore(this);
+		this.cartStore = new CartStore(this);
+		this.wishlistStore = new WishlistStore(this);
+		this.userStore = new UserStore(this);
+		this.cmsStore = new CmsStore(this);
+	}
 }
 
-export const createRootStore = () => new RootStore()
+export const createRootStore = () => new RootStore();

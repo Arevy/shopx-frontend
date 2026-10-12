@@ -185,3 +185,13 @@ The Dockerfile uses Node 22 bookworm-slim. Compose selects `development` with `n
 ## Remaining work
 
 Payment-provider integration, shipping/inventory, checkout recovery/idempotency, complete accessibility and RTL audits, analytics, and optional offline/PWA support remain development directions. Translation infrastructure already exists; adding it is no longer a pending task. See the [workspace status](../docs/development-status.md) for verified scope. No workspace license file is present; the older README's claim of an inherited monorepo license was not substantiated.
+
+## Managed platform configuration
+
+The optional factory deployment reuses this production image across independent stores. Set the server-only `SHOPX_PLATFORM_API_ORIGIN` to that store's backend origin and `SHOPX_PLATFORM_ID` to its immutable ID. Keep `GRAPHQL_UPSTREAM_ENDPOINT` and Redis/cache configuration scoped to that same store.
+
+`/api/platform-config` checks the backend's identity and forwards public configuration only. A MobX `PlatformStore` refreshes on focus and every 30 seconds while visible, updates the business name and maps branding to the existing SCSS tokens. No setting is inferred from an incoming tenant header. When the optional server settings are absent, the endpoint returns `configuration: null` and the original branding remains.
+
+`/api/products/:id/image` proxies managed relative product-image URLs to the configured backend, including requests from Next's image optimizer. The destination is server configuration, never a client-provided URL. Existing absolute image URLs remain supported.
+
+The Docker production target also supports repositories with an empty `public/` directory. There are no sibling build contexts or imports. The local integration workspace's factory controls provisioning; cloning this repository alone still works with an existing compatible GraphQL backend.
