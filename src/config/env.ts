@@ -25,7 +25,8 @@ const DEFAULT_USE_SERVER_SERVICES = false
 
 export const getPublicGraphqlEndpoint = () => sanitizeEnv(process.env.NEXT_PUBLIC_GRAPHQL_ENDPOINT)
 
-export const getGraphqlEndpoint = () => getPublicGraphqlEndpoint() ?? DEFAULT_GRAPHQL_ENDPOINT
+export const getGraphqlEndpoint = () =>
+  sanitizeEnv(process.env.GRAPHQL_UPSTREAM_ENDPOINT) ?? getPublicGraphqlEndpoint() ?? DEFAULT_GRAPHQL_ENDPOINT
 
 export const getRedisUrl = () => sanitizeEnv(process.env.REDIS_URL) ?? DEFAULT_REDIS_URL
 
