@@ -1,216 +1,179 @@
-# ShopX Frontend
+# ShopX storefront
 
-The store front experience of the ShopX platform, implemented with **Next.js 14 (Pages Router)**, **React 18**, **TypeScript**, **MobX**, and **GraphQL**. It consumes the GraphQL API served by `e-commerce-backend` (Oracle DB + Redis) through a shared `ApiService`, and delivers a fully interactive retail journey: campaign-driven homepage, product exploration, cart & wishlist management, authentication, and checkout flows.
+The customer-facing web app, built with **Next.js 14.2.18 (Pages Router), React 18.3.1, TypeScript, and MobX**. It consumes the GraphQL API in `e-commerce-backend` and does not connect directly to Oracle. This is an independent Git repository, not a package in a Yarn monorepo.
 
----
+## Run this repository independently
 
-## Environments
+This repository owns its source, lockfile, Dockerfile, tests, and [standalone Compose configuration](compose.yaml). It does not require the parent ShopX directory or sibling checkouts. Other services are accessed through configurable network endpoints and must implement the expected GraphQL/API contract; a different API schema requires a client adapter.
 
-| Surface              | URL / Port           | Purpose                               |
-|----------------------|----------------------|---------------------------------------|
-| Frontend (this app)  | `http://localhost:3100` | Customer-facing store experience       |
-| Admin portal         | `http://localhost:3000` | Internal merchandising & CMS tooling  |
-| GraphQL backend      | `http://localhost:4000/graphql` | Data source for both UIs              |
+From this repository, create the private container configuration only if it does not already exist:
 
-> ℹ️  Ports are coordinated across the monorepo: the admin portal stays on 3000 while the store front runs on 3100 to avoid conflicts.
-
----
-
-## Requirements
-- Node.js **20.9+** (matches the backend’s minimum – use `nvm use` if an `.nvmrc` is present).
-- Yarn Classic (`npm install --global yarn@1`) – the repo is optimized for Yarn 1 workspaces.
-- A running instance of `e-commerce-backend` (Oracle + Redis). Ensure the GraphQL endpoint is reachable; seed `sql_script.txt` to populate sample data including CMS pages.
-
----
-
-## Getting Started
 ```bash
-# 1. Install dependencies
-yarn install
-
-# 2. Provide environment variables
-cp .env.example .env.local   # adjust NEXT_PUBLIC_GRAPHQL_ENDPOINT if needed
-
-# 3. Start the dev server
-yarn dev                     # launches http://localhost:3100
+cp .env.docker.example .env.docker
 ```
 
-Environment variables accepted at runtime (`.env`, `.env.local`, or `.env.production`):
+Edit `.env.docker` for your external services, then run:
+
+```bash
+docker compose --env-file .env.docker up -d --build --wait
+docker compose --env-file .env.docker ps
+docker compose --env-file .env.docker logs --tail 80
+docker compose --env-file .env.docker down
+```
+
+The standalone project has its own Compose name. Change `APP_PORT` if the workspace stack already occupies the default host port. `host.docker.internal` reaches services published on the host; `localhost` inside a container refers to that container. Use a reachable hostname for remote APIs/databases. Do not copy private environment files into images.
+
+Set `GRAPHQL_UPSTREAM_ENDPOINT` to the backend and `REDIS_URL` to the desired cache instance. Set `SERVER_SERVICES_TOKEN` privately for cache tools. Product-image URLs and `SHOPX_PUBLIC_API_ORIGIN` must use an origin reachable by both the browser and the Next.js process; a backend returning `localhost` image URLs will not work with container-side image optimization unless that origin is routed appropriately. Use a shared public/LAN hostname for standalone deployments.
+
+In the full local workspace, use the parent `docker-compose.yml` / `node scripts/compose.mjs up` instead. It orchestrates shared dependencies and configures service DNS centrally; it does not merge these Git repositories or require their standalone Compose projects to run alongside it.
+
+## Start the application
+
+Compose uses **Node 22.x** and installs Linux dependencies from `yarn.lock`. The manifest permits Node 20+, but the workspace is aligned on 22.x. For development on the Mac, first run `yarn install --frozen-lockfile`.
+
+From this repository in the existing ShopX workspace:
+
+```bash
+cd ..
+node scripts/compose.mjs up
+```
+
+Open **http://localhost:3100** or **http://shopx.localhost**. The [workspace README](../README.md) covers Oracle, Redis, and the other applications. Admin uses 3000, GraphQL 4000, and RN web 8083. Parent scripts are not included in a standalone clone.
+
+Compose mounts `src/` and `public/` for live recompilation. To run `npm run dev` on the Mac, first stop Compose's `frontend` service to free port 3100, and keep the backend available. In a fresh checkout, copy `.env.example` to `.env.local` only if that file does not already exist, then adjust its values. The legacy workspace setup updates existing configuration rather than requiring it to be discarded.
+
+## Configuration
+
+In Compose, the Next.js server uses `http://backend:4000/graphql` and `redis://redis:6379/1`; browsers use `/api/serverSideServices/graphql` on their own origin. Nginx routes this path to Next.js. `SHOPX_PUBLIC_API_ORIGIN` configures the image origin allowed by Next.js.
+
+For standalone host development, settings are resolved by [env.ts](src/config/env.ts) and [apiEndpoints.ts](src/config/apiEndpoints.ts). Example configuration with the proxy enabled:
+
 ```dotenv
 NEXT_PUBLIC_GRAPHQL_ENDPOINT=http://localhost:4000/graphql
 NEXT_PUBLIC_SITE_NAME=ShopX
+NEXT_PUBLIC_USE_SERVER_SERVICES=true
 NEXT_PUBLIC_SERVER_SERVICES_BASE_PATH=/api/serverSideServices
-NEXT_PUBLIC_USE_SERVER_SERVICES=false
-SERVER_SERVICES_TOKEN=development
-REDIS_URL=redis://127.0.0.1:6379
+GRAPHQL_UPSTREAM_ENDPOINT=http://127.0.0.1:4000/graphql
 REDIS_CACHE_PREFIX=shopx:frontend
 REDIS_CACHE_TTL=300
 ```
-Any variable prefixed with `NEXT_PUBLIC_` is automatically exposed to the browser. For private values (e.g. feature flags) use backend-driven storage instead.
 
----
+- `.env.example` sets `NEXT_PUBLIC_USE_SERVER_SERVICES=false`; the current workspace enables it. With `true`, browsers use the Next.js proxy; with `false`, they use the GraphQL endpoint directly.
+- `GRAPHQL_UPSTREAM_ENDPOINT` is the backend destination for Next.js. Pointing it back to the Next.js proxy would create a loop.
+- `REDIS_URL` is `redis://redis:6379/1` in Compose. Only the legacy host setup detects `clever_wilson`'s published port; that is a separate Redis instance.
+- `SERVER_SERVICES_TOKEN` protects cache tools and stays on the server. A development fallback exists; use a private value in a deployed environment.
+- `NEXT_PUBLIC_*` values are exposed to browsers and embedded during the Next.js build. Changing them for production requires a rebuild. Never put credentials in these variables.
 
-## Feature Overview
-- **CMS-driven homepage** – dynamic hero, highlights, featured products, new arrivals, and a rich-text block fed by the admin portal’s WYSIWYG editor.
-- **Catalog browsing** – server-sourced product list with category filtering, instant search, wishlist toggles, and graceful loading states.
-- **Product imagery** – all catalog, cart, and wishlist views render the backend-hosted `/products/:id/image` URL returned by GraphQL for a consistent media pipeline.
-- **Product detail** – price, description, reviews, recommendations, CTA buttons (“Add to cart”, “Save for later”).
-- **Cart workflow** – guest cart stored in local storage with automatic migration once the user authenticates; authenticated carts live server-side with Redis-backed caching and are pulled via the new `getUserContext` aggregate immediately after login.
-- **Wishlist** – same hybrid behaviour as cart, with Redis-backed persistence and instant refresh driven by `getUserContext`.
-- **Authentication** – login and registration screens backed by HTTP-only session cookies; MobX only persists lightweight profile data and automatically refreshes the server context after sign-in.
-- **Admin impersonation** – dedicated `/impersonate` route redeems short-lived tokens issued from the admin portal and swaps the active session cookie before redirecting to the homepage.
-- **Checkout** – shipping address capture (with address book reuse), order creation, and payment mutation (card/cash/bank transfer) tied to the backend schema.
-- **Notification system** – toast stack for success/error/info feedback, used consistently across flows.
+The local database is `oracle19 / ORCLCDB / AREVY`, accessed through the backend. Investigate an empty catalog by checking the database identity and proxy, not by executing the destructive `sql_script.txt`.
 
----
+The [backend SQL guide](../e-commerce-backend/README.md#schema-and-sql-script) explains the corrected demo reset and isolated tests. The new constraints have not been migrated into `AREVY`; starting the storefront requires no data reset.
 
-## Project Structure
-```
-shopx-frontend/
-├── Dockerfile                 # Multi-stage build for production bundles
-├── public/                    # Static assets
-├── src/
-│   ├── components/
-│   │   ├── layout/
-│   │   │   ├── Header/        # Header.tsx + Header.module.scss + index.ts
-│   │   │   ├── Footer/        # Footer + styles
-│   │   │   └── LanguageSelector/
-│   │   └── ui/                # Button, Surface, SectionHeader, ToastStack, etc.
-│   ├── config/                # Environment helpers
-│   ├── graphql/               # One file per query/mutation, plus barrel exports
-│   ├── hooks/                 # UI-level hooks (disclosure, debounced search)
-│   ├── i18n/                  # Translation provider & helpers
-│   ├── lib/                   # ApiService, auth events, utilities
-│   ├── pages/
-│   │   ├── *.page.tsx         # Route entrypoints (e.g. index.page.tsx, cart/index.page.tsx)
-│   │   └── <route>/           # Page implementations + `Route.ts` metadata
-│   ├── routes/                # Centralised navigation metadata & helpers
-│   ├── stores/                # MobX stores (cart + checkout, wishlist, cms, user/auth/addresses, products)
-│   ├── styles/                # Design tokens, mixins, globals (SCSS)
-│   └── types/                 # Shared TypeScript models & SCSS declarations
-└── README.md
-```
-Route files use the custom extension pattern configured in `next.config.mjs` (`pageExtensions: ['page.tsx', ...]`). A thin `*.page.tsx` re-export lives next to each page module (for example `src/pages/cart/index.page.tsx` re-exports `./CartPage`) so the Next.js router stays lightweight while the implementation remains in a dedicated folder. MobX stores orchestrate API calls and stateful logic, which components consume via `useStores()` to keep data and presentation decoupled.
+### Starter data and local access
 
----
+The backend owns the [versioned general-store pack and additive installer](../e-commerce-backend/docs/data-seeding.md). The recovered workspace now includes 45 products in 14 categories and seven published CMS pages, including new tech, home and lifestyle content. The storefront reads these records through GraphQL; startup does not seed or reset the database.
 
-## Development Notes
-- **Internationalisation**: The UI is currently English-only. Future translation work can leverage Next’s built-in routing or third-party libs; all copy now lives in English for easier globalization.
-- **CMS integration**: CMS pages are cached via Redis in the backend. On the frontend we memoize responses in the `CmsStore` to avoid redundant queries during a session.
-- **Session hydration**: `UserStore` issues a `GET_USER_CONTEXT` query after login or when a persisted session is detected, ensuring carts, wishlists, addresses, and profile data stay in sync with Redis-backed caches. If the backend revokes the session (e.g., via the admin portal), `ApiService` flags the session as expired, clears local state, and prompts the shopper to sign back in.
-- **Store responsibilities**: `CartStore` now owns checkout submission (order creation/payment) alongside cart synchronisation, while `UserStore` covers authentication, impersonation adoption, and address CRUD. Components rely on the exposed loading/error flags instead of duplicating mutation logic.
-- **Redis GraphQL proxy**: `ApiService` points to `/api/serverSideServices/graphql` in the browser, which proxies requests through a Redis-backed cache (TTL configurable via `REDIS_CACHE_TTL`). Inspect cached payloads through `/api/serverSideServices/cache` and purge individual entries with `DELETE /api/serverSideServices/cache/{key}`.
-- **Design tokens & SCSS**: Global palette, typography, and spacing live in `src/styles/globals.scss`. Sass imports use the alias `@styles/...`, configured via `next.config.mjs` so component styles no longer rely on deep relative paths.
-- **Custom App & Document**: The Pages Router entrypoints (`src/pages/_app.page.tsx` and `src/pages/_document.page.tsx`) host the providers and custom document markup directly—no intermediate exports required.
-- **Typed routes**: `next.config.mjs` disables `typedRoutes` due to the custom linking strategy. Re-enable once all dynamic routes are upgraded to `Route` types.
-- **Testing**: TypeScript compile (`tsc --noEmit`) is wired into CI. Add Playwright or Testing Library tests for end-to-end confidence.
-- **Docker**: `yarn build` creates a production bundle inside `/app/.next`. The Dockerfile first builds with dependencies, then copies the minimal runtime image ready for `yarn start`.
+The private workspace guide at `../docs/local-accounts.private.md` lists two new `CUSTOMER` accounts with saved addresses, carts, wishlists and pending orders. It also lists the `SUPPORT` profiles used by the admin portal. Existing accounts and passwords were preserved. The guide is machine-local and is not part of a standalone clone; independent platforms provide their own compatible backend, data, credentials and cache/session isolation.
 
----
+## Features and routes
 
-### GraphQL Cache Usage
+| Route | Existing implementation |
+| --- | --- |
+| `/` | Products and CMS content, hero/highlight sections, featured products, and rich-text content |
+| `/products`, `/products/[id]` | Catalog, search/category filters, product details, reviews, and shopping actions |
+| `/auth/login`, `/auth/register` | Backend login and registration |
+| `/account` | Profile, saved addresses, and account information |
+| `/cart`, `/wishlist` | Guest data stored locally and synchronized with the backend after login |
+| `/checkout` | Saved/new profile address, order creation, and payment registration |
+| `/cms/[slug]` | Published CMS content |
+| `/impersonate` | Redeem a short-lived ticket issued by support |
 
-The API layer caches read-heavy GraphQL queries in Redis via `/api/serverSideServices/graphql`. Store actions opt-in with stable cache keys generated by `createCacheKey(namespace, ...parts)` from `src/lib/cacheKeys.ts`. Current namespaces and TTLs:
+The UI includes i18next resources for **en, ro, fr, de, ar, he**, a language selector, and RTL direction support for Arabic/Hebrew. Translation resources do not establish complete RTL layout verification.
 
-> By default (`NEXT_PUBLIC_USE_SERVER_SERVICES=false`) local development still hits the backend GraphQL endpoint directly. Set `NEXT_PUBLIC_USE_SERVER_SERVICES=true` when deploying to environments where the proxy + cache should be active.
-> When the proxy is enabled make sure you access the storefront via the same parent domain as the backend (e.g. `https://shopx.localhost`) so the upstream `Set-Cookie` headers remain valid.
+Product imagery comes from GraphQL `image.url`, served by the backend at `/products/:id/image`. Missing images use UI fallbacks, not mock product records. Toast notifications provide success/error/information feedback.
 
-| Namespace | Description | TTL |
-|-----------|-------------|-----|
-| `products:list:{...filters}` | Product catalogue (limit/search/category) | 600 s |
-| `products:categories` | Category dropdown | 1 800 s |
-| `products:detail:<productId>` | PDP data + reviews | 900 s |
-| `cms:pages` | CMS index | 900 s |
-| `cms:page:<slug>` | Individual CMS page payload | 900 s |
+## Data, sessions, and checkout
 
-User-specific queries (cart, wishlist, addresses, user context) set `skipCache: true` to avoid leaking session data.
+[ApiService](src/lib/apiService.ts) owns transport and session errors. [MobX stores](src/stores) own authentication, catalog, cart, wishlist, CMS, and UI state. `UserStore` hydrates `getUserContext` after login or when restoring a persisted identity; the server remains authoritative. Revoked/expired sessions clear local session state and require another login.
 
-#### Inspecting and invalidating cached entries
+`CartStore` owns checkout submission and cart synchronization; `UserStore` handles account, impersonation, and address operations. Components consume store loading/error state through `useStores()` instead of duplicating business logic. `CmsStore` also memoizes pages during the browser session; this is separate from Redis caches.
+
+The default shopper cookie is `sid`. Sign in again after changing databases or revoking sessions. The new private general-store accounts belong to recovered `AREVY`; older `SHOPX_LOCAL` credentials belong to a separate database.
+
+Checkout saves addresses to the profile and submits product selections to the backend. The backend calculates the order total from Oracle and that total is used for payment registration. The resulting payment is **PENDING**, without a bank processor. Orders do not yet store address snapshots. Unlike RN checkout, the storefront does not persist a pending order for payment retry; handling intermediate failures remains open.
+
+## GraphQL caching
+
+The proxy caches only eligible anonymous public queries allowed by [operationMetadata.ts](src/server/graphql/operationMetadata.ts). Requests containing cookies or Authorization headers, private queries, and mutations reach the backend.
+
+The server derives `graphql:public-v2:...` keys from queries and variables under the application's Redis prefix. Client `cacheKey` / `x-cache-key` values do not determine the stored key. `REDIS_CACHE_TTL` defaults to 300 seconds; individual calls can request their own TTL. Old names such as `products:list` and `cms:page` are not the actual storage keys.
+
+Existing store options still express caching intent: product lists request 600 seconds, categories 600 seconds, and product details/CMS 900 seconds. Helpers such as `createCacheKey` remain in the client, but server eligibility and key derivation are authoritative. New private operations must not become cacheable just because a caller provides a key.
+
+Backend cache invalidation does not remove responses already cached by Next.js. After catalog/CMS writes, anonymous responses may remain until their TTL expires or the relevant proxy cache is explicitly invalidated.
+
+## Cache tools
+
+All routes below require `?api=<SERVER_SERVICES_TOKEN>` and operate only on the storefront Redis prefix, normally `shopx:frontend`. Supply the private token locally; do not commit it or paste it into shared logs.
+
+| Route, relative to the storefront | Methods | Behavior |
+| --- | --- | --- |
+| `/api/serverSideServices/cache` | GET | List actual keys, without the application prefix |
+| `/api/serverSideServices/cache` | DELETE | Clear all entries under this application's prefix |
+| `/api/serverSideServices/cache` | POST | `flushAll`, `flushNamespace`, or `flushKey` |
+| `/api/serverSideServices/cache/[key]` | GET / DELETE | Inspect value/TTL or remove one URL-encoded key |
+| `/api/serverSideServices/cache/namespace/[namespace]` | GET / DELETE | List or remove matching keys; a trailing wildcard is added when needed |
+
+With `SERVER_SERVICES_TOKEN` already set in your local shell, list keys:
 
 ```bash
-# set locally for convenience
-API_TOKEN=${SERVER_SERVICES_TOKEN:-development}
-
-# list all cache keys
-curl "http://localhost:3100/api/serverSideServices/cache?api=${API_TOKEN}"
-
-# flush every cached entry
-curl -X DELETE "http://localhost:3100/api/serverSideServices/cache?api=${API_TOKEN}"
-
-# inspect a specific entry
-curl "http://localhost:3100/api/serverSideServices/cache/$(python3 - <<'PY'
-from urllib.parse import quote
-print(quote('products:detail:"42"'))
-PY)?api=${API_TOKEN}"
-
-# purge a key after updating product/CMS content via admin tools
-curl -X DELETE "http://localhost:3100/api/serverSideServices/cache/$(python3 - <<'PY'
-from urllib.parse import quote
-print(quote('cms:page:"homepage"'))
-PY)?api=${API_TOKEN}"
-
-# list keys for a namespace (e.g. everything starting with "products")
-curl "http://localhost:3100/api/serverSideServices/cache/namespace/products?api=${API_TOKEN}"
-
-# flush a namespace (products, cms, etc.)
-curl -X DELETE "http://localhost:3100/api/serverSideServices/cache/namespace/products?api=${API_TOKEN}"
-
-# POST helpers (flush variants without dealing with URL encoding)
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"action":"flushAll"}' \
-  "http://localhost:3100/api/serverSideServices/cache?api=${API_TOKEN}"
-
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"action":"flushNamespace","namespace":"products"}' \
-  "http://localhost:3100/api/serverSideServices/cache?api=${API_TOKEN}"
-
-curl -X POST -H "Content-Type: application/json" \
-  -d '{"action":"flushKey","namespace":"products:detail:\"42\""}' \
-  "http://localhost:3100/api/serverSideServices/cache?api=${API_TOKEN}"
+curl -sS --get --data-urlencode "api=$SERVER_SERVICES_TOKEN" http://localhost:3100/api/serverSideServices/cache
 ```
 
-When adding new queries, reuse `createCacheKey` in the relevant store action and choose an appropriate TTL. Pair write mutations with cache invalidation if they update the same dataset; the helper ensures deterministic keys so admin tooling can target entries for purge.
+Use the exact returned key, without adding `shopx:frontend:`. In the following POST body, replace the placeholder with a key from that listing. The API's field is named `namespace` even for a single-key deletion:
 
-**Cache routes quick reference**
+```json
+{"action":"flushKey","namespace":"<exact-key-from-listing>"}
+```
 
-| Route | Method(s) | Description |
-|-------|-----------|-------------|
-| `/api/serverSideServices/cache?api=<token>` | GET | Lists every cached key (all namespaces) |
-| `/api/serverSideServices/cache?api=<token>` | DELETE | Flushes all cached entries for the frontend prefix |
-| `/api/serverSideServices/cache?api=<token>` | POST | Body-driven actions: `flushAll`, `flushNamespace`, `flushKey` |
-| `/api/serverSideServices/cache/[key]?api=<token>` | GET | Returns cached payload + TTL for one key (URL-encode the key) |
-| `/api/serverSideServices/cache/[key]?api=<token>` | DELETE | Removes a single cached entry |
-| `/api/serverSideServices/cache/namespace/[namespace]?api=<token>` | GET | Lists keys whose name starts with the provided namespace (supports wildcards, e.g. `products:list`) |
-| `/api/serverSideServices/cache/namespace/[namespace]?api=<token>` | DELETE | Flushes every key matching the namespace/pattern |
+POST that body to `/api/serverSideServices/cache?api=<token>`. `{"action":"flushNamespace","namespace":"graphql:public-v2"}` removes the current public-query namespace; `{"action":"flushAll"}` clears the app prefix. These operations change cache state, not Oracle records. Admin has a separate prefix and [its own tools](../admin-portal/README.md#cache-tools).
 
----
+## Commands and verification
 
-## Operational Checklist
-1. **Backend up & seeded** – ensures product/catalog/ CMS data is available.
-2. **Environment set** – `NEXT_PUBLIC_GRAPHQL_ENDPOINT` points to the live GraphQL API.
-3. **Run `yarn build`** – compiles the Next.js app for production.
-4. **Run `yarn start`** – serves the compiled bundle on port 3100.
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Next.js development on port 3100 |
+| `npm run build` | Production Next.js build, including configured checks |
+| `npm start` | Runs `prestart` (`next build`), then serves on 3100 |
+| `npx tsc --noEmit` | Separate TypeScript check |
+| `npm run lint` | ESLint through `next lint` |
+| `npm run test:contracts` | Two tests for public-cache eligibility and private-query isolation |
 
----
+The two contract tests and TypeScript passed again on October 12; lint passed during the October 11 checks. Workspace `../scripts/browser-smoke.cjs` and `../scripts/smoke.mjs` create temporary QA data and require valid SUPPORT credentials for the active database. API smoke passes against recovered `AREVY`, covering authenticated commerce and private-cache isolation. Chrome passed storefront login and the shared backend wishlist. `../scripts/verify-data.mjs` verifies the new accounts and persisted starter content through the storefront proxy. See the [workspace verification record](../docs/development-status.md) for limits; API checkout evidence does not by itself prove every storefront checkout interaction.
+
+`next build` and `next dev` use the same `.next` directory. Stop this repository's development server before building, then restart it afterward.
 
 ## Troubleshooting
-| Symptom | Likely cause | Resolution |
-|---------|--------------|------------|
-| `ORA-28001` in backend logs | Oracle password expired | Update `.env` with a fresh password or enable automatic rotation (`DB_PASSWORD_ROTATE=true`). |
-| CORS errors from frontend | Backend missing origin | Ensure `CORS_ALLOWED_ORIGINS` includes `http://localhost:3100` (adds automatically if variable is unset). |
-| `node` engine mismatch | Local Node < 20 | `nvm use 20` or install a compatible Node.js version. |
-| Empty catalog/homepage | Backend not seeded | Run `sql_script.txt` to repopulate sample data, including CMS pages. |
 
----
+| Symptom | Check |
+| --- | --- |
+| Empty catalog or homepage | Backend `/health/ready`, active Oracle schema, public GraphQL query, then proxy response; do not reset recovered data |
+| GraphQL/CORS error | Check proxy upstream reachability. For direct browser requests, verify `CORS_ALLOWED_ORIGINS` in the backend |
+| Images fail in Next.js optimization | The public image origin must be allowed by Next.js and reachable from its container; Compose defaults to `api.shopx.localhost` |
+| Login expires or support revokes access | Sign in again; the cookie must identify an active backend session |
+| `ORA-28001` | Follow the backend's [password recovery guidance](../e-commerce-backend/README.md#expired-oracle-passwords) |
+| Node engine mismatch | Select Node 22 for the workspace and reinstall dependencies for that runtime |
+| Stale content after admin changes | Check browser store state, backend cache, and Next.js public cache separately |
 
-## Roadmap Ideas
-- **i18n/Localization** – Integrate Next.js i18n routing and provide translation dictionaries.
-- **Analytics instrumentation** – Hook events into your analytics stack (Segment, GA4, etc.).
-- **Accessibility polish** – Conduct an a11y audit to refine keyboard navigation and ARIA coverage.
-- **Offline-ready PWA** – Cache key assets and data for intermittent connectivity.
-- **Payment provider integration** – Swap the mock GraphQL payment mutation for Stripe, Adyen, or Braintree.
+## Code organization and Docker
 
----
+- [src/pages](src/pages): `*.page.tsx` route entrypoints and `*.api.ts` API routes, configured in [next.config.mjs](next.config.mjs). Thin route files delegate to page modules; `_app.page.tsx` and `_document.page.tsx` own providers and document markup.
+- [src/routes](src/routes): navigation metadata; [src/hooks](src/hooks) and [src/components](src/components): store access and shared UI.
+- [src/stores](src/stores), [src/graphql](src/graphql), [ApiService](src/lib/apiService.ts): data flows.
+- [src/server](src/server): Redis and the GraphQL cache/proxy.
+- [src/i18n](src/i18n), [local](local), [src/styles](src/styles): translations and SCSS. Shared styles use the `@styles` alias; `experimental.typedRoutes` is currently disabled in Next.js configuration; preserve existing route/link conventions when adding screens.
 
-## License
-This project inherits the monorepo license. Review the root LICENSE file for details.
+The Dockerfile uses Node 22 bookworm-slim. Compose selects `development` with `next dev`; `production` builds the app and runs the existing build through Next CLI without `prestart`. `NEXT_PUBLIC_*` must be correct at build time. Compose uses recovered `AREVY` and its own persistent Redis. Public catalog/connectivity were checked through port 3100 and Nginx, including Chrome.
+
+## Remaining work
+
+Payment-provider integration, shipping/inventory, checkout recovery/idempotency, complete accessibility and RTL audits, analytics, and optional offline/PWA support remain development directions. Translation infrastructure already exists; adding it is no longer a pending task. See the [workspace status](../docs/development-status.md) for verified scope. No workspace license file is present; the older README's claim of an inherited monorepo license was not substantiated.

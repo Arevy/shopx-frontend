@@ -327,7 +327,7 @@ export class CartStore {
       throw new Error('Authentication required.')
     }
 
-    const { cartItems, total, paymentMethod, missingProductMessage } = params
+    const { cartItems, paymentMethod, missingProductMessage } = params
     if (!cartItems.length) {
       throw new Error('Cart is empty.')
     }
@@ -356,13 +356,13 @@ export class CartStore {
 
       await this.root.apiService.execute(CREATE_PAYMENT, {
         orderId: createOrder.id,
-        amount: total,
+        amount: createOrder.total,
         method: paymentMethod,
       })
 
       const normalizedOrder = normalizeOrder(createOrder)
 
-      await this.clearCart()
+      await this.syncFromServer()
 
       return normalizedOrder
     } catch (error) {
