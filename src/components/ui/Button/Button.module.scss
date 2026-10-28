@@ -7,7 +7,7 @@
 	align-items: center;
 	justify-content: center;
 	gap: 0.5rem;
-	border-radius: 12px;
+	border-radius: var(--platform-radius, 12px);
 	font-weight: 600;
 	line-height: 1.25;
 	min-height: 44px;
@@ -33,7 +33,7 @@
 .primary {
 	padding: 0.85rem 1.6rem;
 	background: $color-primary;
-	color: #101112;
+	color: var(--platform-on-accent, #101112);
 	box-shadow: none;
 
 	&:hover:not(:disabled) {

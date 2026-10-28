@@ -1,3 +1,4 @@
+import { operationalLog } from '@/server/operationalLog'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 import { getGraphqlEndpoint, getRedisDefaultTtl } from '@/config/env'
@@ -60,7 +61,7 @@ const parseBody = (req: NextApiRequest): GraphQLPayload => {
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line no-console
-        console.warn('[GraphQL API] failed to parse body', error)
+        operationalLog.warn('[GraphQL API] failed to parse body', error)
       }
       return {}
     }
@@ -156,7 +157,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } catch (error) {
     if (process.env.NODE_ENV !== 'production') {
       // eslint-disable-next-line no-console
-      console.error('[GraphQL API] upstream request failed', error)
+      operationalLog.error('[GraphQL API] upstream request failed', error)
     }
     res.status(502).json({ error: 'Failed to reach GraphQL upstream.' })
     return
@@ -179,7 +180,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     } catch (error) {
       if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line no-console
-        console.warn('[GraphQL API] failed to cache response', error)
+        operationalLog.warn('[GraphQL API] failed to cache response', error)
       }
     }
   }

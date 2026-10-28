@@ -1,5 +1,14 @@
 .cmsContent {
-  display: grid;
-  gap: 1.2rem;
-  line-height: 1.7;
+	display: grid;
+	gap: 1.2rem;
+	line-height: 1.7;
+}
+
+.announcement {
+	padding: 1rem;
+	margin: 1rem auto;
+	text-align: center;
+	background: var(--platform-surface, #1a1d20);
+	color: var(--platform-text, #f4f5f2);
+	border-radius: var(--platform-radius, 12px);
 }

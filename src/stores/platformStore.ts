@@ -1,3 +1,4 @@
+import { Experience, validateExperience } from "./platformCustomization";
 import { makeAutoObservable, runInAction } from "mobx";
 import i18n from "../i18n/i18n";
 import { LANGUAGE_STORAGE_KEY, LANGUAGES } from "../i18n/config";
@@ -9,6 +10,7 @@ export interface PlatformConfig {
 	currency: "EUR";
 	priceDisplay: "gross";
 	branding: { accent: string; background: string; surface: string };
+	experience?: Experience;
 }
 export class PlatformStore {
 	configuration: PlatformConfig | null = null;
@@ -44,6 +46,8 @@ export class PlatformStore {
 				window.location.reload();
 				return;
 			}
+			if (c.experience !== undefined)
+				c.experience = validateExperience(c.experience);
 			const firstConfiguration = !this.configuration;
 			runInAction(() => {
 				this.configuration = c;
@@ -60,6 +64,37 @@ export class PlatformStore {
 					c.branding[key]
 				);
 			}
+			const css = document.documentElement.style;
+			const light = contrastColor(c.branding.background) === "#151719";
+			const radius =
+				c.experience?.cornerStyle === "sharp"
+					? 0
+					: c.experience?.cornerStyle === "pill"
+					? 24
+					: 12;
+			const fonts = {
+				sans: '"Inter", system-ui, sans-serif',
+				serif: 'Georgia, "Times New Roman", serif',
+				mono: '"SFMono-Regular", Consolas, monospace',
+			};
+			css.setProperty("--platform-text", light ? "#151719" : "#f4f5f2");
+			css.setProperty("--platform-muted", light ? "#4b5563" : "#adb5b9");
+			css.setProperty("--platform-on-accent", contrastColor(c.branding.accent));
+			css.setProperty("--platform-border", light ? "#c8cdd1" : "#343a3d");
+			css.setProperty(
+				"--platform-surface-muted",
+				light ? "#e9edf0" : "#222629"
+			);
+			css.setProperty("--platform-radius", radius + "px");
+			css.setProperty(
+				"--platform-font",
+				fonts[(c.experience?.fontFamily || "sans") as keyof typeof fonts]
+			);
+			css.setProperty(
+				"--platform-product-min",
+				c.experience?.catalogDensity === "compact" ? "180px" : "240px"
+			);
+			css.setProperty("color-scheme", light ? "light" : "dark");
 			document.title = c.displayName;
 		} catch {
 			/* A running client retains its last validated branding during an outage. */
@@ -77,4 +112,15 @@ export class PlatformStore {
 			window.removeEventListener("focus", refresh);
 		};
 	}
+}
+
+function contrastColor(hex: string) {
+	const rgb = hex
+		.slice(1)
+		.match(/../g)!
+		.map((v) => parseInt(v, 16) / 255)
+		.map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+	return rgb[0] * 0.2126 + rgb[1] * 0.7152 + rgb[2] * 0.0722 > 0.179
+		? "#151719"
+		: "#f4f5f2";
 }

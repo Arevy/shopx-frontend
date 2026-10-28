@@ -1,14 +1,14 @@
 $color-background: var(--platform-background, #101112);
-$color-background-alt: #151719;
+$color-background-alt: var(--platform-surface-muted, #151719);
 $color-surface: var(--platform-surface, #1a1d20);
-$color-surface-muted: #222629;
-$color-surface-translucent: #1a1d20;
-$color-border: #343a3d;
+$color-surface-muted: var(--platform-surface-muted, #222629);
+$color-surface-translucent: var(--platform-surface, #1a1d20);
+$color-border: var(--platform-border, #343a3d);
 $color-primary: var(--platform-accent, #c8ff5f);
 $color-primary-dark: #b2ed45;
 $color-accent: #b3f04e;
-$color-text: #f4f5f2;
-$color-text-muted: #adb5b9;
+$color-text: var(--platform-text, #f4f5f2);
+$color-text-muted: var(--platform-muted, #adb5b9);
 $color-success: #80dda5;
 $color-warning: #ffd580;
 $color-danger: #ff9a9a;
@@ -17,10 +17,10 @@ $shadow-md: 0 14px 40px rgba(0, 0, 0, 0.22);
 $shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.3);
 $radius-xs: 0.5rem;
 $radius-sm: 0.75rem;
-$radius-md: 1rem;
-$radius-lg: 1.5rem;
+$radius-md: var(--platform-radius, 1rem);
+$radius-lg: var(--platform-radius, 1.5rem);
 $transition-base: cubic-bezier(0.22, 1, 0.36, 1);
-$font-family-base: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-	sans-serif;
+$font-family-base: var(--platform-font, "Inter"), -apple-system,
+	BlinkMacSystemFont, "Segoe UI", sans-serif;
 $breakpoint-md: 1000px;
 $breakpoint-sm: 600px;

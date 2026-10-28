@@ -1,4 +1,4 @@
-FROM node:22-bookworm-slim AS dependencies
+FROM node:22.23.4-bookworm-slim AS dependencies
 WORKDIR /app
 
 COPY package.json yarn.lock ./
@@ -18,7 +18,7 @@ ENV NEXT_PUBLIC_USE_SERVER_SERVICES=${NEXT_PUBLIC_USE_SERVER_SERVICES}
 RUN yarn build
 RUN mkdir -p public
 
-FROM node:22-bookworm-slim AS production
+FROM node:22.23.4-bookworm-slim AS production
 WORKDIR /app
 ENV NODE_ENV=production
 

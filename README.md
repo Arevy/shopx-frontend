@@ -1,8 +1,12 @@
 # ShopX storefront
 
-The customer-facing web app, built with **Next.js 14.2.18 (Pages Router), React 18.3.1, TypeScript, and MobX**. It consumes the GraphQL API in `e-commerce-backend` and does not connect directly to Oracle. This is an independent Git repository, not a package in a Yarn monorepo.
+The customer-facing web app, built with **Next.js 15.5.28 (Pages Router), React 18.3.1, TypeScript, and MobX**. It consumes the GraphQL API in `e-commerce-backend` and does not connect directly to Oracle. This is an independent Git repository, not a package in a Yarn monorepo.
 
 ## Run this repository independently
+
+Run the commands in this section from this repository root. The integration workspace is optional; provide reachable GraphQL/Redis endpoints for your own environment.
+
+Server GraphQL proxy failures use structured operational logs with fixed messages and safe error codes; raw error objects and request payloads are excluded. The optional ShopX control-plane monitoring stack collects sanitized container output and gateway availability without adding a runtime dependency here. Configure it through the [control-plane observability guide](https://github.com/Arevy/shopx-control-plane/blob/master/docs/observability.md). Browser JavaScript errors and distributed traces are not collected in this phase.
 
 This repository owns its source, lockfile, Dockerfile, tests, and [standalone Compose configuration](compose.yaml). It does not require the parent ShopX directory or sibling checkouts. Other services are accessed through configurable network endpoints and must implement the expected GraphQL/API contract; a different API schema requires a client adapter.
 
@@ -29,7 +33,7 @@ In the full local workspace, use the parent `docker-compose.yml` / `node scripts
 
 ## Start the application
 
-Compose uses **Node 22.x** and installs Linux dependencies from `yarn.lock`. The manifest permits Node 20+, but the workspace is aligned on 22.x. For development on the Mac, first run `yarn install --frozen-lockfile`.
+Compose uses **Node 22.23.4** and installs Linux dependencies from `yarn.lock`. The Node engine is `>=22.23.4 <23`. On the Mac, run `nvm install && nvm use` before `yarn install --frozen-lockfile`.
 
 From this repository in the existing ShopX workspace:
 
@@ -38,7 +42,7 @@ cd ..
 node scripts/compose.mjs up
 ```
 
-Open **http://localhost:3100** or **http://shopx.localhost**. The [workspace README](../README.md) covers Oracle, Redis, and the other applications. Admin uses 3000, GraphQL 4000, and RN web 8083. Parent scripts are not included in a standalone clone.
+Open **http://localhost:3100** or **http://shopx.localhost**. The workspace README (`../README.md`, integration workspace only) covers Oracle, Redis, and the other applications. Admin uses 3000, GraphQL 4000, and RN web 8083. Parent scripts are not included in a standalone clone.
 
 Compose mounts `src/`, `public/`, and `local/` for live recompilation. To run `npm run dev` on the Mac, first stop Compose's `frontend` service to free port 3100, and keep the backend available. In a fresh checkout, copy `.env.example` to `.env.local` only if that file does not already exist, then adjust its values. The legacy workspace setup updates existing configuration rather than requiring it to be discarded.
 
@@ -74,26 +78,26 @@ REDIS_CACHE_TTL=300
 
 The local database is `oracle19 / ORCLCDB / AREVY`, accessed through the backend. Investigate an empty catalog by checking the database identity and proxy, not by executing the destructive `sql_script.txt`.
 
-The [backend SQL guide](../e-commerce-backend/README.md#schema-and-sql-script) explains the corrected demo reset and isolated tests. The new constraints have not been migrated into `AREVY`; starting the storefront requires no data reset.
+The [backend SQL guide](https://github.com/Arevy/e-commerce-backend/blob/master/README.md#schema-and-sql-script) explains the corrected demo reset and isolated tests. The new constraints have not been migrated into `AREVY`; starting the storefront requires no data reset.
 
 ### Starter data and local access
 
-The backend owns the [versioned general-store pack and additive installer](../e-commerce-backend/docs/data-seeding.md). The recovered workspace now includes 45 products in 14 categories and seven published CMS pages, including new tech, home and lifestyle content. The storefront reads these records through GraphQL; startup does not seed or reset the database.
+The backend owns the [versioned general-store pack and additive installer](https://github.com/Arevy/e-commerce-backend/blob/master/docs/data-seeding.md). The recovered workspace now includes 45 products in 14 categories and seven published CMS pages, including new tech, home and lifestyle content. The storefront reads these records through GraphQL; startup does not seed or reset the database.
 
 The private workspace guide at `../docs/local-accounts.private.md` lists two new `CUSTOMER` accounts with saved addresses, carts, wishlists and pending orders. It also lists the `SUPPORT` profiles used by the admin portal. Existing accounts and passwords were preserved. The guide is machine-local and is not part of a standalone clone; independent platforms provide their own compatible backend, data, credentials and cache/session isolation.
 
 ## Features and routes
 
-| Route | Existing implementation |
-| --- | --- |
-| `/` | Products and CMS content, hero/highlight sections, featured products, and rich-text content |
-| `/products`, `/products/[id]` | Catalog, search/category filters, product details, reviews, and shopping actions |
-| `/auth/login`, `/auth/register` | Backend login and registration |
-| `/account` | Profile, saved addresses, and account information |
-| `/cart`, `/wishlist` | Guest data stored locally and synchronized with the backend after login |
-| `/checkout` | Saved/new profile address, order creation, and payment registration |
-| `/cms/[slug]` | Published CMS content |
-| `/impersonate` | Redeem a short-lived ticket issued by support |
+| Route                           | Existing implementation                                                                     |
+| ------------------------------- | ------------------------------------------------------------------------------------------- |
+| `/`                             | Products and CMS content, hero/highlight sections, featured products, and rich-text content |
+| `/products`, `/products/[id]`   | Catalog, search/category filters, product details, reviews, and shopping actions            |
+| `/auth/login`, `/auth/register` | Backend login and registration                                                              |
+| `/account`                      | Profile, saved addresses, and account information                                           |
+| `/cart`, `/wishlist`            | Guest data stored locally and synchronized with the backend after login                     |
+| `/checkout`                     | Saved/new profile address, order creation, and payment registration                         |
+| `/cms/[slug]`                   | Published CMS content                                                                       |
+| `/impersonate`                  | Redeem a short-lived ticket issued by support                                               |
 
 The UI includes i18next resources for **en, ro, fr, de, ar, he**, a language selector, and RTL direction support for Arabic/Hebrew. Translation resources do not establish complete RTL layout verification.
 
@@ -123,12 +127,12 @@ Backend cache invalidation does not remove responses already cached by Next.js. 
 
 All routes below require `?api=<SERVER_SERVICES_TOKEN>` and operate only on the storefront Redis prefix, normally `shopx:frontend`. Supply the private token locally; do not commit it or paste it into shared logs.
 
-| Route, relative to the storefront | Methods | Behavior |
-| --- | --- | --- |
-| `/api/serverSideServices/cache` | GET | List actual keys, without the application prefix |
-| `/api/serverSideServices/cache` | DELETE | Clear all entries under this application's prefix |
-| `/api/serverSideServices/cache` | POST | `flushAll`, `flushNamespace`, or `flushKey` |
-| `/api/serverSideServices/cache/[key]` | GET / DELETE | Inspect value/TTL or remove one URL-encoded key |
+| Route, relative to the storefront                     | Methods      | Behavior                                                               |
+| ----------------------------------------------------- | ------------ | ---------------------------------------------------------------------- |
+| `/api/serverSideServices/cache`                       | GET          | List actual keys, without the application prefix                       |
+| `/api/serverSideServices/cache`                       | DELETE       | Clear all entries under this application's prefix                      |
+| `/api/serverSideServices/cache`                       | POST         | `flushAll`, `flushNamespace`, or `flushKey`                            |
+| `/api/serverSideServices/cache/[key]`                 | GET / DELETE | Inspect value/TTL or remove one URL-encoded key                        |
 | `/api/serverSideServices/cache/namespace/[namespace]` | GET / DELETE | List or remove matching keys; a trailing wildcard is added when needed |
 
 With `SERVER_SERVICES_TOKEN` already set in your local shell, list keys:
@@ -140,37 +144,39 @@ curl -sS --get --data-urlencode "api=$SERVER_SERVICES_TOKEN" http://localhost:31
 Use the exact returned key, without adding `shopx:frontend:`. In the following POST body, replace the placeholder with a key from that listing. The API's field is named `namespace` even for a single-key deletion:
 
 ```json
-{"action":"flushKey","namespace":"<exact-key-from-listing>"}
+{ "action": "flushKey", "namespace": "<exact-key-from-listing>" }
 ```
 
-POST that body to `/api/serverSideServices/cache?api=<token>`. `{"action":"flushNamespace","namespace":"graphql:public-v2"}` removes the current public-query namespace; `{"action":"flushAll"}` clears the app prefix. These operations change cache state, not Oracle records. Admin has a separate prefix and [its own tools](../admin-portal/README.md#cache-tools).
+POST that body to `/api/serverSideServices/cache?api=<token>`. `{"action":"flushNamespace","namespace":"graphql:public-v2"}` removes the current public-query namespace; `{"action":"flushAll"}` clears the app prefix. These operations change cache state, not Oracle records. Admin has a separate prefix and [its own tools](https://github.com/Arevy/ShopX-Admin-Portal/blob/master/README.md#cache-tools).
 
 ## Commands and verification
 
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Next.js development on port 3100 |
-| `npm run build` | Production Next.js build, including configured checks |
-| `npm start` | Runs `prestart` (`next build`), then serves on 3100 |
-| `npx tsc --noEmit` | Separate TypeScript check |
-| `npm run lint` | ESLint through `next lint` |
-| `npm run test:contracts` | Two tests for public-cache eligibility and private-query isolation |
+On a fresh clone, install from `yarn.lock` and run `npm run build` before the separate `npx tsc --noEmit` check. Next generates `.next/types/routes.d.ts`, referenced by `next-env.d.ts`; generated `.next/` files stay outside Git.
 
-The two contract tests and TypeScript passed again on October 12; lint passed during the October 11 checks. Workspace `../scripts/browser-smoke.cjs` and `../scripts/smoke.mjs` create temporary QA data and require valid SUPPORT credentials for the active database. API smoke passes against recovered `AREVY`, covering authenticated commerce and private-cache isolation. Chrome passed storefront login and the shared backend wishlist. `../scripts/verify-data.mjs` verifies the new accounts and persisted starter content through the storefront proxy. See the [workspace verification record](../docs/development-status.md) for limits; API checkout evidence does not by itself prove every storefront checkout interaction.
+| Command                  | Purpose                                                             |
+| ------------------------ | ------------------------------------------------------------------- |
+| `npm run dev`            | Next.js development on port 3100                                    |
+| `npm run build`          | Production Next.js build, including configured checks               |
+| `npm start`              | Runs `prestart` (`next build`), then serves on 3100                 |
+| `npx tsc --noEmit`       | Separate TypeScript check                                           |
+| `npm run lint`           | ESLint through `next lint`                                          |
+| `npm run test:contracts` | Three tests for public-cache isolation and runtime homepage loading |
+
+The current three contract tests and production build passed on October 27, 2026, including runtime homepage loading. The earlier October 12 run had two contract tests; lint passed during the October 11 checks. Workspace `../scripts/browser-smoke.cjs` and `../scripts/smoke.mjs` create temporary QA data and require valid SUPPORT credentials for the active database. API smoke passes against recovered `AREVY`, covering authenticated commerce and private-cache isolation. Chrome passed storefront login and the shared backend wishlist. `../scripts/verify-data.mjs` verifies the new accounts and persisted starter content through the storefront proxy. See the workspace verification record (`../docs/development-status.md`, integration workspace only) for limits; API checkout evidence does not by itself prove every storefront checkout interaction.
 
 `next build` and `next dev` use the same `.next` directory. Stop this repository's development server before building, then restart it afterward.
 
 ## Troubleshooting
 
-| Symptom | Check |
-| --- | --- |
-| Empty catalog or homepage | Backend `/health/ready`, active Oracle schema, public GraphQL query, then proxy response; do not reset recovered data |
-| GraphQL/CORS error | Check proxy upstream reachability. For direct browser requests, verify `CORS_ALLOWED_ORIGINS` in the backend |
-| Images fail in Next.js optimization | The public image origin must be allowed by Next.js and reachable from its container; Compose defaults to `api.shopx.localhost` |
-| Login expires or support revokes access | Sign in again; the cookie must identify an active backend session |
-| `ORA-28001` | Follow the backend's [password recovery guidance](../e-commerce-backend/README.md#expired-oracle-passwords) |
-| Node engine mismatch | Select Node 22 for the workspace and reinstall dependencies for that runtime |
-| Stale content after admin changes | Check browser store state, backend cache, and Next.js public cache separately |
+| Symptom                                 | Check                                                                                                                          |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Empty catalog or homepage               | Backend `/health/ready`, active Oracle schema, public GraphQL query, then proxy response; do not reset recovered data          |
+| GraphQL/CORS error                      | Check proxy upstream reachability. For direct browser requests, verify `CORS_ALLOWED_ORIGINS` in the backend                   |
+| Images fail in Next.js optimization     | The public image origin must be allowed by Next.js and reachable from its container; Compose defaults to `api.shopx.localhost` |
+| Login expires or support revokes access | Sign in again; the cookie must identify an active backend session                                                              |
+| `ORA-28001`                             | Follow the backend's [password recovery guidance](https://github.com/Arevy/e-commerce-backend/blob/master/README.md#expired-oracle-passwords)                    |
+| Node engine mismatch                    | Select Node 22 for the workspace and reinstall dependencies for that runtime                                                   |
+| Stale content after admin changes       | Check browser store state, backend cache, and Next.js public cache separately                                                  |
 
 ## Code organization and Docker
 
@@ -184,7 +190,7 @@ The Dockerfile uses Node 22 bookworm-slim. Compose selects `development` with `n
 
 ## Remaining work
 
-Payment-provider integration, shipping/inventory, checkout recovery/idempotency, complete accessibility and RTL audits, analytics, and optional offline/PWA support remain development directions. Translation infrastructure already exists; adding it is no longer a pending task. See the [workspace status](../docs/development-status.md) for verified scope. No workspace license file is present; the older README's claim of an inherited monorepo license was not substantiated.
+Payment-provider integration, shipping/inventory, checkout recovery/idempotency, complete accessibility and RTL audits, analytics, and optional offline/PWA support remain development directions. Translation infrastructure already exists; adding it is no longer a pending task. See the workspace status (`../docs/development-status.md`, integration workspace only) for verified scope. No workspace license file is present; the older README's claim of an inherited monorepo license was not substantiated.
 
 ## Managed platform configuration
 
@@ -195,3 +201,17 @@ The optional factory deployment reuses this production image across independent 
 `/api/products/:id/image` proxies managed relative product-image URLs to the configured backend, including requests from Next's image optimizer. The destination is server configuration, never a client-provided URL. Existing absolute image URLs remain supported.
 
 The Docker production target also supports repositories with an empty `public/` directory. There are no sibling build contexts or imports. The local integration workspace's factory controls provisioning; cloning this repository alone still works with an existing compatible GraphQL backend.
+
+## Runtime business customization
+
+Compatible managed stores can publish `experience` alongside their public branding: HTTPS logo, tagline, hero heading/description, announcement, footer/contact, typography, corner style, catalog density and featured/new-arrival/editorial visibility. Optional blank copy falls back to existing translations; supplied business copy is plain text and is not translated automatically. The HTTPS logo loads directly in the browser, not through a backend URL fetcher.
+
+MobX validates settings before applying them. Public configuration refreshes on focus and every 30 seconds while visible; no frontend rebuild is needed to publish content or theme changes. Missing `experience` preserves default presentation. Products, accounts and transactions still come from the commerce API. Factory configuration changes never reseed the catalog or change a store's backend identity.
+
+The central editor and revision/retry workflow live in the independently deployed control console. This repository does not import that repository or require its management API at runtime.
+
+The homepage loads its catalog from the runtime backend with `getServerSideProps`. Reusable Docker images no longer carry an empty build-time homepage that waits for ISR regeneration on the first visit. No authenticated session is forwarded by this public homepage loader.
+
+## Security maintenance
+
+The reviewed baseline is Next.js 15.5.28 with React 18 Pages Router, sharp 0.35.5 and Node 22.23.4. Image optimization limits each fetched response to 6 MiB and its disk cache to 100 MiB. Keep the lockfile and production image aligned when updating dependencies. Rebuild and recreate running containers; updating a manifest alone does not patch a running server.

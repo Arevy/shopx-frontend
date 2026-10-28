@@ -59,7 +59,7 @@
 	height: 1.65rem;
 	border-radius: 999px;
 	background: var(--color-primary);
-	color: #101112;
+	color: var(--platform-on-accent, #101112);
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -175,7 +175,7 @@
 }
 
 .dark .header {
-	background: rgba(15, 23, 42, 0.9);
+	background: var(--color-surface);
 }
 
 .inner {
@@ -184,8 +184,20 @@
 }
 .brand {
 	font-size: 1.65rem;
-	flex-shrink: 0;
+	flex-shrink: 1;
+	min-width: 0;
 	letter-spacing: -0.06em;
+}
+.brandText {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.brand img,
+.brand::after,
+.actions {
+	flex-shrink: 0;
 }
 .brand::after {
 	content: "";

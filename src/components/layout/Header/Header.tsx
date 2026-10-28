@@ -1,5 +1,7 @@
 "use client";
 
+import Image from "next/image";
+
 import Link from "next/link";
 import type { UrlObject } from "url";
 import { useRouter } from "next/router";
@@ -71,7 +73,24 @@ export const Header = observer(() => {
 		>
 			<div className={classNames(styles.inner, { [styles.innerRtl]: isRtl })}>
 				<Link href="/" className={styles.brand}>
+					{platformStore.configuration?.experience?.logoUrl && (
+						<Image
+							key={platformStore.configuration.experience.logoUrl}
+							unoptimized
+							src={platformStore.configuration.experience.logoUrl}
+							width={36}
+							height={36}
+							alt=""
+							referrerPolicy="no-referrer"
+							style={{ objectFit: "contain" }}
+							onError={(e) => {
+								e.currentTarget.style.display = "none";
+							}}
+						/>
+					)}
 					<motion.span
+						className={styles.brandText}
+						title={platformStore.configuration?.displayName || "ShopX"}
 						initial={{ opacity: 0, x: -12 }}
 						animate={{ opacity: 1, x: 0 }}
 						transition={{ duration: 0.4, ease: "easeOut" }}

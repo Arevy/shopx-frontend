@@ -1,75 +1,75 @@
 {
-  "language": {
-    "label": "שפה",
-    "accessibility_label": "בחר את שפת הממשק",
-    "options": {
-      "en": "English",
-      "ro": "Română",
-      "fr": "Français",
-      "de": "Deutsch",
-      "ar": "العربية",
-      "he": "עברית"
-    }
-  },
-  "header": {
-    "nav": {
-      "home": "בית",
-      "catalog": "קטלוג",
-      "wishlist": "רשימת משאלות",
-      "cart": "עגלה",
-      "more": "עוד"
-    },
-    "actions": {
-      "sign_in": "התחברות",
-      "sign_out": "התנתקות",
-      "profile": "פרופיל",
-      "toggle_navigation": "הצג/הסתר תפריט"
-    }
-  },
-  "routes": {
-    "checkout": "סיום הזמנה",
-    "impersonate": "התחזות",
-    "product_detail": "פרטי מוצר",
-    "cms_page": "עמוד תוכן",
-    "login": "התחברות",
-    "register": "יצירת חשבון",
-    "account": "חשבון"
-  },
-  "footer": {
-    "description": "פלטפורמת המסחר האלקטרוני המחברת טכנולוגיה ועיצוב לחוויית קנייה עדכנית.",
-    "sections": {
-      "support": "תמיכה",
-      "company": "חברה",
-      "social": "חברתי"
-    },
-    "links": {
-      "support": {
-        "contact": "צור קשר",
-        "faq": "שאלות ותשובות",
-        "returns": "החזרות ואחריות"
-      },
-      "company": {
-        "about": "על ShopX",
-        "careers": "קריירה",
-        "blog": "בלוג"
-      },
-      "social": {
-        "instagram": "אינסטגרם",
-        "facebook": "פייסבוק",
-        "tiktok": "טיקטוק"
-      }
-    },
-    "bottom": {
-      "copyright": "© {{year}} ShopX. כל הזכויות שמורות.",
-      "credit": "פותח באהבה באמצעות Next.js ו‑GraphQL."
-    }
-  },
-  "product": {
-    "add": "הוספה לסל",
-    "adding": "מוסיף…",
-    "save": "שמירת מוצר",
-    "unsave": "הסרה מהמועדפים",
-    "vat": "כולל מע״מ",
-    "no_image": "התמונה אינה זמינה"
-  }
+	"language": {
+		"label": "שפה",
+		"accessibility_label": "בחר את שפת הממשק",
+		"options": {
+			"en": "English",
+			"ro": "Română",
+			"fr": "Français",
+			"de": "Deutsch",
+			"ar": "العربية",
+			"he": "עברית"
+		}
+	},
+	"header": {
+		"nav": {
+			"home": "בית",
+			"catalog": "קטלוג",
+			"wishlist": "רשימת משאלות",
+			"cart": "עגלה",
+			"more": "עוד"
+		},
+		"actions": {
+			"sign_in": "התחברות",
+			"sign_out": "התנתקות",
+			"profile": "פרופיל",
+			"toggle_navigation": "הצג/הסתר תפריט"
+		}
+	},
+	"routes": {
+		"checkout": "סיום הזמנה",
+		"impersonate": "התחזות",
+		"product_detail": "פרטי מוצר",
+		"cms_page": "עמוד תוכן",
+		"login": "התחברות",
+		"register": "יצירת חשבון",
+		"account": "חשבון"
+	},
+	"footer": {
+		"description": "פלטפורמת המסחר האלקטרוני המחברת טכנולוגיה ועיצוב לחוויית קנייה עדכנית.",
+		"sections": {
+			"support": "תמיכה",
+			"company": "חברה",
+			"social": "חברתי"
+		},
+		"links": {
+			"support": {
+				"contact": "צור קשר",
+				"faq": "שאלות ותשובות",
+				"returns": "החזרות ואחריות"
+			},
+			"company": {
+				"about": "על ShopX",
+				"careers": "קריירה",
+				"blog": "בלוג"
+			},
+			"social": {
+				"instagram": "אינסטגרם",
+				"facebook": "פייסבוק",
+				"tiktok": "טיקטוק"
+			}
+		},
+		"bottom": {
+			"copyright": "© {{year}} {{siteName}}. כל הזכויות שמורות.",
+			"credit": "פותח באהבה באמצעות Next.js ו‑GraphQL."
+		}
+	},
+	"product": {
+		"add": "הוספה לסל",
+		"adding": "מוסיף…",
+		"save": "שמירת מוצר",
+		"unsave": "הסרה מהמועדפים",
+		"vat": "כולל מע״מ",
+		"no_image": "התמונה אינה זמינה"
+	}
 }
